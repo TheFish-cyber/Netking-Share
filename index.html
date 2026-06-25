@@ -30,7 +30,7 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* HEADER TOP BAR - CO GIÃN CHUẨN TRÊN NỀN WEB VÀ MOBILE */
+        /* HEADER TOP BAR */
         .top-header {
             position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 600px;
@@ -46,9 +46,9 @@
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
         .top-header h1 { font-size: 0.95rem; letter-spacing: 1px; margin: 0; }
 
-        /* HEADER AUTH BUTTON */
+        /* AUTH BUTTON IN HEADER */
         .header-auth-btn {
-            padding: 6px 12px;
+            padding: 6px 14px;
             font-size: 0.75rem;
             font-weight: bold;
             border-radius: 20px;
@@ -56,7 +56,7 @@
             transition: all 0.25s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            display: flex; align-items: center; gap: 4px;
+            display: flex; align-items: center; gap: 6px;
             border: none;
         }
         .auth-state-signin {
@@ -71,10 +71,10 @@
         }
         .auth-state-logged:hover { background: #7000ff; color: #ffffff; box-shadow: 0 0 10px #7000ff; }
 
-        /* CYBER FRAME CHỐNG VỠ LAYOUT */
+        /* CYBER FRAME */
         .cyber-frame {
             position: relative;
-            background: #06060c;
+            background: #06060c !important;
             border: 1.5px solid #00f0ff;
             border-radius: 14px;
             z-index: 1;
@@ -109,7 +109,7 @@
             color: #00f0ff; border-color: #00f0ff; box-shadow: 0 0 6px rgba(0, 240, 255, 0.15);
         }
 
-        /* CONTAINER CHÍNH - GIỮ HIỂN THỊ ĐỘC LẬP KHÔNG BỊ MODAL ĐÈ */
+        /* MAIN CONTAINER */
         .container { width: 100%; max-width: 600px; padding: 18px; margin-bottom: 25px; z-index: 5; display: block !important; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -138,7 +138,7 @@
 
         /* Nút phụ tắt thông báo 1 giờ */
         .btn-mute-temporary {
-            background: transparent; border: 1px solid #5a5a75; color: #8a8ab0; font-size: 0.75rem; padding: 8px; border-radius: 8px; cursor: pointer; margin-top: 8px; width: 100%; transition: 0.2s;
+            background: transparent; border: 1px solid #5a5a75; color: #8a8ab0; font-size: 0.75rem; padding: 9px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; display: block; text-align: center; font-weight: 500;
         }
         .btn-mute-temporary:hover { border-color: #8a8ab0; color: #ffffff; background: rgba(255,255,255,0.05); }
 
@@ -156,7 +156,7 @@
         .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
         .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 6px #00f0ff; }
 
-        /* MODAL OVERLAYS - BẢO ĐẢM KHÔNG BỊ TRÀN VÀ CHE KHUẤT TRÊN DIỆN THOẠI */
+        /* MODAL OVERLAYS FIXED SYSTEM */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.93);
             z-index: 9999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px);
@@ -242,6 +242,7 @@
             <p id="status-desc" style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 15px;">Thao tác hoàn tất.</p>
             
             <button class="btn-submit" onclick="closeStatusModal()" style="background: linear-gradient(45deg, #00f0ff, #7000ff); border:none;">XÁC NHẬN</button>
+            
             <button class="btn-mute-temporary" onclick="muteStatusModalOneHour()">🔕 Ẩn thông báo này trong 1h</button>
         </div>
     </div>
@@ -266,7 +267,7 @@
         <div class="modal-box cyber-frame">
             <button onclick="closeAuthModal()" class="modal-close-btn">×</button>
             
-            <div id="login-form-wrapper">
+            <div id="login-form-wrapper" style="display: block;">
                 <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.05rem;">ĐĂNG NHẬP SYSTEMS</h3>
                 <div class="form-group"><label>USERNAME</label><input type="text" id="login-user" placeholder="Nhập tên tài khoản..."></div>
                 <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass" placeholder="Nhập mật khẩu..."></div>
@@ -312,7 +313,7 @@
                 </div>
                 <div class="info-row" style="border:none;">
                     <span>RANK LEVEL:</span>
-                    <strong id="info-display-rank" style="color: #ff007f;">MEMBER</strong>
+                    <strong id="info-display-rank" style="color: #00f0ff;">MEMBER</strong>
                 </div>
             </div>
 
@@ -400,6 +401,7 @@
             animate();
         }
 
+        /* FIX HÀM ĐIỀU PHỐI ĐỂ KHÔNG BỊ SAI TRẠNG THÁI KHUNG */
         function handleHeaderAuthClick() {
             if (currentUser === "guest") {
                 openAuthModal('signin');
@@ -596,7 +598,6 @@
             }, 1000);
         }
 
-        // LOGIC KIỂM TRA XEM CÓ ĐANG BỊ TẮT THÔNG BÁO 1 GIỜ KHÔNG
         function isMuted() {
             const muteExpiry = localStorage.getItem("status_modal_mute_expiry");
             if (!muteExpiry) return false;
@@ -604,18 +605,15 @@
         }
 
         function muteStatusModalOneHour() {
-            const oneHourWindow = Date.now() + (60 * 60 * 1000); // Thêm 1 tiếng tính bằng ms
+            const oneHourWindow = Date.now() + (60 * 60 * 1000); 
             localStorage.setItem("status_modal_mute_expiry", oneHourWindow.toString());
             document.getElementById("status-modal").classList.remove("active");
-            
-            // Chạy ngầm chuyển hướng nếu có luồng logic đang chờ sẵn
             executeHiddenFlows();
         }
 
         function showStatusModal(isSuccess, title, msg) {
-            // Nếu người dùng chọn ẩn thông báo 1h thì chạy ngầm luôn, không popup
             if (isMuted()) {
-                console.log(`[Cyber System Muted] Blocked Modal: ${title} - ${msg}`);
+                console.log(`[System Muted] Run Hidden Flow: ${title}`);
                 executeHiddenFlows();
                 return;
             }
@@ -681,7 +679,6 @@
             else {
                 let userInput = document.getElementById("login-user").value.trim();
                 const passInput = document.getElementById("login-pass").value.trim();
-                const remember = document.getElementById("remember-me").checked;
                 
                 if(!userInput || !passInput) return alert("Vui lòng nhập tài khoản mật khẩu!");
 
@@ -725,6 +722,7 @@
             renderServerData();
         }
 
+        /* FIX HOÀN TOÀN TRẠNG THÁI CHUYỂN ĐỔI FORM ĐỂ TRÁNH BỊ TRANH CHẤP TRỐNG KHUNG */
         function openAuthModal(type) { 
             document.getElementById("auth-modal").classList.add("active"); 
             toggleAuthForm(type); 
@@ -734,8 +732,13 @@
         }
         
         function toggleAuthForm(type) {
-            document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
-            document.getElementById("signin-form-wrapper").style.display = type === 'signin' ? "none" : "block";
+            if (type === 'login') {
+                document.getElementById("login-form-wrapper").style.display = "block";
+                document.getElementById("signin-form-wrapper").style.display = "none";
+            } else {
+                document.getElementById("login-form-wrapper").style.display = "none";
+                document.getElementById("signin-form-wrapper").style.display = "block";
+            }
         }
     </script>
 </body>
