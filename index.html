@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files</title>
+    <title>Netking Files - Ultimate Cyber Systems</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -15,8 +15,8 @@
             background-color: #030308;
             color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
-            padding: 20px;
-            padding-top: 90px;
+            padding: 15px;
+            padding-top: 85px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,7 +30,7 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* HEADER TOP BAR - FIX ĐỘ RỘNG VÀ VỊ TRÍ TRÊN MOBILE */
+        /* HEADER TOP BAR - CO GIÃN CHUẨN TRÊN NỀN WEB VÀ MOBILE */
         .top-header {
             position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 600px;
@@ -46,7 +46,7 @@
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
         .top-header h1 { font-size: 0.95rem; letter-spacing: 1px; margin: 0; }
 
-        /* BUTTON AUTH TRÊN HEADER */
+        /* HEADER AUTH BUTTON */
         .header-auth-btn {
             padding: 6px 12px;
             font-size: 0.75rem;
@@ -56,9 +56,7 @@
             transition: all 0.25s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            display: flex; align-items: center; gap: 4px;
             border: none;
         }
         .auth-state-signin {
@@ -73,12 +71,11 @@
         }
         .auth-state-logged:hover { background: #7000ff; color: #ffffff; box-shadow: 0 0 10px #7000ff; }
 
-        /* CYBER FRAME */
+        /* CYBER FRAME CHỐNG VỠ LAYOUT */
         .cyber-frame {
             position: relative;
-            background: linear-gradient(#06060c, #06060c) padding-box, 
-                        linear-gradient(135deg, #00f0ff, #7000ff, #ff007f) border-box;
-            border: 1.5px solid transparent;
+            background: #06060c;
+            border: 1.5px solid #00f0ff;
             border-radius: 14px;
             z-index: 1;
         }
@@ -86,12 +83,7 @@
             content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
             border-radius: 14px; 
             background: linear-gradient(135deg, #00f0ff, #7000ff, #ff007f);
-            z-index: -1; opacity: 0.35; filter: blur(10px); pointer-events: none;
-            animation: smokePulse 3.5s infinite alternate;
-        }
-        @keyframes smokePulse {
-            0% { filter: blur(7px); opacity: 0.25; }
-            100% { filter: blur(12px); opacity: 0.45; }
+            z-index: -1; opacity: 0.25; filter: blur(8px); pointer-events: none;
         }
 
         .blink-text { animation: textBlink 1.5s infinite alternate; }
@@ -107,9 +99,9 @@
         }
 
         /* Tabs Menu */
-        .tabs-container { display: flex; gap: 6px; margin-bottom: 20px; width: 100%; max-width: 600px; }
+        .tabs-container { display: flex; gap: 6px; margin-bottom: 18px; width: 100%; max-width: 600px; z-index: 5; }
         .tab-btn {
-            flex: 1; padding: 10px 5px; background: rgba(15, 15, 25, 0.7); border: 1px solid rgba(0, 240, 255, 0.15);
+            flex: 1; padding: 10px 4px; background: rgba(15, 15, 25, 0.7); border: 1px solid rgba(0, 240, 255, 0.15);
             color: #8a8ab0; font-weight: bold; cursor: pointer; border-radius: 8px; transition: all 0.2s; text-align: center; font-size: 0.8rem;
         }
         .tab-btn.active, .tab-btn:hover {
@@ -117,18 +109,20 @@
             color: #00f0ff; border-color: #00f0ff; box-shadow: 0 0 6px rgba(0, 240, 255, 0.15);
         }
 
-        .container { width: 100%; max-width: 600px; padding: 18px; margin-bottom: 30px; display: block !important; }
+        /* CONTAINER CHÍNH - GIỮ HIỂN THỊ ĐỘC LẬP KHÔNG BỊ MODAL ĐÈ */
+        .container { width: 100%; max-width: 600px; padding: 18px; margin-bottom: 25px; z-index: 5; display: block !important; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         /* Form UI */
-        .form-group { margin-bottom: 14px; }
+        .form-group { margin-bottom: 14px; position: relative; z-index: 10; }
         label { display: block; margin-bottom: 5px; color: #00f0ff; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.5px; }
         input[type="text"], input[type="password"], input[type="file"], textarea {
-            width: 100%; padding: 10px; background: rgba(10, 10, 15, 0.85);
-            border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.85rem;
+            width: 100%; padding: 10px; background: rgba(10, 10, 15, 0.95) !important;
+            border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.85rem;
+            position: relative; z-index: 15;
         }
-        input:focus, textarea:focus { border-color: #ff007f; box-shadow: 0 0 6px rgba(255, 0, 127, 0.2); }
+        input:focus, textarea:focus { border-color: #ff007f; box-shadow: 0 0 6px rgba(255, 0, 127, 0.3); }
 
         .remember-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; color: #8a8ab0; font-size: 0.8rem;}
         .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 14px; height: 14px;}
@@ -141,6 +135,12 @@
             background: transparent; border: 1.5px solid #ff003c; color: #ff003c; transition: 0.2s;
         }
         .btn-logout-danger:hover { background: #ff003c; color: #fff; box-shadow: 0 0 10px #ff003c; }
+
+        /* Nút phụ tắt thông báo 1 giờ */
+        .btn-mute-temporary {
+            background: transparent; border: 1px solid #5a5a75; color: #8a8ab0; font-size: 0.75rem; padding: 8px; border-radius: 8px; cursor: pointer; margin-top: 8px; width: 100%; transition: 0.2s;
+        }
+        .btn-mute-temporary:hover { border-color: #8a8ab0; color: #ffffff; background: rgba(255,255,255,0.05); }
 
         /* Items File */
         .file-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
@@ -155,29 +155,27 @@
         }
         .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
         .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 6px #00f0ff; }
-        
-        .btn-admin-verify { background: transparent; border: 1px solid #ff007f; color: #ff007f; }
-        .btn-admin-verify:hover { background: #ff007f; color: white; box-shadow: 0 0 6px #ff007f; }
 
-        /* FIX LỖI FRAME: OVERLAYS MODALS ĐƯỢC CHỐNG TRÀN VÀ ĐẢM BẢO CUỘN TRÊN MOBILE */
+        /* MODAL OVERLAYS - BẢO ĐẢM KHÔNG BỊ TRÀN VÀ CHE KHUẤT TRÊN DIỆN THOẠI */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.9);
-            z-index: 999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.93);
+            z-index: 9999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
             padding: 15px; overflow-y: auto;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
-        #status-modal { z-index: 10000 !important; }
+        #status-modal { z-index: 10050 !important; }
 
         .modal-box { 
-            padding: 22px; max-width: 400px; width: 100%; position: relative; 
-            margin: auto; box-sizing: border-box;
+            padding: 22px; max-width: 380px; width: 100%; position: relative; 
+            margin: auto; box-sizing: border-box; background: #07070f !important;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
         }
         .modal-close-btn { 
             position: absolute; top: 12px; right: 12px; background: none; border: none; 
-            color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1.2rem; z-index: 10; 
-            width: 25px; height: 25px; text-align: center; line-height: 25px;
+            color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1.3rem; z-index: 100; 
+            width: 30px; height: 30px; text-align: center; line-height: 30px;
         }
         .auth-links a { color: #00f0ff; font-weight: bold; text-decoration: none; margin: 0 5px; cursor: pointer;}
         .note-rules { font-size: 0.72rem; color: #ff007f; margin-top: 4px; display: block; line-height: 1.3;}
@@ -185,7 +183,7 @@
         /* Loader */
         #loading-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 4, 8, 0.95);
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
         }
         #loading-frame.active { opacity: 1; pointer-events: auto; }
@@ -241,8 +239,10 @@
             <button onclick="closeStatusModal()" class="modal-close-btn">×</button>
             <span id="status-icon" class="status-icon">✓</span>
             <h3 id="status-title" class="text-gradient" style="font-size: 1.1rem; margin-bottom: 8px;">SUCCESS</h3>
-            <p id="status-desc" style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 18px;">Thao tác hoàn tất.</p>
-            <button class="btn-submit cyber-frame" onclick="closeStatusModal()" style="background: transparent;">XÁC NHẬN</button>
+            <p id="status-desc" style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 15px;">Thao tác hoàn tất.</p>
+            
+            <button class="btn-submit" onclick="closeStatusModal()" style="background: linear-gradient(45deg, #00f0ff, #7000ff); border:none;">XÁC NHẬN</button>
+            <button class="btn-mute-temporary" onclick="muteStatusModalOneHour()">🔕 Ẩn thông báo này trong 1h</button>
         </div>
     </div>
 
@@ -254,7 +254,7 @@
             </div>
             <h2 class="text-gradient blink-text" style="margin-bottom: 10px; font-size: 1.2rem; text-align: center;">WELCOME TO NETKING FILES</h2>
             <p style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 16px; text-align: justify;">
-                Chào mừng bạn đến với mạng lưới lưu trữ đám mây Netking Files. Toàn bộ tập tin truyền tải đều được bảo mật mã hóa nâng cao. Vui lòng đăng nhập hoặc đăng ký để mở khóa quyền quản trị và tải tệp tin tốc độ cao.
+                Chào mừng bạn đến với mạng lưới lưu trữ đám mây Netking Files. Toàn bộ tập tin truyền tải đều được bảo mật mã hóa nâng cao. Vui lòng đăng nhập hoặc đăng ký để mở khóa quyền quản trị.
             </p>
             <div class="auth-links" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; text-align: center;">
                 <a onclick="openAuthModal('signin')">Sign In</a> <span style="color: #6a6a90;">丨</span> <a onclick="openAuthModal('login')">Login In</a>
@@ -272,9 +272,9 @@
                 <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass" placeholder="Nhập mật khẩu..."></div>
                 <div class="remember-wrapper">
                     <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Ghi nhớ đăng nhập cho lần sau</label>
+                    <label for="remember-me">Ghi nhớ đăng nhập</label>
                 </div>
-                <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleAuth('login')">LOGIN NOW</button>
+                <button class="btn-submit" style="background: linear-gradient(45deg, #00f0ff, #7000ff);" onclick="handleAuth('login')">LOGIN NOW</button>
                 <p style="margin-top: 12px; font-size: 0.78rem; color:#8a8ab0;">Chưa có nick? <a onclick="toggleAuthForm('signin')">Đăng ký</a></p>
             </div>
 
@@ -282,15 +282,15 @@
                 <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.05rem;">ĐĂNG KÝ USER</h3>
                 <div class="form-group">
                     <label>USERNAME TÀI KHOẢN</label>
-                    <input type="text" id="reg-user" placeholder="Tối đa 10 kí tự, chỉ dùng chữ, số và _">
-                    <small class="note-rules">* Tối đa 10 kí tự. Chỉ chấp nhận chữ, số và kí tự _</small>
+                    <input type="text" id="reg-user" placeholder="Tối đa 10 kí tự">
+                    <small class="note-rules">* Tối đa 10 kí tự. Chỉ dùng chữ, số và _</small>
                 </div>
                 <div class="form-group">
                     <label>PASSWORD BẢO MẬT</label>
-                    <input type="password" id="reg-pass" placeholder="Tối đa 20 kí tự, không dùng kí tự đặc biệt">
+                    <input type="password" id="reg-pass" placeholder="Tối đa 20 kí tự">
                     <small class="note-rules">* Tối đa 20 kí tự. Không chứa kí tự đặc biệt cấm.</small>
                 </div>
-                <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleAuth('register')">HOÀN TẤT ĐĂNG KÝ</button>
+                <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="handleAuth('register')">HOÀN TẤT ĐĂNG KÝ</button>
                 <p style="margin-top: 12px; font-size: 0.78rem; color:#8a8ab0;">Có nick rồi? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
             </div>
         </div>
@@ -316,7 +316,7 @@
                 </div>
             </div>
 
-            <button class="btn-submit btn-logout-danger cyber-frame" onclick="processLogout()">🚪 LOG OUT ACC</button>
+            <button class="btn-submit btn-logout-danger" onclick="processLogout()">🚪 LOG OUT ACC</button>
         </div>
     </div>
 
@@ -343,7 +343,7 @@
             <div class="form-group"><label>PHIÊN BẢN FILE</label><input type="text" id="file-version" placeholder="v1.0.0"></div>
             <div class="form-group"><label>ĐƯỜNG DẪN TẢI / LIÊN KẾT (URL)</label><input type="text" id="file-url" placeholder="https://..."></div>
             <div class="form-group"><label>HOẶC TẢI TỆP TIN TỪ THIẾT BỊ</label><input type="file" id="file-upload"></div>
-            <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleUpload()">TẢI LÊN MÁY CHỦ</button>
+            <button class="btn-submit" style="background: linear-gradient(45deg, #00f0ff, #ff007f);" onclick="handleUpload()">TẢI LÊN MÁY CHỦ</button>
         </div>
     </div>
 
@@ -370,14 +370,14 @@
                 h = canvas.height = window.innerHeight;
             });
 
-            const stars = Array.from({ length: 50 }, () => ({
+            const stars = Array.from({ length: 45 }, () => ({
                 x: Math.random() * w, y: Math.random() * h,
                 size: Math.random() * 2, alpha: Math.random(), speed: 0.02 + Math.random() * 0.03
             }));
 
-            const snowflakes = Array.from({ length: 12 }, () => ({
+            const snowflakes = Array.from({ length: 10 }, () => ({
                 x: Math.random() * w, y: Math.random() * h,
-                speedY: 0.7 + Math.random() * 1.3, speedX: (Math.random() - 0.5) * 0.6, size: 10 + Math.random() * 5
+                speedY: 0.6 + Math.random() * 1.2, speedX: (Math.random() - 0.5) * 0.5, size: 9 + Math.random() * 5
             }));
 
             function animate() {
@@ -388,7 +388,7 @@
                     ctx.fillStyle = `rgba(0, 240, 255, ${Math.max(0, s.alpha)})`;
                     ctx.fillRect(s.x, s.y, s.size, s.size);
                 });
-                ctx.fillStyle = "rgba(255, 0, 127, 0.4)";
+                ctx.fillStyle = "rgba(255, 0, 127, 0.35)";
                 snowflakes.forEach(f => {
                     ctx.font = `${f.size}px Arial`;
                     ctx.fillText("☆", f.x, f.y);
@@ -426,6 +426,7 @@
             document.getElementById("info-display-rank").innerText = currentUser.toUpperCase();
             document.getElementById("account-info-modal").classList.add("active");
         }
+        
         function closeAccountInfoModal() {
             document.getElementById("account-info-modal").classList.remove("active");
         }
@@ -441,7 +442,7 @@
             renderServerData();
             
             nextActionFlow = "just_close";
-            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản khỏi hệ thống Cyber.");
+            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản khỏi hệ thống.");
             
             document.getElementById("welcome-modal").classList.add("active");
             startWelcomeCounter();
@@ -453,12 +454,6 @@
                 startWelcomeCounter();
             } else {
                 document.getElementById("welcome-modal").classList.remove("active");
-            }
-            
-            const savedUser = localStorage.getItem("remembered_netking_user");
-            if (savedUser && savedUser.toLowerCase() === "xine3d") {
-                document.getElementById("login-user").value = savedUser;
-                document.getElementById("remember-me").checked = true;
             }
         }
 
@@ -493,7 +488,7 @@
                 document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
                 
                 loader.classList.remove("active");
-            }, 1200);
+            }, 1000);
         }
 
         function renderServerData() {
@@ -513,7 +508,7 @@
                     : '';
 
                 const html = `
-                    <div class="file-item cyber-frame">
+                    <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
                         <div>
                             <h4>${file.title} ${file.verified ? '<span class="badge-verified">Verified</span>' : ''}</h4>
                             <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4;">${file.desc || 'Không có mô tả.'}</p>
@@ -556,7 +551,7 @@
 
             if (currentUser !== "admin" && databaseFiles.length >= 2) {
                 nextActionFlow = "just_close";
-                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files! Vui lòng liên hệ Admin.");
+                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files!");
                 return;
             }
 
@@ -601,7 +596,30 @@
             }, 1000);
         }
 
+        // LOGIC KIỂM TRA XEM CÓ ĐANG BỊ TẮT THÔNG BÁO 1 GIỜ KHÔNG
+        function isMuted() {
+            const muteExpiry = localStorage.getItem("status_modal_mute_expiry");
+            if (!muteExpiry) return false;
+            return Date.now() < parseInt(muteExpiry);
+        }
+
+        function muteStatusModalOneHour() {
+            const oneHourWindow = Date.now() + (60 * 60 * 1000); // Thêm 1 tiếng tính bằng ms
+            localStorage.setItem("status_modal_mute_expiry", oneHourWindow.toString());
+            document.getElementById("status-modal").classList.remove("active");
+            
+            // Chạy ngầm chuyển hướng nếu có luồng logic đang chờ sẵn
+            executeHiddenFlows();
+        }
+
         function showStatusModal(isSuccess, title, msg) {
+            // Nếu người dùng chọn ẩn thông báo 1h thì chạy ngầm luôn, không popup
+            if (isMuted()) {
+                console.log(`[Cyber System Muted] Blocked Modal: ${title} - ${msg}`);
+                executeHiddenFlows();
+                return;
+            }
+
             const sModal = document.getElementById("status-modal");
             const sIcon = document.getElementById("status-icon");
             const sTitle = document.getElementById("status-title");
@@ -616,9 +634,7 @@
             sModal.classList.add("active");
         }
 
-        function closeStatusModal() {
-            document.getElementById("status-modal").classList.remove("active");
-            
+        function executeHiddenFlows() {
             if (nextActionFlow === "open_login") {
                 openAuthModal('login');
             } else if (nextActionFlow === "login_success_clear") {
@@ -633,41 +649,36 @@
             nextActionFlow = "just_close";
         }
 
+        function closeStatusModal() {
+            document.getElementById("status-modal").classList.remove("active");
+            executeHiddenFlows();
+        }
+
         async function handleAuth(action) {
             if (action === 'register') {
                 const user = document.getElementById("reg-user").value.trim();
                 const pass = document.getElementById("reg-pass").value.trim();
 
-                // 1. KIỂM TRA ĐỘ DÀI
-                if (user.length > 10) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Tên tài khoản không được vượt quá 10 kí tự!");
-                }
-                if (pass.length > 20) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu không được vượt quá 20 kí tự!");
-                }
+                if (user.length > 10) return showStatusModal(false, "VALIDATION ERROR", "Tên không được quá 10 kí tự!");
+                if (pass.length > 20) return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu không được quá 20 kí tự!");
 
-                // 2. CHECK KÝ TỰ ĐẶC BIỆT BỊ CẤM BẰNG REGEX
-                // Username: Chỉ cho phép chữ thường, chữ hoa, số và dấu gạch dưới _
                 const usernameRegex = /^[a-zA-Z0-9_]+$/;
                 if (!usernameRegex.test(user)) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Tên chỉ được bao gồm chữ, số và dấu gạch dưới (_). Không chứa ký tự đặc biệt khác!");
+                    return showStatusModal(false, "VALIDATION ERROR", "Tên chỉ được bao gồm chữ, số và dấu gạch dưới (_).");
                 }
 
-                // Password: Không chứa các ký tự + × ÷ = / < > [ ] ! @ # $ ^ % - " '
                 const forbiddenPassChars = /[+×÷=/<>[\]!@#$^%\-"']/;
                 if (forbiddenPassChars.test(pass)) {
                     return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu chứa ký tự đặc biệt bị cấm!");
                 }
 
-                // Đạt điều kiện -> Cho phép đăng ký và lưu tạm vào hệ thống Local làm DB mô phỏng
                 localStorage.setItem(`db_user_${user.toLowerCase()}`, pass); 
-                localStorage.setItem(`db_user_display_${user.toLowerCase()}`, user); // Giữ nguyên chữ hoa/thường để hiển thị tên đẹp
+                localStorage.setItem(`db_user_display_${user.toLowerCase()}`, user);
 
                 nextActionFlow = "open_login"; 
-                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký thành công! Nhấn xác nhận để tiến hành đăng nhập.");
+                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký thành công! Tiến hành đăng nhập hệ thống.");
             } 
             else {
-                // LOGIC ĐĂNG NHẬP: CHUYỂN HẾT VỀ LOWERCASE ĐỂ KHÔNG PHÂN BIỆT HOA/THƯỜNG
                 let userInput = document.getElementById("login-user").value.trim();
                 const passInput = document.getElementById("login-pass").value.trim();
                 const remember = document.getElementById("remember-me").checked;
@@ -676,22 +687,19 @@
 
                 let userLower = userInput.toLowerCase();
 
-                // Check tài khoản Admin mặc định (Không phân biệt hoa thường)
                 if (userLower === "xine3d" && passInput === "Thinh_2012") {
                     currentUser = "admin";
                     localStorage.setItem("netking_current_user", "admin"); 
                     localStorage.setItem("netking_session_username", "xine3d");
                     localStorage.setItem("netking_session_password", "Thinh_2012");
-                    if (remember) localStorage.setItem("remembered_netking_user", "xine3d");
                     
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
-                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại quyền kiểm soát!");
+                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại!");
                     renderServerData();
                     return;
                 }
 
-                // Check tài khoản người dùng tự đăng ký trong DB mô phỏng
                 const localSavedPass = localStorage.getItem(`db_user_${userLower}`);
                 if (localSavedPass && localSavedPass === passInput) {
                     const realDisplayName = localStorage.getItem(`db_user_display_${userLower}`) || userInput;
@@ -700,11 +708,10 @@
                     localStorage.setItem("netking_current_user", "member"); 
                     localStorage.setItem("netking_session_username", realDisplayName);
                     localStorage.setItem("netking_session_password", passInput);
-                    if (remember) localStorage.setItem("remembered_netking_user", realDisplayName);
 
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
-                    showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành viên thành công!");
+                    showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành công!");
                     renderServerData();
                 } else {
                     showStatusModal(false, "AUTH FAILED", "Tài khoản hoặc mật khẩu không chính xác!");
@@ -718,8 +725,13 @@
             renderServerData();
         }
 
-        function openAuthModal(type) { document.getElementById("auth-modal").classList.add("active"); toggleAuthForm(type); }
-        function closeAuthModal() { document.getElementById("auth-modal").classList.remove("active"); }
+        function openAuthModal(type) { 
+            document.getElementById("auth-modal").classList.add("active"); 
+            toggleAuthForm(type); 
+        }
+        function closeAuthModal() { 
+            document.getElementById("auth-modal").classList.remove("active"); 
+        }
         
         function toggleAuthForm(type) {
             document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
