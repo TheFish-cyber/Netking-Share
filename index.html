@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files - Ultimate Cyber Systems</title>
+    <title>Netking Files</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -16,7 +16,7 @@
             color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
             padding: 20px;
-            padding-top: 100px;
+            padding-top: 90px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,26 +30,26 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* HEADER TOP BAR */
+        /* HEADER TOP BAR - FIX ĐỘ RỘNG VÀ VỊ TRÍ TRÊN MOBILE */
         .top-header {
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 600px;
-            background: rgba(20, 20, 30, 0.75);
+            position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 600px;
+            background: rgba(20, 20, 30, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.1); 
             border-radius: 30px;
-            padding: 8px 20px; 
+            padding: 8px 16px; 
             display: flex; align-items: center; justify-content: space-between; gap: 10px;
-            z-index: 100; backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100; backdrop-filter: blur(12px);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
         }
-        .header-brand { display: flex; align-items: center; gap: 10px; }
+        .header-brand { display: flex; align-items: center; gap: 8px; }
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
-        .top-header h1 { font-size: 1.05rem; letter-spacing: 1px; margin: 0; }
+        .top-header h1 { font-size: 0.95rem; letter-spacing: 1px; margin: 0; }
 
         /* BUTTON AUTH TRÊN HEADER */
         .header-auth-btn {
-            padding: 6px 14px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            font-size: 0.75rem;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
@@ -58,34 +58,22 @@
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            border: none;
         }
-        /* Chưa đăng nhập (Sign In) */
         .auth-state-signin {
-            background: transparent;
-            border: 1px solid #00f0ff;
-            color: #00f0ff;
-            box-shadow: inset 0 0 4px rgba(0, 240, 255, 0.2);
+            background: transparent; border: 1px solid #00f0ff; color: #00f0ff;
+            box-shadow: inset 0 0 4px rgba(0, 240, 255, 0.1);
         }
-        .auth-state-signin:hover {
-            background: #00f0ff;
-            color: #030308;
-            box-shadow: 0 0 10px #00f0ff;
-        }
-        /* Đã đăng nhập (Account Info) */
+        .auth-state-signin:hover { background: #00f0ff; color: #030308; box-shadow: 0 0 10px #00f0ff; }
+        
         .auth-state-logged {
-            background: transparent;
-            border: 1px solid #7000ff;
-            color: #b070ff;
-            box-shadow: inset 0 0 4px rgba(112, 0, 255, 0.2);
+            background: transparent; border: 1px solid #7000ff; color: #b070ff;
+            box-shadow: inset 0 0 4px rgba(112, 0, 255, 0.1);
         }
-        .auth-state-logged:hover {
-            background: #7000ff;
-            color: #ffffff;
-            box-shadow: 0 0 10px #7000ff;
-        }
+        .auth-state-logged:hover { background: #7000ff; color: #ffffff; box-shadow: 0 0 10px #7000ff; }
 
-        /* CYBER FRAME + SMOKE */
+        /* CYBER FRAME */
         .cyber-frame {
             position: relative;
             background: linear-gradient(#06060c, #06060c) padding-box, 
@@ -102,14 +90,14 @@
             animation: smokePulse 3.5s infinite alternate;
         }
         @keyframes smokePulse {
-            0% { filter: blur(7px); opacity: 0.28; }
-            100% { filter: blur(14px); opacity: 0.48; }
+            0% { filter: blur(7px); opacity: 0.25; }
+            100% { filter: blur(12px); opacity: 0.45; }
         }
 
         .blink-text { animation: textBlink 1.5s infinite alternate; }
         @keyframes textBlink {
             0% { opacity: 1; text-shadow: 0 0 4px #00f0ff; }
-            100% { opacity: 0.5; text-shadow: 0 0 10px #ff007f; }
+            100% { opacity: 0.6; text-shadow: 0 0 8px #ff007f; }
         }
 
         .text-gradient {
@@ -119,104 +107,105 @@
         }
 
         /* Tabs Menu */
-        .tabs-container { display: flex; gap: 8px; margin-bottom: 25px; width: 100%; max-width: 600px; }
+        .tabs-container { display: flex; gap: 6px; margin-bottom: 20px; width: 100%; max-width: 600px; }
         .tab-btn {
-            flex: 1; padding: 12px; background: rgba(15, 15, 25, 0.7); border: 1px solid rgba(0, 240, 255, 0.15);
-            color: #8a8ab0; font-weight: bold; cursor: pointer; border-radius: 8px; transition: all 0.2s; text-align: center; font-size: 0.85rem;
+            flex: 1; padding: 10px 5px; background: rgba(15, 15, 25, 0.7); border: 1px solid rgba(0, 240, 255, 0.15);
+            color: #8a8ab0; font-weight: bold; cursor: pointer; border-radius: 8px; transition: all 0.2s; text-align: center; font-size: 0.8rem;
         }
         .tab-btn.active, .tab-btn:hover {
             background: linear-gradient(45deg, rgba(0, 240, 255, 0.15), rgba(255, 0, 127, 0.15));
-            color: #00f0ff; border-color: #00f0ff; box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
+            color: #00f0ff; border-color: #00f0ff; box-shadow: 0 0 6px rgba(0, 240, 255, 0.15);
         }
 
-        .container { width: 100%; max-width: 600px; padding: 22px; margin-bottom: 30px; display: block !important; }
+        .container { width: 100%; max-width: 600px; padding: 18px; margin-bottom: 30px; display: block !important; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         /* Form UI */
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; color: #00f0ff; font-weight: bold; font-size: 0.82rem; letter-spacing: 0.5px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 5px; color: #00f0ff; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.5px; }
         input[type="text"], input[type="password"], input[type="file"], textarea {
-            width: 100%; padding: 11px; background: rgba(10, 10, 15, 0.8);
-            border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.88rem;
+            width: 100%; padding: 10px; background: rgba(10, 10, 15, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.85rem;
         }
         input:focus, textarea:focus { border-color: #ff007f; box-shadow: 0 0 6px rgba(255, 0, 127, 0.2); }
 
-        .remember-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; color: #8a8ab0; font-size: 0.82rem;}
-        .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 15px; height: 15px;}
+        .remember-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; color: #8a8ab0; font-size: 0.8rem;}
+        .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 14px; height: 14px;}
 
         .btn-submit {
-            width: 100%; padding: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 0.88rem;
-            letter-spacing: 1px; display: block; text-align: center; border-radius: 10px;
+            width: 100%; padding: 11px; color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem;
+            letter-spacing: 1px; display: block; text-align: center; border-radius: 10px; border: none;
         }
-        /* Nút Log Out đỏ */
         .btn-logout-danger {
             background: transparent; border: 1.5px solid #ff003c; color: #ff003c; transition: 0.2s;
         }
-        .btn-logout-danger:hover {
-            background: #ff003c; color: #fff; box-shadow: 0 0 12px #ff003c;
-        }
+        .btn-logout-danger:hover { background: #ff003c; color: #fff; box-shadow: 0 0 10px #ff003c; }
 
         /* Items File */
-        .file-item {
-            background: rgba(15, 15, 25, 0.8) !important; padding: 16px; margin-bottom: 15px;
-            display: flex; flex-direction: column; gap: 12px;
-        }
-        .file-item h4 { font-size: 1rem; color: #fff; display: flex; align-items: center; justify-content: space-between; }
-        .file-meta { display: flex; gap: 12px; color: #6a6a90; font-size: 0.75rem; }
-        .badge-verified { color: #00f0ff; border: 1px solid #00f0ff; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-shadow: 0 0 4px #00f0ff; }
+        .file-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .file-item h4 { font-size: 0.95rem; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+        .file-meta { display: flex; gap: 10px; color: #6a6a90; font-size: 0.7rem; }
+        .badge-verified { color: #00f0ff; border: 1px solid #00f0ff; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #00f0ff; }
         
-        .file-actions-group { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 5px; }
+        .file-actions-group { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px; }
         .btn-view, .btn-admin-verify {
-            width: 100%; text-align: center; padding: 10px; border-radius: 8px; font-weight: bold; 
-            cursor: pointer; text-decoration: none; font-size: 0.82rem; display: block; transition: 0.2s;
+            width: 100%; text-align: center; padding: 8px; border-radius: 8px; font-weight: bold; 
+            cursor: pointer; text-decoration: none; font-size: 0.8rem; display: block; transition: 0.2s;
         }
         .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
-        .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 8px #00f0ff; }
+        .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 6px #00f0ff; }
         
         .btn-admin-verify { background: transparent; border: 1px solid #ff007f; color: #ff007f; }
-        .btn-admin-verify:hover { background: #ff007f; color: white; box-shadow: 0 0 8px #ff007f; }
+        .btn-admin-verify:hover { background: #ff007f; color: white; box-shadow: 0 0 6px #ff007f; }
 
-        /* Overlays Modals */
+        /* FIX LỖI FRAME: OVERLAYS MODALS ĐƯỢC CHỐNG TRÀN VÀ ĐẢM BẢO CUỘN TRÊN MOBILE */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.88);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.9);
             z-index: 999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px);
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            padding: 15px; overflow-y: auto;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
-        /* ĐÈ KHUNG TRẠNG THÁI STATUS LÊN TRÊN CÙNG */
         #status-modal { z-index: 10000 !important; }
 
-        .modal-box { padding: 25px; max-width: 440px; width: 90%; position: relative; }
-        .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1rem; z-index: 10; width: 25px; height: 25px; text-align: center; line-height: 25px;}
+        .modal-box { 
+            padding: 22px; max-width: 400px; width: 100%; position: relative; 
+            margin: auto; box-sizing: border-box;
+        }
+        .modal-close-btn { 
+            position: absolute; top: 12px; right: 12px; background: none; border: none; 
+            color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1.2rem; z-index: 10; 
+            width: 25px; height: 25px; text-align: center; line-height: 25px;
+        }
         .auth-links a { color: #00f0ff; font-weight: bold; text-decoration: none; margin: 0 5px; cursor: pointer;}
+        .note-rules { font-size: 0.72rem; color: #ff007f; margin-top: 4px; display: block; line-height: 1.3;}
 
         /* Loader */
         #loading-frame {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 4, 8, 0.94);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 4, 8, 0.95);
             z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
         }
         #loading-frame.active { opacity: 1; pointer-events: auto; }
-        .spinner { width: 45px; height: 45px; border: 3px solid rgba(0, 240, 255, 0.1); border-left-color: #00f0ff; border-right-color: #ff007f; border-radius: 50%; animation: spin 0.9s infinite linear; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(0, 240, 255, 0.1); border-left-color: #00f0ff; border-right-color: #ff007f; border-radius: 50%; animation: spin 0.9s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .status-icon { font-size: 3.5rem; font-weight: bold; margin-bottom: 15px; text-align: center; display: block; }
-        .icon-success { color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.7); }
-        .icon-error { color: #ff003c; text-shadow: 0 0 15px rgba(255, 0, 60, 0.7); }
+        .status-icon { font-size: 3rem; font-weight: bold; margin-bottom: 12px; text-align: center; display: block; }
+        .icon-success { color: #00ff66; text-shadow: 0 0 12px rgba(0, 255, 102, 0.6); }
+        .icon-error { color: #ff003c; text-shadow: 0 0 12px rgba(255, 0, 60, 0.6); }
 
         .upload-manifest {
-            width: 100%; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 12px; margin: 15px 0;
-            border: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 0.82rem;
+            width: 100%; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 10px; margin: 12px 0;
+            border: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 0.8rem;
         }
-        .upload-manifest p { margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8ab0; }
+        .upload-manifest p { margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8ab0; }
         .upload-manifest strong { color: #00f0ff; }
 
-        /* CSS thông tin tài khoản hiển thị dạng text nhãn phát sáng nhẹ */
-        .info-row { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
         .info-row span { color: #8a8ab0; }
-        .info-row strong { color: #00f0ff; text-shadow: 0 0 5px rgba(0, 240, 255, 0.3); }
+        .info-row strong { color: #00f0ff; text-shadow: 0 0 4px rgba(0, 240, 255, 0.3); }
     </style>
 </head>
 <body>
@@ -226,7 +215,7 @@
     <div class="top-header">
         <div class="header-brand">
             <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Logo">
-            <h1 class="text-gradient blink-text">NETKING PORTAL</h1>
+            <h1 class="text-gradient blink-text">NETKING FILES</h1>
         </div>
         <button id="header-auth-action" class="header-auth-btn auth-state-signin" onclick="handleHeaderAuthClick()">
             🔑 Sign In
@@ -235,7 +224,7 @@
 
     <div id="loading-frame">
         <div class="spinner"></div>
-        <div id="loading-text" style="margin-top: 18px; color: #00f0ff; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px;" class="blink-text">SYSTEM LOADING...</div>
+        <div id="loading-text" style="margin-top: 15px; color: #00f0ff; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;" class="blink-text">SYSTEM LOADING...</div>
         
         <div id="upload-progress-box" style="display: none; width: 85%; max-width: 380px; text-align: center;">
             <div class="upload-manifest">
@@ -243,31 +232,31 @@
                 <p>📝 DESCRIPTION: <strong id="p-desc">N/A</strong></p>
                 <p>⚙️ VERSION: <strong id="p-ver">v1.0.0</strong></p>
             </div>
-            <div id="upload-timer-text" style="color: #ff007f; font-weight: bold; font-size: 1.1rem;">ENCRYPTING IN 5s...</div>
+            <div id="upload-timer-text" style="color: #ff007f; font-weight: bold; font-size: 1rem;">ENCRYPTING IN 5s...</div>
         </div>
     </div>
 
     <div id="status-modal" class="modal-overlay">
-        <div class="modal-box cyber-frame" style="text-align: center; max-width: 360px;">
+        <div class="modal-box cyber-frame" style="text-align: center; max-width: 350px;">
             <button onclick="closeStatusModal()" class="modal-close-btn">×</button>
             <span id="status-icon" class="status-icon">✓</span>
-            <h3 id="status-title" class="text-gradient" style="font-size: 1.2rem; margin-bottom: 10px;">SUCCESS</h3>
-            <p id="status-desc" style="color: #8a8ab0; font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px;">Thao tác hoàn tất.</p>
+            <h3 id="status-title" class="text-gradient" style="font-size: 1.1rem; margin-bottom: 8px;">SUCCESS</h3>
+            <p id="status-desc" style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 18px;">Thao tác hoàn tất.</p>
             <button class="btn-submit cyber-frame" onclick="closeStatusModal()" style="background: transparent;">XÁC NHẬN</button>
         </div>
     </div>
 
     <div id="welcome-modal" class="modal-overlay">
         <div class="modal-box cyber-frame">
-            <button id="close-welcome-btn" class="modal-close-btn" disabled style="font-size:0.75rem; width:80px;">Close (3s)</button>
-            <div style="text-align: center; margin-bottom: 10px;">
-                <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Netking Launcher" style="width: 55px; height: 55px; object-fit: contain; border-radius: 10px; filter: drop-shadow(0 0 6px #00f0ff);">
+            <button id="close-welcome-btn" class="modal-close-btn" disabled style="font-size:0.7rem; width:75px;">Close (3s)</button>
+            <div style="text-align: center; margin-bottom: 8px;">
+                <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Netking Launcher" style="width: 50px; height: 50px; object-fit: contain; border-radius: 10px; filter: drop-shadow(0 0 5px #00f0ff);">
             </div>
-            <h2 class="text-gradient blink-text" style="margin-bottom: 12px; font-size: 1.3rem; text-align: center;">WELCOME TO NETKING FILES</h2>
-            <p style="color: #8a8ab0; font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px; text-align: justify;">
-                Chào mừng bạn đến với mạng lưới lưu trữ đám mây Netking Portal. Toàn bộ tập tin truyền tải đều được bảo mật mã hóa nâng cao. Vui lòng đăng nhập hoặc đăng ký để mở khóa quyền quản trị và tải tệp tin tốc độ cao.
+            <h2 class="text-gradient blink-text" style="margin-bottom: 10px; font-size: 1.2rem; text-align: center;">WELCOME TO NETKING FILES</h2>
+            <p style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 16px; text-align: justify;">
+                Chào mừng bạn đến với mạng lưới lưu trữ đám mây Netking Files. Toàn bộ tập tin truyền tải đều được bảo mật mã hóa nâng cao. Vui lòng đăng nhập hoặc đăng ký để mở khóa quyền quản trị và tải tệp tin tốc độ cao.
             </p>
-            <div class="auth-links" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 15px; text-align: center;">
+            <div class="auth-links" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; text-align: center;">
                 <a onclick="openAuthModal('signin')">Sign In</a> <span style="color: #6a6a90;">丨</span> <a onclick="openAuthModal('login')">Login In</a>
             </div>
         </div>
@@ -278,33 +267,41 @@
             <button onclick="closeAuthModal()" class="modal-close-btn">×</button>
             
             <div id="login-form-wrapper">
-                <h3 class="text-gradient" style="margin-bottom: 18px; font-size: 1.1rem;">ĐĂNG NHẬP SYSTEMS</h3>
-                <div class="form-group"><label>USERNAME</label><input type="text" id="login-user"></div>
-                <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass"></div>
+                <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.05rem;">ĐĂNG NHẬP SYSTEMS</h3>
+                <div class="form-group"><label>USERNAME</label><input type="text" id="login-user" placeholder="Nhập tên tài khoản..."></div>
+                <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass" placeholder="Nhập mật khẩu..."></div>
                 <div class="remember-wrapper">
                     <input type="checkbox" id="remember-me">
                     <label for="remember-me">Ghi nhớ đăng nhập cho lần sau</label>
                 </div>
                 <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleAuth('login')">LOGIN NOW</button>
-                <p style="margin-top: 15px; font-size: 0.8rem; color:#8a8ab0;">Chưa có nick? <a onclick="toggleAuthForm('signin')">Đăng ký</a></p>
+                <p style="margin-top: 12px; font-size: 0.78rem; color:#8a8ab0;">Chưa có nick? <a onclick="toggleAuthForm('signin')">Đăng ký</a></p>
             </div>
 
             <div id="signin-form-wrapper" style="display: none;">
-                <h3 class="text-gradient" style="margin-bottom: 18px; font-size: 1.1rem;">ĐĂNG KÝ USER</h3>
-                <div class="form-group"><label>USERNAME TÀI KHOẢN</label><input type="text" id="reg-user"></div>
-                <div class="form-group"><label>PASSWORD BẢO MẬT</label><input type="password" id="reg-pass"></div>
+                <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.05rem;">ĐĂNG KÝ USER</h3>
+                <div class="form-group">
+                    <label>USERNAME TÀI KHOẢN</label>
+                    <input type="text" id="reg-user" placeholder="Tối đa 10 kí tự, chỉ dùng chữ, số và _">
+                    <small class="note-rules">* Tối đa 10 kí tự. Chỉ chấp nhận chữ, số và kí tự _</small>
+                </div>
+                <div class="form-group">
+                    <label>PASSWORD BẢO MẬT</label>
+                    <input type="password" id="reg-pass" placeholder="Tối đa 20 kí tự, không dùng kí tự đặc biệt">
+                    <small class="note-rules">* Tối đa 20 kí tự. Không chứa kí tự đặc biệt cấm.</small>
+                </div>
                 <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleAuth('register')">HOÀN TẤT ĐĂNG KÝ</button>
-                <p style="margin-top: 15px; font-size: 0.8rem; color:#8a8ab0;">Có nick rồi? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
+                <p style="margin-top: 12px; font-size: 0.78rem; color:#8a8ab0;">Có nick rồi? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
             </div>
         </div>
     </div>
 
     <div id="account-info-modal" class="modal-overlay">
-        <div class="modal-box cyber-frame" style="max-width: 380px;">
+        <div class="modal-box cyber-frame" style="max-width: 360px;">
             <button onclick="closeAccountInfoModal()" class="modal-close-btn">×</button>
-            <h3 class="text-gradient" style="margin-bottom: 20px; font-size: 1.2rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
+            <h3 class="text-gradient" style="margin-bottom: 16px; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
             
-            <div style="margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+            <div style="margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
                 <div class="info-row">
                     <span>ACCOUNT NAME:</span>
                     <strong id="info-display-username">N/A</strong>
@@ -331,12 +328,12 @@
 
     <div class="container cyber-frame">
         <div id="tab-files" class="tab-content active">
-            <label style="margin-bottom: 15px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG</label>
+            <label style="margin-bottom: 12px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG</label>
             <div id="files-container"></div>
         </div>
 
         <div id="tab-verified" class="tab-content">
-            <label style="margin-bottom: 15px; color: #00f0ff;" class="blink-text">✓ TỆP TIN XÁC MINH</label>
+            <label style="margin-bottom: 12px; color: #00f0ff;" class="blink-text">✓ TỆP TIN XÁC MINH</label>
             <div id="verified-container"></div>
         </div>
 
@@ -373,14 +370,14 @@
                 h = canvas.height = window.innerHeight;
             });
 
-            const stars = Array.from({ length: 65 }, () => ({
+            const stars = Array.from({ length: 50 }, () => ({
                 x: Math.random() * w, y: Math.random() * h,
                 size: Math.random() * 2, alpha: Math.random(), speed: 0.02 + Math.random() * 0.03
             }));
 
-            const snowflakes = Array.from({ length: 15 }, () => ({
+            const snowflakes = Array.from({ length: 12 }, () => ({
                 x: Math.random() * w, y: Math.random() * h,
-                speedY: 0.7 + Math.random() * 1.3, speedX: (Math.random() - 0.5) * 0.6, size: 11 + Math.random() * 6
+                speedY: 0.7 + Math.random() * 1.3, speedX: (Math.random() - 0.5) * 0.6, size: 10 + Math.random() * 5
             }));
 
             function animate() {
@@ -391,7 +388,7 @@
                     ctx.fillStyle = `rgba(0, 240, 255, ${Math.max(0, s.alpha)})`;
                     ctx.fillRect(s.x, s.y, s.size, s.size);
                 });
-                ctx.fillStyle = "rgba(255, 0, 127, 0.45)";
+                ctx.fillStyle = "rgba(255, 0, 127, 0.4)";
                 snowflakes.forEach(f => {
                     ctx.font = `${f.size}px Arial`;
                     ctx.fillText("☆", f.x, f.y);
@@ -403,32 +400,26 @@
             animate();
         }
 
-        // XỬ LÝ SỰ KIỆN KHI ẤN VÀO BUTTON AUTH TRÊN HEADER
         function handleHeaderAuthClick() {
             if (currentUser === "guest") {
-                // Chưa đăng nhập: Mở thẳng khung Đăng ký (Sign In)
                 openAuthModal('signin');
             } else {
-                // Đã đăng nhập: Mở frame Account Info xem chi tiết tài khoản
                 openAccountInfoModal();
             }
         }
 
-        // CẬP NHẬT GIAO DIỆN NÚT TRÊN HEADER TRỰC QUAN KHÁC BIỆT
         function updateHeaderAuthButtonUI() {
             const authBtn = document.getElementById("header-auth-action");
             if (currentUser === "guest") {
                 authBtn.innerText = "🔑 Sign In";
                 authBtn.className = "header-auth-btn auth-state-signin";
             } else {
-                // Lấy tên lưu trữ hiển thị lên nút cho xịn sò
                 const savedDisplayUser = localStorage.getItem("netking_session_username") || "Account";
                 authBtn.innerText = `👤 ${savedDisplayUser}`;
                 authBtn.className = "header-auth-btn auth-state-logged";
             }
         }
 
-        // ĐIỀU KHIỂN ĐÓNG/MỞ FRAME ACCOUNT INFO
         function openAccountInfoModal() {
             document.getElementById("info-display-username").innerText = localStorage.getItem("netking_session_username") || "N/A";
             document.getElementById("info-display-password").innerText = localStorage.getItem("netking_session_password") || "••••••••";
@@ -441,7 +432,6 @@
 
         function processLogout() {
             closeAccountInfoModal();
-            
             currentUser = "guest";
             localStorage.setItem("netking_current_user", "guest");
             localStorage.removeItem("netking_session_username");
@@ -466,7 +456,7 @@
             }
             
             const savedUser = localStorage.getItem("remembered_netking_user");
-            if (savedUser === "xine3d") {
+            if (savedUser && savedUser.toLowerCase() === "xine3d") {
                 document.getElementById("login-user").value = savedUser;
                 document.getElementById("remember-me").checked = true;
             }
@@ -503,7 +493,7 @@
                 document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
                 
                 loader.classList.remove("active");
-            }, 1500);
+            }, 1200);
         }
 
         function renderServerData() {
@@ -512,7 +502,7 @@
             cAll.innerHTML = ""; cVer.innerHTML = "";
 
             if(databaseFiles.length === 0) {
-                const emptyHtml = `<p style="color:#6a6a90; font-size:0.85rem; padding:15px; text-align:center;">Hệ thống trống. Chưa có tệp tin nào được đồng bộ.</p>`;
+                const emptyHtml = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Hệ thống trống. Chưa có tệp tin nào được đồng bộ.</p>`;
                 cAll.innerHTML = emptyHtml; cVer.innerHTML = emptyHtml;
                 return;
             }
@@ -526,8 +516,8 @@
                     <div class="file-item cyber-frame">
                         <div>
                             <h4>${file.title} ${file.verified ? '<span class="badge-verified">Verified</span>' : ''}</h4>
-                            <p style="font-size:0.85rem; color:#8a8ab0; margin-top:5px; line-height:1.4;">${file.desc || 'Không có mô tả.'}</p>
-                            <div class="file-meta" style="margin-top:8px;">
+                            <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4;">${file.desc || 'Không có mô tả.'}</p>
+                            <div class="file-meta" style="margin-top:6px;">
                                 <span>Ver: ${file.version || '1.0'}</span>
                                 <span>Views: ${file.views || 0}</span>
                             </div>
@@ -645,23 +635,55 @@
 
         async function handleAuth(action) {
             if (action === 'register') {
+                const user = document.getElementById("reg-user").value.trim();
+                const pass = document.getElementById("reg-pass").value.trim();
+
+                // 1. KIỂM TRA ĐỘ DÀI
+                if (user.length > 10) {
+                    return showStatusModal(false, "VALIDATION ERROR", "Tên tài khoản không được vượt quá 10 kí tự!");
+                }
+                if (pass.length > 20) {
+                    return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu không được vượt quá 20 kí tự!");
+                }
+
+                // 2. CHECK KÝ TỰ ĐẶC BIỆT BỊ CẤM BẰNG REGEX
+                // Username: Chỉ cho phép chữ thường, chữ hoa, số và dấu gạch dưới _
+                const usernameRegex = /^[a-zA-Z0-9_]+$/;
+                if (!usernameRegex.test(user)) {
+                    return showStatusModal(false, "VALIDATION ERROR", "Tên chỉ được bao gồm chữ, số và dấu gạch dưới (_). Không chứa ký tự đặc biệt khác!");
+                }
+
+                // Password: Không chứa các ký tự + × ÷ = / < > [ ] ! @ # $ ^ % - " '
+                const forbiddenPassChars = /[+×÷=/<>[\]!@#$^%\-"']/;
+                if (forbiddenPassChars.test(pass)) {
+                    return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu chứa ký tự đặc biệt bị cấm!");
+                }
+
+                // Đạt điều kiện -> Cho phép đăng ký và lưu tạm vào hệ thống Local làm DB mô phỏng
+                localStorage.setItem(`db_user_${user.toLowerCase()}`, pass); 
+                localStorage.setItem(`db_user_display_${user.toLowerCase()}`, user); // Giữ nguyên chữ hoa/thường để hiển thị tên đẹp
+
                 nextActionFlow = "open_login"; 
-                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký tài khoản thành công! Nhấn xác nhận để chuyển sang Đăng nhập hệ thống.");
-            } else {
-                const user = document.getElementById("login-user").value.trim();
-                const pass = document.getElementById("login-pass").value.trim();
+                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký thành công! Nhấn xác nhận để tiến hành đăng nhập.");
+            } 
+            else {
+                // LOGIC ĐĂNG NHẬP: CHUYỂN HẾT VỀ LOWERCASE ĐỂ KHÔNG PHÂN BIỆT HOA/THƯỜNG
+                let userInput = document.getElementById("login-user").value.trim();
+                const passInput = document.getElementById("login-pass").value.trim();
                 const remember = document.getElementById("remember-me").checked;
                 
-                if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu!");
+                if(!userInput || !passInput) return alert("Vui lòng nhập tài khoản mật khẩu!");
 
-                // Lưu dữ liệu tài khoản tạm thời để hiển thị trong Account Info
-                localStorage.setItem("netking_session_username", user);
-                localStorage.setItem("netking_session_password", pass);
+                let userLower = userInput.toLowerCase();
 
-                if (user === "xine3d" && pass === "Thinh_2012") {
+                // Check tài khoản Admin mặc định (Không phân biệt hoa thường)
+                if (userLower === "xine3d" && passInput === "Thinh_2012") {
                     currentUser = "admin";
                     localStorage.setItem("netking_current_user", "admin"); 
-                    if (remember) localStorage.setItem("remembered_netking_user", user);
+                    localStorage.setItem("netking_session_username", "xine3d");
+                    localStorage.setItem("netking_session_password", "Thinh_2012");
+                    if (remember) localStorage.setItem("remembered_netking_user", "xine3d");
+                    
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
                     showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại quyền kiểm soát!");
@@ -669,13 +691,24 @@
                     return;
                 }
 
-                currentUser = "member";
-                localStorage.setItem("netking_current_user", "member"); 
-                if (remember) localStorage.setItem("remembered_netking_user", user);
-                nextActionFlow = "login_success_clear"; 
-                updateHeaderAuthButtonUI();
-                showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành viên nhóm thành công.");
-                renderServerData();
+                // Check tài khoản người dùng tự đăng ký trong DB mô phỏng
+                const localSavedPass = localStorage.getItem(`db_user_${userLower}`);
+                if (localSavedPass && localSavedPass === passInput) {
+                    const realDisplayName = localStorage.getItem(`db_user_display_${userLower}`) || userInput;
+                    
+                    currentUser = "member";
+                    localStorage.setItem("netking_current_user", "member"); 
+                    localStorage.setItem("netking_session_username", realDisplayName);
+                    localStorage.setItem("netking_session_password", passInput);
+                    if (remember) localStorage.setItem("remembered_netking_user", realDisplayName);
+
+                    nextActionFlow = "login_success_clear"; 
+                    updateHeaderAuthButtonUI();
+                    showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành viên thành công!");
+                    renderServerData();
+                } else {
+                    showStatusModal(false, "AUTH FAILED", "Tài khoản hoặc mật khẩu không chính xác!");
+                }
             }
         }
 
