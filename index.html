@@ -71,6 +71,49 @@
         }
         .auth-state-logged:hover { background: #7000ff; color: #ffffff; box-shadow: 0 0 10px #7000ff; }
 
+        /* FRAME LIVE TRAFFIC (NEW) */
+        .live-traffic-box {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(10, 10, 20, 0.7);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.78rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .live-label {
+            background: #ff007f;
+            color: #fff;
+            padding: 2px 6px;
+            font-weight: bold;
+            font-size: 0.65rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            box-shadow: 0 0 6px #ff007f;
+            white-space: nowrap;
+        }
+        .live-text-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            height: 18px;
+        }
+        #live-dynamic-text {
+            position: absolute;
+            white-space: nowrap;
+            color: #00f0ff;
+            font-weight: 500;
+            text-shadow: 0 0 2px rgba(0, 240, 255, 0.4);
+            transition: all 0.5s ease-in-out;
+            transform: translateY(20px);
+        }
+
         /* CYBER FRAME */
         .cyber-frame {
             position: relative;
@@ -185,7 +228,6 @@
         .info-row span { color: #8a8ab0; }
         .info-row strong { color: #00f0ff; text-shadow: 0 0 4px rgba(0, 240, 255, 0.3); }
         
-        /* CSS cho vùng cuộn thông báo nếu quá nhiều */
         #announcements-container { max-height: 550px; overflow-y: auto; padding-right: 5px; }
         #announcements-container::-webkit-scrollbar { width: 5px; }
         #announcements-container::-webkit-scrollbar-thumb { background: #00f0ff; border-radius: 4px; }
@@ -205,9 +247,16 @@
         </button>
     </div>
 
+    <div class="live-traffic-box">
+        <span class="live-label">LIVE</span>
+        <div class="live-text-wrapper">
+            <span id="live-dynamic-text">Hệ thống đang quét các luồng dữ liệu...</span>
+        </div>
+    </div>
+
     <div id="loading-frame">
         <div class="spinner"></div>
-        <div id="loading-text" style="margin-top: 15px; color: #00f0ff; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;" class="blink-text">SYSTEM LOADING...</div>
+        <div id="loading-text" style="margin-top: 20px; color: #00f0ff; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px; text-align: center; max-width: 80%; line-height: 1.5;" class="blink-text">SYSTEM LOADING...</div>
     </div>
 
     <div id="status-modal" class="modal-overlay">
@@ -296,7 +345,7 @@
                         </div>
                     </div>
                     <div class="file-actions-group">
-                        <a href="https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file" target="_blank" class="btn-view" onclick="increaseView('file1')">Tải Ngay (MediaFire)</a>
+                        <button class="btn-view" onclick="startDownloadProcess('file1', 'https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file')">Tải Ngay (MediaFire)</button>
                     </div>
                 </div>
 
@@ -311,7 +360,7 @@
                         </div>
                     </div>
                     <div class="file-actions-group">
-                        <a href="https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file" target="_blank" class="btn-view" onclick="increaseView('file2')">Tải Ngay (MediaFire)</a>
+                        <button class="btn-view" onclick="startDownloadProcess('file2', 'https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file')">Tải Ngay (MediaFire)</button>
                     </div>
                 </div>
             </div>
@@ -330,7 +379,7 @@
                         </div>
                     </div>
                     <div class="file-actions-group">
-                        <a href="https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file" target="_blank" class="btn-view" onclick="increaseView('file1')">Tải Ngay (MediaFire)</a>
+                        <button class="btn-view" onclick="startDownloadProcess('file1', 'https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file')">Tải Ngay (MediaFire)</button>
                     </div>
                 </div>
             </div>
@@ -359,73 +408,57 @@
         let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
 
-        // MẢNG CHỨA ĐÚNG 50 BẢN CẬP NHẬT WEB ĐỂ ĐỔ RA GIAO DIỆN
         const updateNotesList = [
             { id: 50, title: "Cập nhật v1.5.0: Chạy thử nghiệm Local Storage Views", content: "Tích hợp bộ đếm View offline dựa trên lượt click tải file, lưu dữ liệu trực tiếp trên Browser của người dùng.", time: "Vừa xong" },
             { id: 49, title: "Cập nhật v1.4.9: Gỡ bỏ Firebase Realtime Database hoàn toàn", content: "Chuyển cấu trúc source code sang cơ chế No-DB độc lập giúp tăng tốc độ tải trang gấp 3 lần.", time: "1 giờ trước" },
-            { id: 48, title: "Cập nhật v1.4.8: Nâng cấp hiệu ứng Background Canvas Space", content: "Tối ưu hóa các điểm sao chuyển động mượt mà hơn, giảm thiểu lượng tiêu thụ CPU trên thiết bị di động.", time: "5 giờ trước" },
-            { id: 47, title: "Cập nhật v1.4.7: Sửa lỗi Auth Link trên Mobile", content: "Khắc phục lỗi không thể nhấn nút Sign In/Login trên một số dòng trình duyệt Android cũ.", time: "1 ngày trước" },
-            { id: 46, title: "Cập nhật v1.4.6: Cân chỉnh giao diện Header Top Bar", content: "Sử dụng hiệu ứng Backdrop blur 12px cùng bo góc tròn hiện đại theo chuẩn Cyberpunk UI.", time: "2 ngày trước" },
-            { id: 45, title: "Cập nhật v1.4.5: Thay đổi Icon nhận diện Netking Launcher", content: "Cập nhật đường dẫn asset ảnh icon mới `ic_launcher_meow.png` đồng bộ trên toàn hệ thống.", time: "2 ngày trước" },
-            { id: 44, title: "Cập nhật v1.4.4: Fix lỗi tràn màn hình ngang (Overflow-x)", content: "Thêm cấu hình `overflow-x: hidden` cho body để triệt tiêu hiện tượng cuộn lệch trên màn hình nhỏ.", time: "3 ngày trước" },
-            { id: 43, title: "Cập nhật v1.4.3: Nâng cấp mã bảo mật mật khẩu", content: "Giao diện Account Info giờ đây che giấu chuỗi mật khẩu thô bằng ký tự chấm tròn ẩn danh.", time: "4 ngày trước" },
-            { id: 42, title: "Cập nhật v1.4.2: Đồng bộ hóa Tab Verified Files", content: "Các file được admin xác minh sẽ có badge xanh `Verified` phát sáng neon rực rỡ.", time: "5 ngày trước" },
-            { id: 41, title: "Cập nhật v1.4.1: Giới hạn ký tự form Đăng Ký", content: "Giới hạn Username tối đa 10 ký tự và Password tối đa 20 ký tự để tránh phá vỡ layout UI.", time: "6 ngày trước" },
-            { id: 40, title: "Cập nhật v1.4.0: Thêm tính năng đếm ngược Welcome Modal", content: "Nút đóng màn hình chào mừng yêu cầu chờ 3 giây để người dùng đọc rõ các quy định hệ thống.", time: "1 tuần trước" },
-            { id: 39, title: "Cập nhật v1.3.9: Tối ưu màu sắc Text Gradient", content: "Phối hợp dải màu linear giữa `#00f0ff` và `#ff007f` tạo hiệu ứng chuyển đổi thị giác bắt mắt.", time: "1 tuần trước" },
-            { id: 38, title: "Cập nhật v1.3.8: Thêm hiệu ứng Blink Text", content: "Các tiêu đề quan trọng được áp dụng animation chớp nháy tuần hoàn mô phỏng hệ thống cảnh báo.", time: "1 tuần trước" },
-            { id: 37, title: "Cập nhật v1.3.7: Cải tiến logic phân quyền Admin Panel", content: "Chỉ duy nhất tài khoản `xine3d` mới có đặc quyền hiển thị Tab số 4 kiểm soát hệ thống.", time: "1 tuần trước" },
-            { id: 36, title: "Cập nhật v1.3.6: Fix lỗi trắng trang khi đổi Tab liên tục", content: "Thêm khoảng delay 400ms cùng hiệu ứng Spinner quay tròn để quá trình đổi tab trơn tru hơn.", time: "2 tuần trước" },
-            { id: 35, title: "Cập nhật v1.3.5: Làm sạch bộ nhớ đệm session cũ", content: "Tự động xóa bỏ các biến thừa trong localStorage khi thực hiện chuỗi lệnh Log Out.", time: "2 tuần trước" },
-            { id: 34, title: "Cập nhật v1.3.4: Thêm mô tả chi tiết cho Fake Lag OG", content: "Bổ sung thông tin hoạt động dựa trên VPN Service giúp người chơi hiểu rõ cơ chế không bị blacklist.", time: "2 tuần trước" },
-            { id: 33, title: "Cập nhật v1.3.3: Tách biệt form Đăng Ký và Đăng Nhập", content: "Sử dụng hàm ẩn/hiển thị `display: block/none` thay vì mở quá nhiều cửa sổ modal chồng chéo.", time: "2 tuần trước" },
-            { id: 32, title: "Cập nhật v1.3.2: Định dạng cấu trúc file-meta", content: "Thu nhỏ font chữ metadata xuống 0.7rem giúp gom cụm thông tin phiên bản và lượt xem ngăn nắp.", time: "3 tuần trước" },
-            { id: 31, title: "Cập nhật v1.3.1: Đổi màu nền Cyber Frame", content: "Ép buộc nền các khối container về mã màu `#06060c !important` tăng độ tương phản.", time: "3 tuần trước" },
-            { id: 30, title: "Cập nhật v1.3.0: Thiết lập hệ thống thông báo tĩnh", content: "Khởi tạo khu vực hiển thị nhật ký bảo trì dành riêng cho nhà phát triển mạng lưới.", time: "3 tuần trước" },
-            { id: 29, title: "Cập nhật v1.2.9: Nâng cấp liên kết tải MediaFire", content: "Cập nhật các mã token tải xuống mới nhất cho gói phần mềm `Netking.apk` chính thức.", time: "1 tháng trước" },
-            { id: 28, title: "Cập nhật v1.2.8: Thêm khung đổ bóng đổ bóng Neon", content: "Tạo bóng mờ box-shadow xung quanh modal thông báo trạng thái thành công/thất bại.", time: "1 tháng trước" },
-            { id: 27, title: "Cập nhật v1.2.7: Xử lý ký tự xuống dòng xuống dòng", content: "Áp dụng `white-space: pre-line` cho phần mô tả tính năng file giúp hiển thị ngắt dòng chuẩn xác.", time: "1 tháng trước" },
-            { id: 26, title: "Cập nhật v1.2.6: Tối ưu hóa kích thước nút bấm hành động", content: "Căn chỉnh padding các nút `btn-view` vừa vặn với kích thước ngón tay bấm trên thiết bị cảm ứng.", time: "1 tháng trước" },
-            { id: 25, title: "Cập nhật v1.2.5: Bổ sung lớp phủ mờ Modal Overlay", content: "Sử dụng `backdrop-filter: blur(8px)` làm mờ hậu cảnh khi xuất hiện cửa sổ đăng nhập.", time: "1 tháng trước" },
-            { id: 24, title: "Cập nhật v1.2.4: Kiểm tra trạng thái Session khi khởi động", content: "Tự động quét thông tin `netking_current_user` ngay khi sự kiện `window.onload` kích hoạt.", time: "1 tháng trước" },
-            { id: 23, title: "Cập nhật v1.2.3: Điều chỉnh Font chữ mặc định", content: "Chuyển đổi toàn bộ phông chữ hệ thống sang nhóm `Segoe UI, sans-serif` dễ đọc.", time: "2 tháng trước" },
-            { id: 22, title: "Cập nhật v1.2.2: Ngăn chặn lỗi gửi form trống", content: "Thêm lệnh chặn `value.trim()` kiểm tra chuỗi rỗng ở các ô nhập liệu tài khoản mật khẩu.", time: "2 tháng trước" },
-            { id: 21, title: "Cập nhật v1.2.1: Thêm dấu đóng nhanh [×]", content: "Bố trí nút hủy bỏ tác vụ ở góc phải trên cùng của tất cả cấu trúc hộp thoại.", time: "2 tháng trước" },
-            { id: 20, title: "Cập nhật v1.2.0: Định hình phong cách thiết kế giao diện", content: "Lựa chọn tông màu chủ đạo đen sâu phối cùng xanh điện tử và hồng dạ quang.", time: "2 tháng trước" },
-            { id: 19, title: "Cập nhật v1.1.9: Thêm hiệu ứng nhấn nút mượt", content: "Cài đặt thuộc tính `transition: all 0.2s` cho mọi thành phần có thể tương tác.", time: "2 tháng trước" },
-            { id: 18, title: "Cập nhật v1.1.8: Khởi tạo bảng thông tin tài khoản", content: "Xây dựng modal riêng biệt hiển thị chi tiết Tên, Mật khẩu và Cấp bậc Rank của User.", time: "2 tháng trước" },
-            { id: 17, title: "Cập nhật v1.1.7: Vá lỗi hiển thị sai tên Admin", content: "Ép chuỗi so sánh tài khoản quản trị về dạng chữ thường `.toLowerCase()` khi phân tích.", time: "3 tháng trước" },
-            { id: 16, title: "Cập nhật v1.1.6: Điều chỉnh độ dày viền khung", content: "Đặt độ dày viền các thẻ phân phối tệp tin ở mức cố định 1px để giao diện thanh thoát.", time: "3 tháng trước" },
-            { id: 15, title: "Cập nhật v1.1.5: Thêm thông tin bản quyền tác giả", content: "Gắn thẻ ghi chú `ADMIN NOTE` kèm chữ ký định danh `xine3d` trên thanh lưu trữ thông báo.", time: "3 tháng trước" },
-            { id: 14, title: "Cập nhật v1.1.4: Tối ưu thanh cuộn trình duyệt Web", content: "Thu hẹp độ rộng thanh cuộn scrollbar xuống 5px nhằm tiết kiệm không gian hiển thị.", time: "3 tháng trước" },
-            { id: 13, title: "Cập nhật v1.1.3: Cải thiện tốc độ mở Modal", content: "Thay đổi cơ chế gỡ bỏ class bằng cách tinh chỉnh biến thời gian chuyển động CSS.", time: "3 tháng trước" },
-            { id: 12, title: "Cập nhật v1.1.2: Cố định vị trí thanh Header", content: "Sử dụng thuộc tính `position: fixed` giúp thanh tiêu đề luôn bám dính ở đỉnh màn hình.", time: "4 tháng trước" },
-            { id: 11, title: "Cập nhật v1.1.1: Tạo khung giả lập dữ liệu Admin Form", content: "Bố trí sẵn các trường nhập Tiêu đề và Nội dung tại mục điều khiển Admin Panel.", time: "4 tháng trước" },
-            { id: 10, title: "Cập nhật v1.1.0: Thử nghiệm cơ chế tăng view tức thời", content: "Xây dựng hàm `loadViews()` đẩy trực tiếp số liệu mới ra màn hình mà không cần tải lại trang.", time: "4 tháng trước" },
-            { id: 9, title: "Cập nhật v1.0.9: Đồng bộ màu sắc nút đăng xuất", content: "Sử dụng đường viền màu đỏ neon `#ff003c` làm nổi bật chức năng thoát tài khoản.", time: "4 tháng trước" },
-            { id: 8, title: "Cập nhật v1.0.8: Thêm biểu tượng trạng thái trực quan", content: "Tích hợp ký tự dấu tích V xanh và dấu X đỏ dạng đổ bóng gương lớn tại tâm modal.", time: "4 tháng trước" },
-            { id: 7, title: "Cập nhật v1.0.7: Sửa lỗi bóp méo hình ảnh Logo", content: "Áp dụng thuộc tính `object-fit: contain` đảm bảo tỷ lệ ảnh logo không bị biến dạng.", time: "5 tháng trước" },
-            { id: 6, title: "Cập nhật v1.0.6: Can thiệp sâu tệp cấu hình CSS Box-sizing", content: "Đặt lệnh áp đặt toàn bộ thẻ tag nhận thuộc tính `box-sizing: border-box` đồng loạt.", time: "5 tháng trước" },
-            { id: 5, title: "Cập nhật v1.0.5: Tích hợp gói tùy chọn Fake Lag Modern", content: "Mở rộng danh mục mô tả bao gồm 3 tính năng: Freeze Infinity, Invisible và Teleporter.", time: "5 tháng trước" },
-            { id: 4, title: "Cập nhật v1.0.4: Phân tách danh mục menu dạng Tab", content: "Tạo cấu trúc chuyển đổi qua lại giữa 4 phân vùng chính bằng mã lệnh xử lý tab nhanh.", time: "5 tháng trước" },
-            { id: 3, title: "Cập nhật v1.0.3: Khởi tạo giá trị View mặc định ban đầu", content: "Tự động gán mốc 1024 views cho file chính và 512 views cho file phụ nếu bộ nhớ trống.", time: "5 tháng trước" },
-            { id: 2, title: "Cập nhật v1.0.2: Cấu hình responsive đa nền tảng", content: "Thiết lập thẻ meta viewport tương thích hoàn hảo trên cả PC, Tablet lẫn điện thoại.", time: "6 tháng trước" },
             { id: 1, title: "Cập nhật v1.0.0: Triển khai dự án Netking Files Share", content: "Thiết lập cấu trúc layout nền móng, hoàn thành bộ khung xương giao diện HTML tĩnh đầu tiên.", time: "6 tháng trước" }
         ];
+
+        // DANH SÁCH TÊN GIẢ LẬP ĐỂ CHẠY LIVE TRAFFIC HACKER
+        const fakeUsers = ["A Sin", "xine3d", "Gia Bảo", "Hoàng Long", "Minh Tuấn", "Quốc Anh", "Văn Thắng", "Thanh Đạt", "Hữu Phước", "Khánh Duy", "Trọng Nghĩa"];
+        const fakeFiles = ["Netking Fake Lag", "Netking Fake Lag OG Version"];
 
         window.onload = function() {
             initBackgroundEffects();
             checkUserSession();
             updateHeaderAuthButtonUI();
             loadViews(); 
-            renderUpdateNotes(); // Gọi hàm tự động vẽ 50 cái note ra giao diện
+            renderUpdateNotes();
+            startLiveTraffic(); // Kích hoạt thanh thông báo chạy chữ động
         };
 
-        // Hàm tự động tạo HTML cho 50 thông báo bảo trì từ mảng dữ liệu trên
+        // HÀM CHẠY LIVE TRAFFIC ĐỘNG (MỖI 4 GIÂY ĐỔI MỘT THÔNG BÁO)
+        function startLiveTraffic() {
+            const textElement = document.getElementById("live-dynamic-text");
+            
+            function changeTrafficText() {
+                // Hiệu ứng cuộn chữ biến mất
+                textElement.style.transform = "translateY(-20px)";
+                textElement.style.opacity = "0";
+                
+                setTimeout(() => {
+                    const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+                    const randomFile = fakeFiles[Math.floor(Math.random() * fakeFiles.length)];
+                    const randomAgo = Math.floor(Math.random() * 59) + 1;
+                    
+                    textElement.innerHTML = `User <strong style="color: #ff007f;">[${randomUser}]</strong> vừa tải <strong style="color: #fff;">${randomFile}</strong> (${randomAgo} giây trước)`;
+                    
+                    // Hiệu ứng chữ xuất hiện từ dưới lên
+                    textElement.style.transform = "translateY(20px)";
+                    setTimeout(() => {
+                        textElement.style.transform = "translateY(0px)";
+                        textElement.style.opacity = "1";
+                    }, 50);
+                }, 500);
+            }
+            
+            changeTrafficText();
+            setInterval(changeTrafficText, 4500);
+        }
+
         function renderUpdateNotes() {
             const container = document.getElementById("announcements-container");
-            container.innerHTML = ""; // Xóa dữ liệu cũ mồi sẵn nếu có
-
+            container.innerHTML = "";
             updateNotesList.forEach(note => {
                 const itemHTML = `
                     <div class="notice-item" style="border: 1px solid rgba(0, 240, 255, 0.15); margin-bottom: 12px;">
@@ -443,10 +476,9 @@
             });
         }
 
-        // Hàm tải và hiển thị lượt truy cập/views
         function loadViews() {
-            if (!localStorage.getItem("netking_view_file1")) localStorage.setItem("netking_view_file1", "1024");
-            if (!localStorage.getItem("netking_view_file2")) localStorage.setItem("netking_view_file2", "512");
+            if (!localStorage.getItem("netking_view_file1")) localStorage.setItem("netking_view_file1", "0");
+            if (!localStorage.getItem("netking_view_file2")) localStorage.setItem("netking_view_file2", "0");
 
             const v1 = localStorage.getItem("netking_view_file1");
             const v2 = localStorage.getItem("netking_view_file2");
@@ -456,11 +488,53 @@
             document.getElementById("view-count-file2").innerText = v2;
         }
 
-        function increaseView(fileKey) {
-            let currentView = parseInt(localStorage.getItem("netking_view_" + fileKey)) || 0;
-            currentView += 1;
-            localStorage.setItem("netking_view_" + fileKey, currentView.toString());
-            loadViews();
+        // HÀM XỬ LÝ CLICK TẢI - ĐÃ KIỂM TRA BẮT BUỘC ĐĂNG NHẬP
+        function startDownloadProcess(fileKey, downloadUrl) {
+            // KIỂM TRA QUYỀN TRUY CẬP CỦA KHÁCH
+            if (currentUser === "guest") {
+                showStatusModal(false, "ACCESS DENIED", "Bạn phải Đăng nhập hoặc Đăng ký tài khoản trước khi tải tệp tin!");
+                // Gọi mở luôn bảng Đăng nhập/Đăng ký lên để họ làm luôn
+                setTimeout(() => { openAuthModal('login'); }, 1200);
+                return;
+            }
+
+            // Nếu đã đăng nhập thì chạy quy trình delay 10 giây tải file như cũ
+            const loader = document.getElementById("loading-frame");
+            const label = document.getElementById("loading-text");
+            
+            loader.classList.add("active");
+            
+            const statusTexts = [
+                "🔗 ĐANG KHỞI TẠO ĐƯỜNG TRUYỀN BẢO MẬT (0s)...",
+                "🛡️ ĐANG MÃ HÓA PACKET DATA GIAO DỊCH (2s)...",
+                "⚡ ĐANG BYPASS SECURE FIREWALL MEDIAFIRE (4s)...",
+                "🌀 ĐANG ĐỒNG BỘ LOCAL STORAGE VIEWS COUNTER (6s)...",
+                "💎 HOÀN TẤT THIẾT LẬP! ĐANG CHUYỂN HƯỚNG TẢI FILE (9s)..."
+            ];
+            
+            let currentStep = 0;
+            label.innerText = statusTexts[0];
+
+            const textInterval = setInterval(() => {
+                currentStep++;
+                if (currentStep < statusTexts.length) {
+                    label.innerText = statusTexts[currentStep];
+                }
+            }, 2000);
+
+            setTimeout(() => {
+                clearInterval(textInterval);
+                
+                let currentView = parseInt(localStorage.getItem("netking_view_" + fileKey)) || 0;
+                currentView += 1;
+                localStorage.setItem("netking_view_" + fileKey, currentView.toString());
+                loadViews();
+
+                loader.classList.remove("active");
+                label.innerText = "SYSTEM LOADING...";
+
+                window.open(downloadUrl, '_blank');
+            }, 10000);
         }
 
         function initBackgroundEffects() {
