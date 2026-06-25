@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files - Ultimate Cyber Systems</title>
+    <title>Netking Files</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -71,16 +71,15 @@
         }
         .auth-state-logged:hover { background: #7000ff; color: #ffffff; box-shadow: 0 0 10px #7000ff; }
 
-        /* FRAME LIVE TRAFFIC (NEW) */
+        /* FRAME LIVE TRAFFIC */
         .live-traffic-box {
             width: 100%;
             max-width: 600px;
             background: rgba(10, 10, 20, 0.7);
             border: 1px solid rgba(0, 240, 255, 0.25);
-            padding: 8px 12px;
+            padding: 6px 12px;
             border-radius: 8px;
             margin-bottom: 12px;
-            font-size: 0.78rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -102,16 +101,20 @@
             width: 100%;
             overflow: hidden;
             position: relative;
-            height: 18px;
+            height: 24px;
+            display: flex;
+            align-items: center;
         }
         #live-dynamic-text {
             position: absolute;
             white-space: nowrap;
             color: #00f0ff;
+            font-size: 0.72rem;
             font-weight: 500;
             text-shadow: 0 0 2px rgba(0, 240, 255, 0.4);
             transition: all 0.5s ease-in-out;
-            transform: translateY(20px);
+            transform: translateY(25px);
+            opacity: 0;
         }
 
         /* CYBER FRAME */
@@ -250,7 +253,7 @@
     <div class="live-traffic-box">
         <span class="live-label">LIVE</span>
         <div class="live-text-wrapper">
-            <span id="live-dynamic-text">Hệ thống đang quét các luồng dữ liệu...</span>
+            <span id="live-dynamic-text">Hệ thống đang thiết lập các phiên giải mã...</span>
         </div>
     </div>
 
@@ -409,14 +412,25 @@
         let nextActionFlow = ""; 
 
         const updateNotesList = [
-            { id: 50, title: "Cập nhật v1.5.0: Chạy thử nghiệm Local Storage Views", content: "Tích hợp bộ đếm View offline dựa trên lượt click tải file, lưu dữ liệu trực tiếp trên Browser của người dùng.", time: "Vừa xong" },
+            { id: 50, title: "Cập nhật v1.5.5: Nâng cấp luồng Live Traffic Real-time Simulation", content: "Đồng bộ hóa lượt xem tự động tăng tương tác trực tiếp khi hệ thống quét thấy hoạt động tải file.", time: "Vừa xong" },
             { id: 49, title: "Cập nhật v1.4.9: Gỡ bỏ Firebase Realtime Database hoàn toàn", content: "Chuyển cấu trúc source code sang cơ chế No-DB độc lập giúp tăng tốc độ tải trang gấp 3 lần.", time: "1 giờ trước" },
             { id: 1, title: "Cập nhật v1.0.0: Triển khai dự án Netking Files Share", content: "Thiết lập cấu trúc layout nền móng, hoàn thành bộ khung xương giao diện HTML tĩnh đầu tiên.", time: "6 tháng trước" }
         ];
 
-        // DANH SÁCH TÊN GIẢ LẬP ĐỂ CHẠY LIVE TRAFFIC HACKER
-        const fakeUsers = ["A Sin", "xine3d", "Gia Bảo", "Hoàng Long", "Minh Tuấn", "Quốc Anh", "Văn Thắng", "Thanh Đạt", "Hữu Phước", "Khánh Duy", "Trọng Nghĩa"];
-        const fakeFiles = ["Netking Fake Lag", "Netking Fake Lag OG Version"];
+        // DANH SÁCH MÔ PHỎNG USER
+        const fakeUsers = [
+            "asin_cyber", "xine3d", "giabao2009", "hoanglong_pro", "minhtuan9x", "alex_hacker", 
+            "shadow99", "matrix_vnn", "ghost_king", "skylight", "cyberfish", "kuro_neko", 
+            "xiao_lin", "vladimir88", "carlos_br", "johnny_dev", "alpha_bot", "nightmare", 
+            "thanhdat_ff", "huuphuoc_og", "khanhduy_termux", "trongnghia_vip"
+        ];
+        
+        // Key để ánh xạ từ tên file text sang key localstorage
+        const fileMapping = {
+            "Netking Fake Lag": "file1",
+            "Netking Fake Lag OG Version": "file2"
+        };
+        const fakeFiles = Object.keys(fileMapping);
 
         window.onload = function() {
             initBackgroundEffects();
@@ -424,36 +438,50 @@
             updateHeaderAuthButtonUI();
             loadViews(); 
             renderUpdateNotes();
-            startLiveTraffic(); // Kích hoạt thanh thông báo chạy chữ động
+            setupNextTrafficEvent(); // Kích hoạt bộ đếm thời gian ngẫu nhiên thông minh
         };
 
-        // HÀM CHẠY LIVE TRAFFIC ĐỘNG (MỖI 4 GIÂY ĐỔI MỘT THÔNG BÁO)
-        function startLiveTraffic() {
+        // HÀM CHẠY LIVE TRAFFIC BẰNG TIMEOUT NGẪU NHIÊN KHÔNG THEO CHU KỲ CỐ ĐỊNH
+        function setupNextTrafficEvent() {
+            // Random khoảng cách thời gian cho mỗi event (Ví dụ: Từ 15 giây đến 55 giây, hoặc chỉnh tùy ý ông)
+            // Muốn khoảng 2 phút xuất hiện tầm 3 user => trung bình tầm 30 - 45s chạy một lần là chuẩn bài.
+            let randomDelay = Math.floor(Math.random() * (55000 - 15000 + 1)) + 15000; 
+
+            setTimeout(() => {
+                triggerLiveTrafficUpdate();
+                setupNextTrafficEvent(); // Đệ quy tạo vòng lặp vô hạn ngẫu nhiên tiếp theo
+            }, randomDelay);
+        }
+
+        function triggerLiveTrafficUpdate() {
             const textElement = document.getElementById("live-dynamic-text");
             
-            function changeTrafficText() {
-                // Hiệu ứng cuộn chữ biến mất
-                textElement.style.transform = "translateY(-20px)";
-                textElement.style.opacity = "0";
-                
-                setTimeout(() => {
-                    const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
-                    const randomFile = fakeFiles[Math.floor(Math.random() * fakeFiles.length)];
-                    const randomAgo = Math.floor(Math.random() * 59) + 1;
-                    
-                    textElement.innerHTML = `User <strong style="color: #ff007f;">[${randomUser}]</strong> vừa tải <strong style="color: #fff;">${randomFile}</strong> (${randomAgo} giây trước)`;
-                    
-                    // Hiệu ứng chữ xuất hiện từ dưới lên
-                    textElement.style.transform = "translateY(20px)";
-                    setTimeout(() => {
-                        textElement.style.transform = "translateY(0px)";
-                        textElement.style.opacity = "1";
-                    }, 50);
-                }, 500);
-            }
+            textElement.style.transform = "translateY(-25px)";
+            textElement.style.opacity = "0";
             
-            changeTrafficText();
-            setInterval(changeTrafficText, 4500);
+            setTimeout(() => {
+                // Thuật toán bốc ngẫu nhiên không trùng lặp tuần hoàn đơn điệu
+                const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+                const randomFile = fakeFiles[Math.floor(Math.random() * fakeFiles.length)];
+                const randomAgo = Math.floor(Math.random() * 45) + 5;
+                
+                textElement.innerHTML = `User <strong style="color: #ff007f;">[${randomUser}]</strong> vừa tải <strong style="color: #fff;">${randomFile}</strong> (${randomAgo}s trước)`;
+                
+                textElement.style.transform = "translateY(25px)";
+                setTimeout(() => {
+                    textElement.style.transform = "translateY(0px)";
+                    textElement.style.opacity = "1";
+                    
+                    // KHI CÓ USER TẢI FILE NÀO -> TỰ ĐỘNG CỘNG DỒN VIEW CHO FILE ĐÓ TRÊN GIAO DIỆN LẬP TỨC
+                    const matchedFileKey = fileMapping[randomFile];
+                    if (matchedFileKey) {
+                        let currentView = parseInt(localStorage.getItem("netking_v2_view_" + matchedFileKey)) || 0;
+                        currentView += 1;
+                        localStorage.setItem("netking_v2_view_" + matchedFileKey, currentView.toString());
+                        loadViews(); // Update lại toàn bộ text hiển thị view trên các Tab
+                    }
+                }, 50);
+            }, 500);
         }
 
         function renderUpdateNotes() {
@@ -477,28 +505,24 @@
         }
 
         function loadViews() {
-            if (!localStorage.getItem("netking_view_file1")) localStorage.setItem("netking_view_file1", "0");
-            if (!localStorage.getItem("netking_view_file2")) localStorage.setItem("netking_view_file2", "0");
+            if (!localStorage.getItem("netking_v2_view_file1")) localStorage.setItem("netking_v2_view_file1", "0");
+            if (!localStorage.getItem("netking_v2_view_file2")) localStorage.setItem("netking_v2_view_file2", "0");
 
-            const v1 = localStorage.getItem("netking_view_file1");
-            const v2 = localStorage.getItem("netking_view_file2");
+            const v1 = localStorage.getItem("netking_v2_view_file1");
+            const v2 = localStorage.getItem("netking_v2_view_file2");
 
             document.getElementById("view-count-file1").innerText = v1;
             document.getElementById("view-count-file1-tab2").innerText = v1;
             document.getElementById("view-count-file2").innerText = v2;
         }
 
-        // HÀM XỬ LÝ CLICK TẢI - ĐÃ KIỂM TRA BẮT BUỘC ĐĂNG NHẬP
         function startDownloadProcess(fileKey, downloadUrl) {
-            // KIỂM TRA QUYỀN TRUY CẬP CỦA KHÁCH
             if (currentUser === "guest") {
                 showStatusModal(false, "ACCESS DENIED", "Bạn phải Đăng nhập hoặc Đăng ký tài khoản trước khi tải tệp tin!");
-                // Gọi mở luôn bảng Đăng nhập/Đăng ký lên để họ làm luôn
                 setTimeout(() => { openAuthModal('login'); }, 1200);
                 return;
             }
 
-            // Nếu đã đăng nhập thì chạy quy trình delay 10 giây tải file như cũ
             const loader = document.getElementById("loading-frame");
             const label = document.getElementById("loading-text");
             
@@ -525,9 +549,9 @@
             setTimeout(() => {
                 clearInterval(textInterval);
                 
-                let currentView = parseInt(localStorage.getItem("netking_view_" + fileKey)) || 0;
+                let currentView = parseInt(localStorage.getItem("netking_v2_view_" + fileKey)) || 0;
                 currentView += 1;
-                localStorage.setItem("netking_view_" + fileKey, currentView.toString());
+                localStorage.setItem("netking_v2_view_" + fileKey, currentView.toString());
                 loadViews();
 
                 loader.classList.remove("active");
