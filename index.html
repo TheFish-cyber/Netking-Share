@@ -45,7 +45,7 @@
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
         .top-header h1 { font-size: 1.1rem; letter-spacing: 1.5px; }
 
-        /* TẤT CẢ FRAMES / BUTTONS / UIS ĐỀU SỬ DỤNG CƠ CHẾ GRADIENT VIỀN + SMOKE */
+        /* CYBER STROKE GRADIENT VIỀN + SMOKE */
         .cyber-frame {
             position: relative;
             background: linear-gradient(#06060c, #06060c) padding-box, 
@@ -112,7 +112,7 @@
         .remember-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; color: #8a8ab0; font-size: 0.82rem;}
         .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 15px; height: 15px;}
 
-        /* NÚT SUBMIT DÀI THEO CHIỀU NGANG Kèm GRADIENT VIỀN + SMOKE CHUẨN UI */
+        /* NÚT SUBMIT DÀI THEO CHIỀU NGANG */
         .btn-submit {
             width: 100%; padding: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 0.88rem;
             letter-spacing: 1px; display: block; text-align: center; border-radius: 10px;
@@ -127,20 +127,15 @@
         .file-meta { display: flex; gap: 12px; color: #6a6a90; font-size: 0.75rem; }
         .badge-verified { color: #00f0ff; border: 1px solid #00f0ff; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-shadow: 0 0 4px #00f0ff; }
         
-        /* Khung nút hành động trải dài theo chiều ngang không bị thô */
         .file-actions-group { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 5px; }
         .btn-view, .btn-admin-verify {
             width: 100%; text-align: center; padding: 10px; border-radius: 8px; font-weight: bold; 
             cursor: pointer; text-decoration: none; font-size: 0.82rem; display: block; transition: 0.2s;
         }
-        .btn-view {
-            background: transparent; border: 1px solid #00f0ff; color: #00f0ff;
-        }
+        .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
         .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 8px #00f0ff; }
         
-        .btn-admin-verify {
-            background: transparent; border: 1px solid #ff007f; color: #ff007f;
-        }
+        .btn-admin-verify { background: transparent; border: 1px solid #ff007f; color: #ff007f; }
         .btn-admin-verify:hover { background: #ff007f; color: white; box-shadow: 0 0 8px #ff007f; }
 
         /* Overlays Modals */
@@ -151,7 +146,7 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-box { padding: 25px; max-width: 440px; width: 90%; position: relative; }
-        .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 0.85rem;}
+        .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 0.85rem; z-index: 10;}
         .auth-links a { color: #00f0ff; font-weight: bold; text-decoration: none; margin: 0 5px; cursor: pointer;}
 
         /* Tab Loader (1.5s delay) & Upload Loader (5s delay) */
@@ -169,7 +164,6 @@
         .icon-success { color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.7); }
         .icon-error { color: #ff003c; text-shadow: 0 0 15px rgba(255, 0, 60, 0.7); }
 
-        /* Chi tiết cấu trúc dữ liệu đẩy tiến trình delay upload */
         .upload-manifest {
             width: 100%; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 12px; margin: 15px 0;
             border: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 0.82rem;
@@ -203,6 +197,7 @@
 
     <div id="status-modal" class="modal-overlay">
         <div class="modal-box cyber-frame" style="text-align: center; max-width: 360px;">
+            <button onclick="closeStatusModal()" class="modal-close-btn">×</button>
             <span id="status-icon" class="status-icon">✓</span>
             <h3 id="status-title" class="text-gradient" style="font-size: 1.2rem; margin-bottom: 10px;">SUCCESS</h3>
             <p id="status-desc" style="color: #8a8ab0; font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px;">Thao tác hoàn tất.</p>
@@ -257,7 +252,6 @@
     </div>
 
     <div class="container cyber-frame fade-dir f-up">
-        
         <div id="tab-files" class="tab-content active">
             <label style="margin-bottom: 15px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG</label>
             <div id="files-container"></div>
@@ -276,27 +270,22 @@
             <div class="form-group"><label>HOẶC TẢI TỆP TIN TỪ THIẾT BỊ</label><input type="file" id="file-upload"></div>
             <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleUpload()">TẢI LÊN MÁY CHỦ</button>
         </div>
-
     </div>
 
     <script>
-        const API_UPLOAD = '/api/upload';
-        const API_AUTH = '/api/auth';
-        const API_VIEWS = '/api/views';
-        
         const directionClasses = ['f-up', 'f-down', 'f-left', 'f-right'];
         let observer;
         
-        // BIẾN QUẢN LÝ LOCAL STATE
-        let databaseFiles = []; // Mảng chứa danh sách file thực tế, ban đầu rỗng (Xóa file mẫu)
-        let currentUser = "member"; // Mặc định là member. Nếu log nick admin sẽ là "admin"
+        let databaseFiles = []; 
+        let currentUser = "member"; 
+        let nextActionFlow = ""; // Quản lý luồng hiển thị thông báo sau khi xác nhận modal
 
         window.onload = function() {
             initBackgroundEffects();
             startWelcomeCounter();
             checkRememberedLogin();
             initScrollObserver();
-            renderServerData(); // Build empty hoặc dữ liệu thực tế
+            renderServerData();
         };
 
         function initBackgroundEffects() {
@@ -354,46 +343,36 @@
             }, 1000);
         }
 
-        // ĐỒNG BỘ HIỆU ỨNG CHUYỂN TAB DELAY ĐÚNG 1.5 GIÂY
         function switchTab(tabId) {
             const loader = document.getElementById("loading-frame");
             document.getElementById("loading-text").style.display = "block";
             document.getElementById("upload-progress-box").style.display = "none";
-            
             loader.classList.add("active");
 
             setTimeout(() => {
                 document.querySelectorAll('.tab-content').forEach(c => c.style.display = "none");
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                
                 document.getElementById(tabId).style.display = "block";
-                
-                // Active nút bấm tương ứng
                 const btnIndex = tabId === 'tab-files' ? 0 : tabId === 'tab-verified' ? 1 : 2;
                 document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
-                
                 loader.classList.remove("active");
                 triggerFadeCheck();
             }, 1500);
         }
 
-        // XỬ LÝ RENDER DANH SÁCH FILE 
         function renderServerData() {
             const cAll = document.getElementById("files-container");
             const cVer = document.getElementById("verified-container");
             cAll.innerHTML = ""; cVer.innerHTML = "";
 
             if(databaseFiles.length === 0) {
-                const emptyHtml = `<p style="color:#6a6a90; font-size:0.85rem; padding:15px; text-align:center;">Hệ thống lõi trống. Chưa có tệp tin nào được đồng bộ.</p>`;
-                cAll.innerHTML = emptyHtml;
-                cVer.innerHTML = emptyHtml;
+                const emptyHtml = `<p style="color:#6a6a90; font-size:0.85rem; padding:15px; text-align:center;">Hệ thống trống. Chưa có tệp tin nào được đồng bộ.</p>`;
+                cAll.innerHTML = emptyHtml; cVer.innerHTML = emptyHtml;
                 return;
             }
 
             databaseFiles.forEach((file, index) => {
                 const randDir = directionClasses[Math.floor(Math.random() * directionClasses.length)];
-                
-                // Nút verify của Admin sẽ xuất hiện thẳng dưới nút Xem File khi currentUser === 'admin'
                 const adminVerifyButton = (currentUser === "admin" && !file.verified) 
                     ? `<button class="btn-admin-verify" onclick="verifyFileByAdmin(${index})">Verify File</button>` 
                     : '';
@@ -414,23 +393,20 @@
                         </div>
                     </div>
                 `;
-                
                 cAll.insertAdjacentHTML('beforeend', html);
                 if (file.verified) cVer.insertAdjacentHTML('beforeend', html);
             });
-
             triggerFadeCheck();
         }
 
-        // ADMIN CHUYỂN TRẠNG THÁI FILE THÀNH VERIFIED
         function verifyFileByAdmin(index) {
             if(currentUser !== "admin") return;
             databaseFiles[index].verified = true;
+            nextActionFlow = "just_close";
             showStatusModal(true, "VERIFIED", "Tệp tin đã được xác minh thành công trên trang chủ!");
             renderServerData();
         }
 
-        // XỬ LÝ UPLOAD FILE - TRÌNH ĐỆM DELAY 5 GIÂY & GIỚI HẠN ACCOUNT 
         function handleUpload() {
             const title = document.getElementById("file-title").value.trim();
             const desc = document.getElementById("file-desc").value.trim();
@@ -438,17 +414,17 @@
             const urlInput = document.getElementById("file-url").value.trim();
 
             if(!title) {
+                nextActionFlow = "just_close";
                 showStatusModal(false, "ERROR SYSTEM", "Vui lòng điền tiêu đề tên file!");
                 return;
             }
 
-            // KIỂM TRA GIỚI HẠN ĐỐI VỚI MEMBER (TỐI ĐA 2 FILES)
             if (currentUser !== "admin" && databaseFiles.length >= 2) {
+                nextActionFlow = "just_close";
                 showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files! Vui lòng liên hệ Admin xine3d.");
                 return;
             }
 
-            // Cấu hình khung đệm loading hiển thị thông tin tệp tải lên
             document.getElementById("loading-text").style.display = "none";
             document.getElementById("p-title").innerText = title;
             document.getElementById("p-desc").innerText = desc || "No description.";
@@ -470,18 +446,10 @@
                     timerText.innerText = `ENCRYPTING IN ${countdown}s...`;
                 } else {
                     clearInterval(interval);
-                    
-                    // Thêm file vào cơ sở dữ liệu local
                     databaseFiles.push({
-                        title: title,
-                        desc: desc,
-                        version: version,
-                        views: 0,
-                        verified: false,
-                        url: urlInput || "#"
+                        title: title, desc: desc, version: version, views: 0, verified: false, url: urlInput || "#"
                     });
 
-                    // Clear input form
                     document.getElementById("file-title").value = "";
                     document.getElementById("file-desc").value = "";
                     document.getElementById("file-version").value = "";
@@ -489,21 +457,14 @@
                     document.getElementById("file-upload").value = "";
 
                     loader.classList.remove("active");
-                    
-                    // Hiện modal thông báo thành công có dấu tích xanh bự phát sáng
+                    nextActionFlow = "go_to_files_tab";
                     showStatusModal(true, "SUCCESS UPLOAD", "Tập tin của bạn đã được đẩy lên máy chủ Netking thành công!");
-                    
                     renderServerData();
-                    // Chuyển về tab danh sách file sau khi up thành công
-                    document.querySelectorAll('.tab-content').forEach(c => c.style.display = "none");
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    document.getElementById('tab-files').style.display = "block";
-                    document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 }
             }, 1000);
         }
 
-        // ĐIỀU KHIỂN KHUNG THÔNG BÁO CHUẨN KẾT QUẢ CỦA TOÀN HỆ THỐNG
+        // ĐIỀU KHIỂN SỰ KIỆN STATUS MODAL THÔNG BÁO CHUẨN LỐC LOGIC MỚI
         function showStatusModal(isSuccess, title, msg) {
             const sModal = document.getElementById("status-modal");
             const sIcon = document.getElementById("status-icon");
@@ -511,27 +472,36 @@
             const sDesc = document.getElementById("status-desc");
 
             if (isSuccess) {
-                sIcon.innerText = "✓";
-                sIcon.className = "status-icon icon-success";
+                sIcon.innerText = "✓"; sIcon.className = "status-icon icon-success";
             } else {
-                sIcon.innerText = "×";
-                sIcon.className = "status-icon icon-error";
+                sIcon.innerText = "×"; sIcon.className = "status-icon icon-error";
             }
-
-            sTitle.innerText = title;
-            sDesc.innerText = msg;
+            sTitle.innerText = title; sDesc.innerText = msg;
             sModal.classList.add("active");
         }
 
         function closeStatusModal() {
             document.getElementById("status-modal").classList.remove("active");
+            
+            // KIỂM TRA LUỒNG CHUYỂN ĐIỀU HƯỚNG THEO YÊU CẦU
+            if (nextActionFlow === "open_login") {
+                openAuthModal('login');
+            } else if (nextActionFlow === "login_success_clear") {
+                closeAuthModal();
+                document.getElementById("welcome-modal").classList.remove("active");
+            } else if (nextActionFlow === "go_to_files_tab") {
+                document.querySelectorAll('.tab-content').forEach(c => c.style.display = "none");
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-files').style.display = "block";
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            }
+            nextActionFlow = "just_close";
         }
 
-        // XỬ LÝ AUTHENTICATION QUYỀN ADMIN xine3d / Thinh_2012
         async function handleAuth(action) {
             if (action === 'register') {
-                alert("Đăng ký thành công! Hãy thực hiện đăng nhập.");
-                toggleAuthForm('login');
+                nextActionFlow = "open_login"; // Đặt flag: Khi đóng thông báo sẽ nhảy sang frame login
+                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký tài khoản thành công! Nhấn xác nhận để đăng nhập hệ thống.");
             } else {
                 const user = document.getElementById("login-user").value.trim();
                 const pass = document.getElementById("login-pass").value.trim();
@@ -540,21 +510,18 @@
                 if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu!");
 
                 if (user === "xine3d" && pass === "Thinh_2012") {
-                    currentUser = "admin"; // Nâng cấp quyền
+                    currentUser = "admin";
                     if (remember) localStorage.setItem("remembered_netking_user", user);
-                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin ThinhkFF quay trở lại tổng đài kiểm soát!");
-                    closeAuthModal();
-                    document.getElementById("welcome-modal").classList.remove("active");
-                    renderServerData(); // Cập nhật lại giao diện để hiển thị nút Verify
+                    nextActionFlow = "login_success_clear"; // Đặt flag: đóng thông báo ẩn sạch modal
+                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin ThinhkFF quay trở lại quyền kiểm soát!");
+                    renderServerData();
                     return;
                 }
 
-                // Tài khoản thông thường
                 currentUser = "member";
                 if (remember) localStorage.setItem("remembered_netking_user", user);
-                showStatusModal(true, "MEMBER ACCESS", "Đăng nhập với tư cách thành viên nhóm Netking.");
-                closeAuthModal();
-                document.getElementById("welcome-modal").classList.remove("active");
+                nextActionFlow = "login_success_clear"; // Đặt flag: đóng thông báo ẩn sạch modal
+                showStatusModal(true, "MEMBER ACCESS", "Đăng nhập với tư cách thành viên nhóm Netking thành công.");
                 renderServerData();
             }
         }
@@ -567,9 +534,7 @@
         function initScrollObserver() {
             observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
                 });
             }, { threshold: 0.01, rootMargin: "50px 0px 50px 0px" });
         }
@@ -577,14 +542,14 @@
         function triggerFadeCheck() {
             setTimeout(() => {
                 document.querySelectorAll('.fade-dir').forEach(el => {
-                    observer.unobserve(el);
-                    observer.observe(el);
+                    observer.unobserve(el); observer.observe(el);
                 });
             }, 60);
         }
 
         function openAuthModal(type) { document.getElementById("auth-modal").classList.add("active"); toggleAuthForm(type); }
-        function closeAuthModal() { document.getElementById("auth-modal").remove("active"); document.getElementById("auth-modal").classList.remove("active");}
+        // FIXED FIX CRASH LỖI SỬ DỤNG SAI HÀM .REMOVE()
+        function closeAuthModal() { document.getElementById("auth-modal").classList.remove("active"); }
         function toggleAuthForm(type) {
             document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
             document.getElementById("signin-form-wrapper").style.display = type === 'signin' ? "block" : "none";
