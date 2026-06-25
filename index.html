@@ -8,9 +8,6 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -135,7 +132,7 @@
         }
 
         /* Items List */
-        .file-item, .notice-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .file-item, .notice-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px; }
         .file-item h4, .notice-item h4 { font-size: 0.95rem; color: #fff; display: flex; align-items: center; justify-content: space-between; }
         .file-meta, .notice-meta { display: flex; gap: 10px; color: #6a6a90; font-size: 0.7rem; }
         .badge-verified { color: #00f0ff; border: 1px solid #00f0ff; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #00f0ff; }
@@ -280,50 +277,87 @@
     <div class="container cyber-frame">
         <div id="tab-files" class="tab-content active">
             <label style="margin-bottom: 12px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG</label>
-            <div id="files-container"></div>
+            <div id="files-container">
+                <div class="file-item">
+                    <div>
+                        <h4>Netking Fake Lag <span class="badge-verified">Verified</span></h4>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Fake Lag Modern, 3 Options:
+                        1. Freeze Infinity
+                        2. Invisible
+                        3. Teleporter</p>
+                        <div class="file-meta" style="margin-top:6px;">
+                            <span>Ver: v1.0.1</span>
+                            <span>Views: 1024</span>
+                        </div>
+                    </div>
+                    <div class="file-actions-group">
+                        <a href="https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a>
+                    </div>
+                </div>
+
+                <div class="file-item">
+                    <div>
+                        <h4>Netking Fake Lag OG Version <span class="badge-verified">Verified</span></h4>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:
+                        Freeze The Game For 2s Have About 1.5s To Shoot</p>
+                        <div class="file-meta" style="margin-top:6px;">
+                            <span>Ver: v1.0.2</span>
+                            <span>Views: 512</span>
+                        </div>
+                    </div>
+                    <div class="file-actions-group">
+                        <a href="https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="tab-verified" class="tab-content">
             <label style="margin-bottom: 12px; color: #00f0ff;" class="blink-text">✓ TỆP TIN XÁC MINH</label>
-            <div id="verified-container"></div>
+            <div id="verified-container">
+                <div class="file-item">
+                    <div>
+                        <h4>Netking Fake Lag <span class="badge-verified">Verified</span></h4>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4;">Fake Lag Modern, 3 Options...</p>
+                    </div>
+                    <div class="file-actions-group">
+                        <a href="https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="tab-announcements" class="tab-content">
             <label style="margin-bottom: 12px; color: #ff007f;" class="blink-text">📢 THÔNG BÁO HỆ THỐNG (ADMIN NOTES)</label>
-            <div id="announcements-container"></div>
+            <div id="announcements-container">
+                <div class="notice-item" style="border: 1px solid rgba(255, 0, 127, 0.25);">
+                    <div>
+                        <h4>📌 Hệ thống chuyển đổi cục bộ <span class="badge-admin">ADMIN NOTE</span></h4>
+                        <p style="font-size:0.82rem; color:#d1d1e0; margin-top:6px; line-height:1.5;">Giao diện Web đã loại bỏ cấu trúc Firebase Database và chạy độc lập hoàn toàn bằng dữ liệu tĩnh (No-DB Mode).</p>
+                        <div class="notice-meta" style="margin-top:8px;">
+                            <span>Đăng bởi: 🌐 xine3d</span>
+                            <span>Thời gian: Cập nhật tĩnh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="tab-admin-panel" class="tab-content">
-            <label style="margin-bottom: 15px; color: #ff007f; display: block;" class="text-gradient">⚙️ HỆ THỐNG ĐĂNG THÔNG BÁO TOÀN SERVER</label>
+            <label style="margin-bottom: 15px; color: #ff007f; display: block;" class="text-gradient">⚙️ HỆ THỐNG ĐĂNG THÔNG BÁO TẠM THỜI</label>
             <div class="form-group">
                 <label>TIÊU ĐỀ THÔNG BÁO *</label>
                 <input type="text" id="notice-title" placeholder="Ví dụ: Cập nhật Fake Lag v1.0.2...">
             </div>
             <div class="form-group">
                 <label>NỘI DUNG CHI TIẾT *</label>
-                <textarea id="notice-content" rows="4" style="resize:none;" placeholder="Nhập nội dung thông báo gửi đến các member..."></textarea>
+                <textarea id="notice-content" rows="4" style="resize:none;" placeholder="Dữ liệu nhập ở đây sẽ không lưu trữ do không có Database..."></textarea>
             </div>
-            <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="handlePostAnnouncement()">PHÁT HÀNH THÔNG BÁO</button>
+            <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="showStatusModal(false, 'ERROR', 'Giao diện tĩnh không hỗ trợ gửi dữ liệu lên Server!')">PHÁT HÀNH THÔNG BÁO</button>
         </div>
     </div>
 
     <script>
-        // CẤU HÌNH FIREBASE CONFIG CHUẨN CỦA ÔNG
-        const firebaseConfig = {
-            apiKey: "AIzaSyA1jVOVPHECGp27Qgi4U4r71fiKm_a3biM",
-            authDomain: "netking-b0ad0.firebaseapp.com",
-            databaseURL: "https://netking-b0ad0-default-rtdb.firebaseio.com",
-            projectId: "netking-b0ad0",
-            storageBucket: "netking-b0ad0.firebasestorage.app",
-            messagingSenderId: "374692503086",
-            appId: "1:374692503086:web:0c46168ddfb8dadf45c9bf"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        let databaseFiles = []; 
-        let databaseNotices = [];
         let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
 
@@ -331,54 +365,7 @@
             initBackgroundEffects();
             checkUserSession();
             updateHeaderAuthButtonUI();
-            
-            // Tự động kiểm tra và khởi tạo 2 file mặc định lên server nếu trống
-            checkAndInitDefaultFiles();
-
-            // Lắng nghe danh sách file từ Firebase
-            db.ref("files").on("value", (snapshot) => {
-                const data = snapshot.val();
-                databaseFiles = data ? Object.values(data) : [];
-                renderServerFiles();
-            });
-
-            // Lắng nghe danh sách thông báo từ Firebase
-            db.ref("announcements").on("value", (snapshot) => {
-                const data = snapshot.val();
-                databaseNotices = data ? Object.values(data) : [];
-                databaseNotices.reverse(); // Hiện thông báo mới nhất lên đầu
-                renderServerAnnouncements();
-            });
         };
-
-        // Hàm tự động nạp 2 file của ông lên server Firebase hoàn toàn miễn phí
-        function checkAndInitDefaultFiles() {
-            db.ref("files").once("value", (snapshot) => {
-                if (!snapshot.exists()) {
-                    const defaultFiles = {
-                        "file_001": {
-                            id: "file_001",
-                            title: "Netking Fake Lag",
-                            desc: "Fake Lag Modern, 3 Options:\n1. Freeze Infinity\n2. Invisible\n3. Teleporter",
-                            version: "v1.0.1",
-                            views: 0,
-                            verified: true,
-                            url: "https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file"
-                        },
-                        "file_002": {
-                            id: "file_002",
-                            title: "Netking Fake Lag OG Version",
-                            desc: "Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:\nFreeze The Game For 2s Have About 1.5s To Shoot",
-                            version: "v1.0.2",
-                            views: 0,
-                            verified: true,
-                            url: "https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file"
-                        }
-                    };
-                    db.ref("files").set(defaultFiles);
-                }
-            });
-        }
 
         function initBackgroundEffects() {
             const canvas = document.getElementById("bg-canvas");
@@ -426,8 +413,6 @@
             } else {
                 authBtn.innerText = `👤 ${savedDisplayUser}`;
                 authBtn.className = "header-auth-btn auth-state-logged";
-                
-                // KIỂM TRA NẾU LÀ ADMIN XINE3D THÌ MỞ TAB THỨ 4
                 if (savedDisplayUser.toLowerCase() === "xine3d") {
                     adminTabBtn.style.display = "block";
                 } else {
@@ -457,7 +442,7 @@
             updateHeaderAuthButtonUI();
             switchTab('tab-files');
             
-            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản.");
+            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản cục bộ.");
             document.getElementById("welcome-modal").classList.add("active");
             startWelcomeCounter();
         }
@@ -494,9 +479,7 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 
                 document.getElementById(tabId).style.display = "block";
-                document.getElementById(tabId === 'tab-files' ? 'tab-files' : tabId).classList.add('active');
                 
-                // Active nút tab tương ứng
                 if(tabId === 'tab-files') document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 if(tabId === 'tab-verified') document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 if(tabId === 'tab-announcements') document.querySelectorAll('.tab-btn')[2].classList.add('active');
@@ -504,96 +487,6 @@
                 
                 loader.classList.remove("active");
             }, 400);
-        }
-
-        function renderServerFiles() {
-            const cAll = document.getElementById("files-container");
-            const cVer = document.getElementById("verified-container");
-            cAll.innerHTML = ""; cVer.innerHTML = "";
-
-            if(databaseFiles.length === 0) {
-                const emptyHtml = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Chưa có tệp tin nào trên Server.</p>`;
-                cAll.innerHTML = emptyHtml; cVer.innerHTML = emptyHtml;
-                return;
-            }
-
-            databaseFiles.forEach((file) => {
-                const html = `
-                    <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
-                        <div>
-                            <h4>${file.title} ${file.verified ? '<span class="badge-verified">Verified</span>' : ''}</h4>
-                            <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">${file.desc || 'Không có mô tả.'}</p>
-                            <div class="file-meta" style="margin-top:6px;">
-                                <span>Ver: ${file.version || '1.0'}</span>
-                                <span>Views: ${file.views || 0}</span>
-                            </div>
-                        </div>
-                        <div class="file-actions-group">
-                            <a href="${file.url || '#'}" target="_blank" class="btn-view" onclick="registerClick('${file.id}', ${file.views || 0})">Tải Ngay (MediaFire)</a>
-                        </div>
-                    </div>
-                `;
-                cAll.insertAdjacentHTML('beforeend', html);
-                if (file.verified) cVer.insertAdjacentHTML('beforeend', html);
-            });
-        }
-
-        function renderServerAnnouncements() {
-            const container = document.getElementById("announcements-container");
-            container.innerHTML = "";
-
-            if (databaseNotices.length === 0) {
-                container.innerHTML = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Chưa có thông báo nào từ Ban Quản Trị Admin Netking.</p>`;
-                return;
-            }
-
-            databaseNotices.forEach(notice => {
-                const html = `
-                    <div class="notice-item cyber-frame" style="border: 1px solid rgba(255, 0, 127, 0.25);">
-                        <div>
-                            <h4>📌 ${notice.title} <span class="badge-admin">ADMIN NOTE</span></h4>
-                            <p style="font-size:0.82rem; color:#d1d1e0; margin-top:6px; line-height:1.5; white-space: pre-line;">${notice.content}</p>
-                            <div class="notice-meta" style="margin-top:8px;">
-                                <span>Đăng bởi: 🌐 ${notice.author}</span>
-                                <span>Thời gian: ${notice.date}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', html);
-            });
-        }
-
-        function handlePostAnnouncement() {
-            const title = document.getElementById("notice-title").value.trim();
-            const content = document.getElementById("notice-content").value.trim();
-            const savedDisplayUser = localStorage.getItem("netking_session_username") || "guest";
-
-            if (savedDisplayUser.toLowerCase() !== "xine3d") {
-                return showStatusModal(false, "ERROR", "Quyền hạn của ông không đủ để đăng bài!");
-            }
-
-            if (!title || !content) {
-                return showStatusModal(false, "ERROR", "Vui lòng nhập đầy đủ tiêu đề và nội dung thông báo!");
-            }
-
-            const newNoticeRef = db.ref("announcements").push();
-            const now = new Date();
-            const dateString = now.toLocaleDateString('vi-VN') + " - " + now.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
-
-            newNoticeRef.set({
-                id: newNoticeRef.key,
-                title: title,
-                content: content,
-                author: savedDisplayUser,
-                date: dateString
-            }).then(() => {
-                document.getElementById("notice-title").value = "";
-                document.getElementById("notice-content").value = "";
-                
-                nextActionFlow = "go_to_announcements";
-                showStatusModal(true, "SUCCESS", "Thông báo đã được phát hành toàn server!");
-            });
         }
 
         function showStatusModal(isSuccess, title, msg) {
@@ -611,8 +504,6 @@
             if (nextActionFlow === "login_success_clear") {
                 closeAuthModal();
                 document.getElementById("welcome-modal").classList.remove("active");
-            } else if (nextActionFlow === "go_to_announcements") {
-                switchTab('tab-announcements');
             }
             nextActionFlow = "just_close";
         }
@@ -621,11 +512,12 @@
             if (action === 'register') {
                 const user = document.getElementById("reg-user").value.trim();
                 const pass = document.getElementById("reg-pass").value.trim();
-                if (user.length > 10 || pass.length > 20) return showStatusModal(false, "ERROR", "Tài khoản tối đa 10 kí tự, mật khẩu tối đa 20 kí tự!");
-
-                db.ref("users/" + user.toLowerCase()).set({ username: user, password: pass });
+                if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu đăng ký!");
+                
+                // Giả lập lưu tạm vào LocalStorage cho bản tĩnh offline
+                localStorage.setItem("local_user_" + user.toLowerCase(), pass);
                 nextActionFlow = "just_close"; 
-                showStatusModal(true, "SUCCESS", "Đăng ký thành công! Hãy chuyển qua đăng nhập.");
+                showStatusModal(true, "SUCCESS", "Đăng ký giả lập thành công! Hãy chuyển qua đăng nhập.");
                 toggleAuthForm('login');
             } 
             else {
@@ -635,7 +527,7 @@
 
                 let userLower = userInput.toLowerCase();
 
-                // TÀI KHOẢN ADMIN MẶC ĐỊNH
+                // Admin tĩnh mặc định của ông
                 if (userLower === "xine3d" && passInput === "Thinh_2012") {
                     currentUser = "admin";
                     localStorage.setItem("netking_current_user", "admin"); 
@@ -644,30 +536,25 @@
                     
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
-                    showStatusModal(true, "ADMIN SYSTEM", "Chào mừng Admin xine3d quay trở lại hệ thống!");
+                    showStatusModal(true, "ADMIN SYSTEM", "Chào mừng Admin xine3d quay trở lại hệ thống tĩnh!");
                     return;
                 }
 
-                db.ref("users/" + userLower).once("value", (snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData && userData.password === passInput) {
-                        currentUser = "member";
-                        localStorage.setItem("netking_current_user", "member"); 
-                        localStorage.setItem("netking_session_username", userData.username);
-                        localStorage.setItem("netking_session_password", passInput);
+                // Check tài khoản vừa đăng ký ở localStorage
+                let localPass = localStorage.getItem("local_user_" + userLower);
+                if (localPass && localPass === passInput) {
+                    currentUser = "member";
+                    localStorage.setItem("netking_current_user", "member"); 
+                    localStorage.setItem("netking_session_username", userInput);
+                    localStorage.setItem("netking_session_password", passInput);
 
-                        nextActionFlow = "login_success_clear"; 
-                        updateHeaderAuthButtonUI();
-                        showStatusModal(true, "SUCCESS", "Đăng nhập thành công!");
-                    } else {
-                        showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác!");
-                    }
-                });
+                    nextActionFlow = "login_success_clear"; 
+                    updateHeaderAuthButtonUI();
+                    showStatusModal(true, "SUCCESS", "Đăng nhập thành công!");
+                } else {
+                    showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác (hoặc thử acc admin xine3d)!");
+                }
             }
-        }
-
-        function registerClick(fileId, currentViews) {
-            db.ref("files/" + fileId).update({ views: currentViews + 1 });
         }
 
         function openAuthModal(type) { document.getElementById("auth-modal").classList.add("active"); toggleAuthForm(type); }
