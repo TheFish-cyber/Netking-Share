@@ -8,6 +8,9 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -136,7 +139,6 @@
         }
         .btn-logout-danger:hover { background: #ff003c; color: #fff; box-shadow: 0 0 10px #ff003c; }
 
-        /* Nút phụ tắt thông báo 1 giờ */
         .btn-mute-temporary {
             background: transparent; border: 1px solid #5a5a75; color: #8a8ab0; font-size: 0.75rem; padding: 9px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; display: block; text-align: center; font-weight: 500;
         }
@@ -156,7 +158,7 @@
         .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
         .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 6px #00f0ff; }
 
-        /* MODAL OVERLAYS FIXED SYSTEM */
+        /* MODAL OVERLAYS */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.93);
             z-index: 9999; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px);
@@ -242,7 +244,6 @@
             <p id="status-desc" style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 15px;">Thao tác hoàn tất.</p>
             
             <button class="btn-submit" onclick="closeStatusModal()" style="background: linear-gradient(45deg, #00f0ff, #7000ff); border:none;">XÁC NHẬN</button>
-            
             <button class="btn-mute-temporary" onclick="muteStatusModalOneHour()">🔕 Ẩn thông báo này trong 1h</button>
         </div>
     </div>
@@ -300,7 +301,7 @@
     <div id="account-info-modal" class="modal-overlay">
         <div class="modal-box cyber-frame" style="max-width: 360px;">
             <button onclick="closeAccountInfoModal()" class="modal-close-btn">×</button>
-            <h3 class="text-gradient" style="margin-bottom: 16px; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
+            <h3 class="text-gradient" style="margin-bottom: 166px; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
             
             <div style="margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
                 <div class="info-row">
@@ -349,7 +350,24 @@
     </div>
 
     <script>
-        let databaseFiles = JSON.parse(localStorage.getItem("netking_database_files")) || []; 
+        // ==========================================
+        //  🔒 ĐÃ GHÉP CẤU HÌNH FIREBASE CHUẨN CỦA ÔNG
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1jVOVPHECGp27Qgi4U4r71fiKm_a3biM",
+            authDomain: "netking-b0ad0.firebaseapp.com",
+            databaseURL: "https://netking-b0ad0-default-rtdb.firebaseio.com",
+            projectId: "netking-b0ad0",
+            storageBucket: "netking-b0ad0.firebasestorage.app",
+            messagingSenderId: "374692503086",
+            appId: "1:374692503086:web:0c46168ddfb8dadf45c9bf"
+        };
+        
+        // Khởi tạo Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let databaseFiles = []; 
         let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
 
@@ -357,7 +375,13 @@
             initBackgroundEffects();
             checkUserSession();
             updateHeaderAuthButtonUI();
-            renderServerData();
+            
+            // Lắng nghe dữ liệu thời gian thực từ Server Firebase toàn cầu
+            db.ref("files").on("value", (snapshot) => {
+                const data = snapshot.val();
+                databaseFiles = data ? Object.values(data) : [];
+                renderServerData();
+            });
         };
 
         function initBackgroundEffects() {
@@ -401,7 +425,6 @@
             animate();
         }
 
-        /* FIX HOÀN TOÀN HÀM LOGIC ĐIỀU PHỐI CLICK HEADER */
         function handleHeaderAuthClick() {
             if (currentUser === "guest") {
                 openAuthModal('signin');
@@ -441,7 +464,6 @@
             localStorage.removeItem("netking_session_password");
             
             updateHeaderAuthButtonUI();
-            renderServerData();
             
             nextActionFlow = "just_close";
             showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản khỏi hệ thống.");
@@ -499,14 +521,14 @@
             cAll.innerHTML = ""; cVer.innerHTML = "";
 
             if(databaseFiles.length === 0) {
-                const emptyHtml = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Hệ thống trống. Chưa có tệp tin nào được đồng bộ.</p>`;
+                const emptyHtml = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Hệ thống trống. Chưa có tệp tin nào được đồng bộ trên Server.</p>`;
                 cAll.innerHTML = emptyHtml; cVer.innerHTML = emptyHtml;
                 return;
             }
 
             databaseFiles.forEach((file, index) => {
                 const adminVerifyButton = (currentUser === "admin" && !file.verified) 
-                    ? `<button class="btn-admin-verify" onclick="verifyFileByAdmin(${index})">Verify File</button>` 
+                    ? `<button class="btn-admin-verify" onclick="verifyFileByAdmin('${file.id}')">Verify File</button>` 
                     : '';
 
                 const html = `
@@ -520,7 +542,7 @@
                             </div>
                         </div>
                         <div class="file-actions-group">
-                            <a href="${file.url || '#'}" target="_blank" class="btn-view" onclick="registerClick(${index})">Xem File</a>
+                            <a href="${file.url || '#'}" target="_blank" class="btn-view" onclick="registerClick('${file.id}', ${file.views || 0})">Xem File</a>
                             ${adminVerifyButton}
                         </div>
                     </div>
@@ -530,13 +552,11 @@
             });
         }
 
-        function verifyFileByAdmin(index) {
+        function verifyFileByAdmin(fileId) {
             if(currentUser !== "admin") return;
-            databaseFiles[index].verified = true;
-            localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
+            db.ref("files/" + fileId).update({ verified: true });
             nextActionFlow = "just_close";
-            showStatusModal(true, "VERIFIED", "Tệp tin đã được xác minh thành công trên trang chủ!");
-            renderServerData();
+            showStatusModal(true, "VERIFIED", "Tệp tin đã được xác minh thành công toàn hệ thống!");
         }
 
         function handleUpload() {
@@ -553,7 +573,7 @@
 
             if (currentUser !== "admin" && databaseFiles.length >= 2) {
                 nextActionFlow = "just_close";
-                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files!");
+                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files trên Server!");
                 return;
             }
 
@@ -578,11 +598,23 @@
                     timerText.innerText = `ENCRYPTING IN ${countdown}s...`;
                 } else {
                     clearInterval(interval);
-                    databaseFiles.push({
-                        title: title, desc: desc, version: version, views: 0, verified: false, url: urlInput || "#"
-                    });
+                    
+                    // Tạo một ID ngẫu nhiên duy nhất cho File trên Firebase
+                    const newFileRef = db.ref("files").push();
+                    const fileId = newFileRef.key;
 
-                    localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
+                    const fileData = {
+                        id: fileId,
+                        title: title, 
+                        desc: desc, 
+                        version: version, 
+                        views: 0, 
+                        verified: false, 
+                        url: urlInput || "#"
+                    };
+
+                    // Đẩy dữ liệu trực tiếp lên Server Cloud
+                    newFileRef.set(fileData);
 
                     document.getElementById("file-title").value = "";
                     document.getElementById("file-desc").value = "";
@@ -592,8 +624,7 @@
 
                     loader.classList.remove("active");
                     nextActionFlow = "go_to_files_tab";
-                    showStatusModal(true, "SUCCESS UPLOAD", "Tập tin của bạn đã được đẩy lên máy chủ Netking thành công!");
-                    renderServerData();
+                    showStatusModal(true, "SUCCESS UPLOAD", "Tập tin đã đẩy lên Server toàn cầu thành công!");
                 }
             }, 1000);
         }
@@ -613,7 +644,6 @@
 
         function showStatusModal(isSuccess, title, msg) {
             if (isMuted()) {
-                console.log(`[System Muted] Run Hidden Flow: ${title}`);
                 executeHiddenFlows();
                 return;
             }
@@ -662,16 +692,19 @@
 
                 const usernameRegex = /^[a-zA-Z0-9_]+$/;
                 if (!usernameRegex.test(user)) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Tên chỉ được bao gồm chữ, số và dấu gạch dưới (_).");
+                    return showStatusModal(false, "VALIDATION ERROR", "Tên chỉ gồm chữ, số và (_).");
                 }
 
                 const forbiddenPassChars = /[+×÷=/<>[\]!@#$^%\-"']/;
                 if (forbiddenPassChars.test(pass)) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu chứa ký tự đặc biệt bị cấm!");
+                    return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu chứa ký tự bị cấm!");
                 }
 
-                localStorage.setItem(`db_user_${user.toLowerCase()}`, pass); 
-                localStorage.setItem(`db_user_display_${user.toLowerCase()}`, user);
+                // Lưu thông tin User lên Server Firebase để tụi bạn có thể đăng nhập chéo thiết bị
+                db.ref("users/" + user.toLowerCase()).set({
+                    username: user,
+                    password: pass
+                });
 
                 nextActionFlow = "open_login"; 
                 showStatusModal(true, "REGISTER SUCCESS", "Đăng ký thành công! Tiến hành đăng nhập hệ thống.");
@@ -693,36 +726,32 @@
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
                     showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại!");
-                    renderServerData();
                     return;
                 }
 
-                const localSavedPass = localStorage.getItem(`db_user_${userLower}`);
-                if (localSavedPass && localSavedPass === passInput) {
-                    const realDisplayName = localStorage.getItem(`db_user_display_${userLower}`) || userInput;
-                    
-                    currentUser = "member";
-                    localStorage.setItem("netking_current_user", "member"); 
-                    localStorage.setItem("netking_session_username", realDisplayName);
-                    localStorage.setItem("netking_session_password", passInput);
+                // Kiểm tra tài khoản trên Server Cloud
+                db.ref("users/" + userLower).once("value", (snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData && userData.password === passInput) {
+                        currentUser = "member";
+                        localStorage.setItem("netking_current_user", "member"); 
+                        localStorage.setItem("netking_session_username", userData.username);
+                        localStorage.setItem("netking_session_password", passInput);
 
-                    nextActionFlow = "login_success_clear"; 
-                    updateHeaderAuthButtonUI();
-                    showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành công!");
-                    renderServerData();
-                } else {
-                    showStatusModal(false, "AUTH FAILED", "Tài khoản hoặc mật khẩu không chính xác!");
-                }
+                        nextActionFlow = "login_success_clear"; 
+                        updateHeaderAuthButtonUI();
+                        showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành công!");
+                    } else {
+                        showStatusModal(false, "AUTH FAILED", "Tài khoản hoặc mật khẩu không chính xác!");
+                    }
+                });
             }
         }
 
-        function registerClick(index) {
-            databaseFiles[index].views = (databaseFiles[index].views || 0) + 1;
-            localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
-            renderServerData();
+        function registerClick(fileId, currentViews) {
+            db.ref("files/" + fileId).update({ views: currentViews + 1 });
         }
 
-        /* FIX HOÀN TOÀN TRẠNG THÁI CHUYỂN ĐỔI FORM */
         function openAuthModal(type) { 
             document.getElementById("auth-modal").classList.add("active"); 
             toggleAuthForm(type); 
