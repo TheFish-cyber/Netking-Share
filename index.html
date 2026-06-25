@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files</title>
+    <title>Netking Files - Ultimate Cyber Systems</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -45,7 +45,7 @@
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
         .top-header h1 { font-size: 1.1rem; letter-spacing: 1.5px; }
 
-        /* CYBER STROKE GRADIENT VIỀN + SMOKE */
+        /* CYBER STROKE GRADIENT VIỀN + SMOKE CHUẨN ĐÉT */
         .cyber-frame {
             position: relative;
             background: linear-gradient(#06060c, #06060c) padding-box, 
@@ -72,13 +72,6 @@
             100% { opacity: 0.5; text-shadow: 0 0 10px #ff007f; }
         }
 
-        .fade-dir { opacity: 1; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.1, 0.8, 0.2, 1); }
-        .f-up { transform: translateY(25px); opacity: 0; }
-        .f-down { transform: translateY(-25px); opacity: 0; }
-        .f-left { transform: translateX(-25px); opacity: 0; }
-        .f-right { transform: translateX(25px); opacity: 0; }
-        .fade-dir.visible { opacity: 1; transform: translate(0, 0) !important; }
-
         .text-gradient {
             background: linear-gradient(45deg, #00f0ff, #ff007f);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -96,7 +89,7 @@
             color: #00f0ff; border-color: #00f0ff; box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
         }
 
-        .container { width: 100%; max-width: 600px; padding: 22px; margin-bottom: 30px; }
+        .container { width: 100%; max-width: 600px; padding: 22px; margin-bottom: 30px; display: block !important; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -112,7 +105,7 @@
         .remember-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; color: #8a8ab0; font-size: 0.82rem;}
         .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 15px; height: 15px;}
 
-        /* NÚT SUBMIT DÀI THEO CHIỀU NGANG */
+        /* NÚT SUBMIT TRẢI NGANG ĐẸP MẮT */
         .btn-submit {
             width: 100%; padding: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 0.88rem;
             letter-spacing: 1px; display: block; text-align: center; border-radius: 10px;
@@ -146,7 +139,7 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-box { padding: 25px; max-width: 440px; width: 90%; position: relative; }
-        .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 0.85rem; z-index: 10;}
+        .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1rem; z-index: 10; width: 25px; height: 25px; text-align: center; line-height: 25px;}
         .auth-links a { color: #00f0ff; font-weight: bold; text-decoration: none; margin: 0 5px; cursor: pointer;}
 
         /* Tab Loader (1.5s delay) & Upload Loader (5s delay) */
@@ -207,7 +200,7 @@
 
     <div id="welcome-modal" class="modal-overlay active">
         <div class="modal-box cyber-frame">
-            <button id="close-welcome-btn" class="modal-close-btn" disabled>Close (3s)</button>
+            <button id="close-welcome-btn" class="modal-close-btn" disabled style="font-size:0.75rem; width:80px;">Close (3s)</button>
             <div style="text-align: center; margin-bottom: 10px;">
                 <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Netking Launcher" style="width: 55px; height: 55px; object-fit: contain; border-radius: 10px; filter: drop-shadow(0 0 6px #00f0ff);">
             </div>
@@ -223,7 +216,7 @@
 
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-box cyber-frame">
-            <button onclick="closeAuthModal()" class="modal-close-btn">Close</button>
+            <button onclick="closeAuthModal()" class="modal-close-btn">×</button>
             <div id="login-form-wrapper">
                 <h3 class="text-gradient" style="margin-bottom: 18px; font-size: 1.1rem;">ĐĂNG NHẬP SYSTEMS</h3>
                 <div class="form-group"><label>USERNAME</label><input type="text" id="login-user"></div>
@@ -245,13 +238,13 @@
         </div>
     </div>
 
-    <div class="tabs-container fade-dir f-down">
+    <div class="tabs-container">
         <button class="tab-btn active" onclick="switchTab('tab-files')">1. Files</button>
         <button class="tab-btn" onclick="switchTab('tab-verified')">2. Verified Files</button>
         <button class="tab-btn" onclick="switchTab('tab-share')">3. Share Files</button>
     </div>
 
-    <div class="container cyber-frame fade-dir f-up">
+    <div class="container cyber-frame">
         <div id="tab-files" class="tab-content active">
             <label style="margin-bottom: 15px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG</label>
             <div id="files-container"></div>
@@ -273,18 +266,14 @@
     </div>
 
     <script>
-        const directionClasses = ['f-up', 'f-down', 'f-left', 'f-right'];
-        let observer;
-        
         let databaseFiles = []; 
         let currentUser = "member"; 
-        let nextActionFlow = ""; // Quản lý luồng hiển thị thông báo sau khi xác nhận modal
+        let nextActionFlow = ""; 
 
         window.onload = function() {
             initBackgroundEffects();
             startWelcomeCounter();
             checkRememberedLogin();
-            initScrollObserver();
             renderServerData();
         };
 
@@ -352,11 +341,12 @@
             setTimeout(() => {
                 document.querySelectorAll('.tab-content').forEach(c => c.style.display = "none");
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                
                 document.getElementById(tabId).style.display = "block";
                 const btnIndex = tabId === 'tab-files' ? 0 : tabId === 'tab-verified' ? 1 : 2;
                 document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+                
                 loader.classList.remove("active");
-                triggerFadeCheck();
             }, 1500);
         }
 
@@ -372,13 +362,12 @@
             }
 
             databaseFiles.forEach((file, index) => {
-                const randDir = directionClasses[Math.floor(Math.random() * directionClasses.length)];
                 const adminVerifyButton = (currentUser === "admin" && !file.verified) 
                     ? `<button class="btn-admin-verify" onclick="verifyFileByAdmin(${index})">Verify File</button>` 
                     : '';
 
                 const html = `
-                    <div class="file-item cyber-frame fade-dir ${randDir}">
+                    <div class="file-item cyber-frame">
                         <div>
                             <h4>${file.title} ${file.verified ? '<span class="badge-verified">Verified</span>' : ''}</h4>
                             <p style="font-size:0.85rem; color:#8a8ab0; margin-top:5px; line-height:1.4;">${file.desc || 'Không có mô tả.'}</p>
@@ -396,7 +385,6 @@
                 cAll.insertAdjacentHTML('beforeend', html);
                 if (file.verified) cVer.insertAdjacentHTML('beforeend', html);
             });
-            triggerFadeCheck();
         }
 
         function verifyFileByAdmin(index) {
@@ -421,7 +409,7 @@
 
             if (currentUser !== "admin" && databaseFiles.length >= 2) {
                 nextActionFlow = "just_close";
-                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files! Vui lòng liên hệ Admin xine3d.");
+                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files! Vui lòng liên hệ Admin.");
                 return;
             }
 
@@ -464,7 +452,6 @@
             }, 1000);
         }
 
-        // ĐIỀU KHIỂN SỰ KIỆN STATUS MODAL THÔNG BÁO CHUẨN LỐC LOGIC MỚI
         function showStatusModal(isSuccess, title, msg) {
             const sModal = document.getElementById("status-modal");
             const sIcon = document.getElementById("status-icon");
@@ -483,7 +470,6 @@
         function closeStatusModal() {
             document.getElementById("status-modal").classList.remove("active");
             
-            // KIỂM TRA LUỒNG CHUYỂN ĐIỀU HƯỚNG THEO YÊU CẦU
             if (nextActionFlow === "open_login") {
                 openAuthModal('login');
             } else if (nextActionFlow === "login_success_clear") {
@@ -500,8 +486,8 @@
 
         async function handleAuth(action) {
             if (action === 'register') {
-                nextActionFlow = "open_login"; // Đặt flag: Khi đóng thông báo sẽ nhảy sang frame login
-                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký tài khoản thành công! Nhấn xác nhận để đăng nhập hệ thống.");
+                nextActionFlow = "open_login"; 
+                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký tài khoản thành công! Nhấn xác nhận hoặc dấu X để đăng nhập hệ thống.");
             } else {
                 const user = document.getElementById("login-user").value.trim();
                 const pass = document.getElementById("login-pass").value.trim();
@@ -509,19 +495,21 @@
                 
                 if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu!");
 
+                // Account Admin
                 if (user === "xine3d" && pass === "Thinh_2012") {
                     currentUser = "admin";
                     if (remember) localStorage.setItem("remembered_netking_user", user);
-                    nextActionFlow = "login_success_clear"; // Đặt flag: đóng thông báo ẩn sạch modal
-                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin ThinhkFF quay trở lại quyền kiểm soát!");
+                    nextActionFlow = "login_success_clear"; 
+                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại quyền kiểm soát!");
                     renderServerData();
                     return;
                 }
 
+                // Member
                 currentUser = "member";
                 if (remember) localStorage.setItem("remembered_netking_user", user);
-                nextActionFlow = "login_success_clear"; // Đặt flag: đóng thông báo ẩn sạch modal
-                showStatusModal(true, "MEMBER ACCESS", "Đăng nhập với tư cách thành viên nhóm Netking thành công.");
+                nextActionFlow = "login_success_clear"; 
+                showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành viên nhóm thành công.");
                 renderServerData();
             }
         }
@@ -531,29 +519,14 @@
             renderServerData();
         }
 
-        function initScrollObserver() {
-            observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('visible');
-                });
-            }, { threshold: 0.01, rootMargin: "50px 0px 50px 0px" });
-        }
-
-        function triggerFadeCheck() {
-            setTimeout(() => {
-                document.querySelectorAll('.fade-dir').forEach(el => {
-                    observer.unobserve(el); observer.observe(el);
-                });
-            }, 60);
-        }
-
         function openAuthModal(type) { document.getElementById("auth-modal").classList.add("active"); toggleAuthForm(type); }
-        // FIXED FIX CRASH LỖI SỬ DỤNG SAI HÀM .REMOVE()
         function closeAuthModal() { document.getElementById("auth-modal").classList.remove("active"); }
+        
         function toggleAuthForm(type) {
             document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
             document.getElementById("signin-form-wrapper").style.display = type === 'signin' ? "block" : "none";
         }
+        
         function checkRememberedLogin() {
             const savedUser = localStorage.getItem("remembered_netking_user");
             if (savedUser === "xine3d") {
