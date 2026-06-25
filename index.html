@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files</title>
+    <title>Netking Files - Ultimate Cyber Systems</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -16,7 +16,7 @@
             color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
             padding: 20px;
-            padding-top: 90px;
+            padding-top: 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,20 +30,60 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* HEADER CAPSULE TRÊN CÙNG */
+        /* HEADER CAPSULE TRÊN CÙNG TÍCH HỢP NÚT DÀNH CHO AUTH */
         .top-header {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
-            width: auto; min-width: 280px; max-width: 90%;
-            background: rgba(20, 20, 30, 0.7);
+            width: 90%; max-width: 600px;
+            background: rgba(20, 20, 30, 0.75);
             border: 1px solid rgba(255, 255, 255, 0.1); 
             border-radius: 30px;
-            padding: 8px 25px; 
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 8px 20px; 
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
             z-index: 100; backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
+        .header-brand { display: flex; align-items: center; gap: 10px; }
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
-        .top-header h1 { font-size: 1.1rem; letter-spacing: 1.5px; }
+        .top-header h1 { font-size: 1.05rem; letter-spacing: 1px; margin: 0; }
+
+        /* BUTTON AUTH BO GÓC CẠNH HEADER */
+        .header-auth-btn {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        /* Style lúc chưa đăng nhập (Sign In) */
+        .auth-state-signin {
+            background: transparent;
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            box-shadow: inset 0 0 4px rgba(0, 240, 255, 0.2);
+        }
+        .auth-state-signin:hover {
+            background: #00f0ff;
+            color: #030308;
+            box-shadow: 0 0 10px #00f0ff;
+        }
+        /* Style lúc đã đăng nhập (Log Out) */
+        .auth-state-logout {
+            background: transparent;
+            border: 1px solid #ff007f;
+            color: #ff007f;
+            box-shadow: inset 0 0 4px rgba(255, 0, 127, 0.2);
+        }
+        .auth-state-logout:hover {
+            background: #ff007f;
+            color: #ffffff;
+            box-shadow: 0 0 10px #ff007f;
+        }
 
         /* CYBER STROKE GRADIENT VIỀN + SMOKE */
         .cyber-frame {
@@ -138,10 +178,8 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
-        /* ĐƯA FRAME STATUS LÊN TRÊN CÙNG TUYỆT ĐỐI */
-        #status-modal {
-            z-index: 10000 !important; 
-        }
+        /* ĐỀ KHUNG TRẠNG THÁI STATUS LÊN TRÊN CÙNG */
+        #status-modal { z-index: 10000 !important; }
 
         .modal-box { padding: 25px; max-width: 440px; width: 90%; position: relative; }
         .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1rem; z-index: 10; width: 25px; height: 25px; text-align: center; line-height: 25px;}
@@ -174,8 +212,13 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="top-header">
-        <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Logo">
-        <h1 class="text-gradient blink-text">NETKING PORTAL</h1>
+        <div class="header-brand">
+            <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Logo">
+            <h1 class="text-gradient blink-text">NETKING PORTAL</h1>
+        </div>
+        <button id="header-auth-action" class="header-auth-btn auth-state-signin" onclick="handleHeaderAuthClick()">
+            🔑 Sign In
+        </button>
     </div>
 
     <div id="loading-frame">
@@ -221,6 +264,7 @@
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-box cyber-frame">
             <button onclick="closeAuthModal()" class="modal-close-btn">×</button>
+            
             <div id="login-form-wrapper">
                 <h3 class="text-gradient" style="margin-bottom: 18px; font-size: 1.1rem;">ĐĂNG NHẬP SYSTEMS</h3>
                 <div class="form-group"><label>USERNAME</label><input type="text" id="login-user"></div>
@@ -232,6 +276,7 @@
                 <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleAuth('login')">LOGIN NOW</button>
                 <p style="margin-top: 15px; font-size: 0.8rem; color:#8a8ab0;">Chưa có nick? <a onclick="toggleAuthForm('signin')">Đăng ký</a></p>
             </div>
+
             <div id="signin-form-wrapper" style="display: none;">
                 <h3 class="text-gradient" style="margin-bottom: 18px; font-size: 1.1rem;">ĐĂNG KÝ USER</h3>
                 <div class="form-group"><label>USERNAME TÀI KHOẢN</label><input type="text" id="reg-user"></div>
@@ -270,7 +315,6 @@
     </div>
 
     <script>
-        // KHỞI TẠO VÀ LẤY DỮ LIỆU TỪ LOCALSTORAGE ĐỂ KHÔNG BỊ XOÁ KHI F5
         let databaseFiles = JSON.parse(localStorage.getItem("netking_database_files")) || []; 
         let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
@@ -278,6 +322,7 @@
         window.onload = function() {
             initBackgroundEffects();
             checkUserSession();
+            updateHeaderAuthButtonUI();
             renderServerData();
         };
 
@@ -322,7 +367,43 @@
             animate();
         }
 
-        // KIỂM TRA PHIÊN ĐĂNG NHẬP ĐỂ TRÁNH AUTO LOGOUT KHI RESET WEB
+        // XỬ LÝ SỰ KIỆN KHI ẤN VÀO BUTTON AUTH TRÊN HEADER
+        function handleHeaderAuthClick() {
+            if (currentUser === "guest") {
+                // Chưa đăng nhập thì mở thẳng khung đăng ký như ý ông bạn
+                openAuthModal('signin');
+            } else {
+                // Đã đăng nhập thì chạy hàm Logout xóa session sạch sẽ
+                processLogout();
+            }
+        }
+
+        // CẬP NHẬT GIAO DIỆN NÚT AUTH TRÊN HEADER THEO TRẠNG THÁI LOGIN
+        function updateHeaderAuthButtonUI() {
+            const authBtn = document.getElementById("header-auth-action");
+            if (currentUser === "guest") {
+                authBtn.innerText = "🔑 Sign In";
+                authBtn.className = "header-auth-btn auth-state-signin";
+            } else {
+                authBtn.innerText = "🚪 Log Out";
+                authBtn.className = "header-auth-btn auth-state-logout";
+            }
+        }
+
+        function processLogout() {
+            currentUser = "guest";
+            localStorage.setItem("netking_current_user", "guest");
+            updateHeaderAuthButtonUI();
+            renderServerData();
+            
+            nextActionFlow = "just_close";
+            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản khỏi hệ thống Cyber.");
+            
+            // Hiện lại màn hình Welcome giới thiệu ban đầu
+            document.getElementById("welcome-modal").classList.add("active");
+            startWelcomeCounter();
+        }
+
         function checkUserSession() {
             if (currentUser === "guest") {
                 document.getElementById("welcome-modal").classList.add("active");
@@ -412,7 +493,7 @@
         function verifyFileByAdmin(index) {
             if(currentUser !== "admin") return;
             databaseFiles[index].verified = true;
-            localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles)); // Lưu lại trạng thái verify
+            localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
             nextActionFlow = "just_close";
             showStatusModal(true, "VERIFIED", "Tệp tin đã được xác minh thành công trên trang chủ!");
             renderServerData();
@@ -461,7 +542,6 @@
                         title: title, desc: desc, version: version, views: 0, verified: false, url: urlInput || "#"
                     });
 
-                    // LƯU DANH SÁCH FILE VÀO STORAGE ĐỂ MÁY KHÁC LOAD HOẶC F5 ĐỀU KHÔNG MẤT
                     localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
 
                     document.getElementById("file-title").value = "";
@@ -523,18 +603,20 @@
 
                 if (user === "xine3d" && pass === "Thinh_2012") {
                     currentUser = "admin";
-                    localStorage.setItem("netking_current_user", "admin"); // Lưu trạng thái session admin
+                    localStorage.setItem("netking_current_user", "admin"); 
                     if (remember) localStorage.setItem("remembered_netking_user", user);
                     nextActionFlow = "login_success_clear"; 
+                    updateHeaderAuthButtonUI();
                     showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại quyền kiểm soát!");
                     renderServerData();
                     return;
                 }
 
                 currentUser = "member";
-                localStorage.setItem("netking_current_user", "member"); // Lưu trạng thái session member
+                localStorage.setItem("netking_current_user", "member"); 
                 if (remember) localStorage.setItem("remembered_netking_user", user);
                 nextActionFlow = "login_success_clear"; 
+                updateHeaderAuthButtonUI();
                 showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành viên nhóm thành công.");
                 renderServerData();
             }
@@ -551,7 +633,7 @@
         
         function toggleAuthForm(type) {
             document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
-            document.getElementById("signin-form-wrapper").style.display = type === 'signin' ? "block" : "none";
+            document.getElementById("signin-form-wrapper").style.display = type === 'signin' ? "none" : "block";
         }
     </script>
 </body>
