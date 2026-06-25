@@ -283,8 +283,9 @@
         import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
         import { getDatabase, ref as rRef, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
+        // ⚠️ QUAN TRỌNG: Hãy điền chính xác các chuỗi cấu hình Firebase của dự án Netking vào đây để không bị lỗi kết nối mây!
         const firebaseConfig = {
-            apiKey: "AIzaSyA1...",
+            apiKey: "AIzaSyA1...", 
             authDomain: "netking-share.firebaseapp.com",
             projectId: "netking-share",
             storageBucket: "netking-share.appspot.com",
@@ -302,15 +303,19 @@
         let sessionID = 'User_' + Math.floor(1000 + Math.random() * 9000);
         const adminEmail = "thinhbcn2012@gmail.com"; 
 
-        // Khởi tạo tài khoản Admin tối cao xine3d cố định trên Cloud
+        // Khởi tạo tài khoản Admin xine3d cố định trên Cloud theo chuẩn sếp yêu cầu
         async function initAdminAccount() {
-            await setDoc(doc(db, "accounts", "xine3d"), {
-                username: "xine3d",
-                password: "Thinh_2012",
-                role: "admin",
-                name: "Netking Admin (xine3d)",
-                picture: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            }, { merge: true });
+            try {
+                await setDoc(doc(db, "accounts", "xine3d"), {
+                    username: "xine3d",
+                    password: "Thinh_2012",
+                    role: "admin",
+                    name: "Netking Admin (xine3d)",
+                    picture: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                }, { merge: true });
+            } catch (e) {
+                console.error("Lỗi tạo admin: ", e);
+            }
         }
         initAdminAccount();
 
@@ -371,26 +376,31 @@
             
             if(!u || !p) { alert("Vui lòng điền đầy đủ tài khoản và mật khẩu!"); return; }
             
-            const docRef = doc(db, "accounts", u);
-            const docSnap = await getDoc(docRef);
-            
-            if(docSnap.exists()) {
-                alert("Tên tài khoản này đã có người đăng ký trên hệ thống!");
-                return;
+            try {
+                const docRef = doc(db, "accounts", u);
+                const docSnap = await getDoc(docRef);
+                
+                if(docSnap.exists()) {
+                    alert("Tên tài khoản này đã có người đăng ký trên hệ thống!");
+                    return;
+                }
+
+                await setDoc(docRef, {
+                    username: u,
+                    password: p,
+                    role: "member",
+                    name: u,
+                    picture: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                });
+
+                alert("Đăng ký tài khoản Đám mây thành công! Tiến hành đăng nhập nào.");
+                document.getElementById('reg-username').value = '';
+                document.getElementById('reg-password').value = '';
+                openAuthSubFrame('log-in');
+            } catch (error) {
+                console.error(error);
+                alert("Lỗi Firebase (Hãy kiểm tra Rules Firestore hoặc Khóa ApiKey): " + error.message);
             }
-
-            await setDoc(docRef, {
-                username: u,
-                password: p,
-                role: "member",
-                name: u,
-                picture: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-            });
-
-            alert("Đăng ký tài khoản Đám mây thành công! Tiến hành đăng nhập nào.");
-            document.getElementById('reg-username').value = '';
-            document.getElementById('reg-password').value = '';
-            openAuthSubFrame('log-in');
         }
 
         // --- XỬ LÝ ĐĂNG NHẬP TÀI KHOẢN CLOUD ---
@@ -400,35 +410,39 @@
 
             if(!u || !p) { alert("Vui lòng điền thông tin đăng nhập!"); return; }
 
-            const docRef = doc(db, "accounts", u);
-            const docSnap = await getDoc(docRef);
+            try {
+                const docRef = doc(db, "accounts", u);
+                const docSnap = await getDoc(docRef);
 
-            if(docSnap.exists() && docSnap.data().password === p) {
-                const userData = docSnap.data();
-                currentUserData = {
-                    name: userData.name,
-                    email: userData.username === 'xine3d' ? adminEmail : userData.username + "@cloud.netking",
-                    picture: userData.picture
-                };
+                if(docSnap.exists() && docSnap.data().password === p) {
+                    const userData = docSnap.data();
+                    currentUserData = {
+                        name: userData.name,
+                        email: userData.username === 'xine3d' ? adminEmail : userData.username + "@cloud.netking",
+                        picture: userData.picture
+                    };
 
-                alert(`Đăng nhập thành công! Chào mừng ${userData.name}.`);
-                document.getElementById('global-auth-overlay').classList.remove('show');
-                document.getElementById('welcome-user-tag').innerText = `ID Đang Kết Nối: [${userData.name}]`;
-                
-                // Mở khóa Chat
-                document.getElementById('chat-controls').innerHTML = `
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleChatKey(event)"/>
-                        <button onclick="sendChatMessage()">Gửi</button>
-                    </div>
-                `;
+                    alert(`Đăng nhập thành công! Chào mừng ${userData.name}.`);
+                    document.getElementById('global-auth-overlay').classList.remove('show');
+                    document.getElementById('welcome-user-tag').innerText = `ID Đang Kết Nối: [${userData.name}]`;
+                    
+                    // Mở khóa Chat
+                    document.getElementById('chat-controls').innerHTML = `
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleChatKey(event)"/>
+                            <button onclick="sendChatMessage()">Gửi</button>
+                        </div>
+                    `;
 
-                // Kích hoạt đặc quyền Verify nếu là Admin xine3d
-                if(userData.username === 'xine3d') {
-                    document.querySelectorAll('.btn-verify').forEach(btn => btn.style.display = 'inline-block');
+                    // Kích hoạt đặc quyền Verify nếu là Admin xine3d hoặc Gmail sếp
+                    if(userData.username === 'xine3d') {
+                        document.querySelectorAll('.btn-verify').forEach(btn => btn.style.display = 'inline-block');
+                    }
+                } else {
+                    alert("Sai tên đăng nhập hoặc mật khẩu, vui lòng thử lại!");
                 }
-            } else {
-                alert("Sai tên đăng nhập hoặc mật khẩu, vui lòng thử lại!");
+            } catch (error) {
+                alert("Lỗi kết nối Firebase: " + error.message);
             }
         }
 
@@ -442,18 +456,22 @@
         });
 
         // --- ĐĂNG LINK NGOÀI HOẶC UPLOAD TỆP TIN ---
-        window.publishCustomShare = function() {
+        window.publishCustomShare = async function() {
             const name = document.getElementById('custom-file-name').value.trim();
             const url = document.getElementById('custom-file-url').value.trim();
             if(!name || !url) { alert("Vui lòng điền đủ Tên và Đường dẫn link!"); return; }
             
-            addDoc(collection(db, "files"), {
-                name: name, url: url, size: "External Link", downloads: 0, verified: false, timestamp: serverTimestamp()
-            });
-            alert("Đăng dữ liệu liên kết thành công!");
-            document.getElementById('custom-file-name').value = '';
-            document.getElementById('custom-file-url').value = '';
-            switchTab('tab-shared');
+            try {
+                await addDoc(collection(db, "files"), {
+                    name: name, url: url, size: "External Link", downloads: 0, verified: false, timestamp: serverTimestamp()
+                });
+                alert("Đăng dữ liệu liên kết thành công lên mây!");
+                document.getElementById('custom-file-name').value = '';
+                document.getElementById('custom-file-url').value = '';
+                switchTab('tab-shared');
+            } catch (error) {
+                alert("Không thể lưu file (Hãy kiểm tra Rules Firestore): " + error.message);
+            }
         };
 
         const fileInput = document.getElementById('file-uploader');
@@ -469,16 +487,20 @@
 
             uploadTask.on('state_changed', 
                 (snap) => { uploadStatus.innerText = `Đang tải: ${Math.round((snap.bytesTransferred / snap.totalBytes) * 100)}%`; },
-                (err) => { uploadStatus.innerText = "Lỗi: " + err.message; },
+                (err) => { uploadStatus.innerText = "Lỗi Storage (Kiểm tra Rules Storage): " + err.message; },
                 () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        addDoc(collection(db, "files"), {
-                            name: customName, url: downloadURL, size: (file.size / (1024 * 1024)).toFixed(2) + " MB", downloads: 0, verified: false, timestamp: serverTimestamp()
-                        });
-                        uploadStatus.innerText = "Tải lên thành công!";
-                        document.getElementById('custom-file-name').value = '';
-                        fileInput.value = '';
-                        switchTab('tab-shared');
+                    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                        try {
+                            await addDoc(collection(db, "files"), {
+                                name: customName, url: downloadURL, size: (file.size / (1024 * 1024)).toFixed(2) + " MB", downloads: 0, verified: false, timestamp: serverTimestamp()
+                            });
+                            uploadStatus.innerText = "Tải lên thành công!";
+                            document.getElementById('custom-file-name').value = '';
+                            fileInput.value = '';
+                            switchTab('tab-shared');
+                        } catch(err) {
+                            alert("Tải file lên kho chứa tốt nhưng không thể ghi bản ghi vào Firestore: " + err.message);
+                        }
                     });
                 }
             );
@@ -527,7 +549,9 @@
                 button.addEventListener('click', async () => {
                     const id = button.getAttribute('data-id');
                     const url = button.getAttribute('data-url');
-                    await updateDoc(doc(db, "files", id), { downloads: increment(1) });
+                    try {
+                        await updateDoc(doc(db, "files", id), { downloads: increment(1) });
+                    } catch(e) { console.error("Lỗi tăng lượt tải: ", e); }
                     window.open(url, '_blank');
                 });
             });
@@ -535,8 +559,10 @@
             document.querySelectorAll('.btn-verify').forEach(button => {
                 button.addEventListener('click', async () => {
                     const id = button.getAttribute('data-id');
-                    await updateDoc(doc(db, "files", id), { verified: true });
-                    alert("Đã xác minh file thành công!");
+                    try {
+                        await updateDoc(doc(db, "files", id), { verified: true });
+                        alert("Đã xác minh file thành công!");
+                    } catch(e) { alert("Lỗi xác minh: " + e.message); }
                 });
             });
         });
@@ -553,7 +579,7 @@
                 msgDiv.className = `msg ${isMe ? 'me' : 'other'}`;
                 msgDiv.innerHTML = `
                     <div class="msg-user-container">
-                        <img class="msg-avatar" src="${chat.avatar}" alt="Avatar">
+                        <img class="msg-avatar" src="${chat.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" alt="Avatar">
                         <span class="msg-user">${chat.email === adminEmail ? '[🛡️ Netking Admin] ' + chat.user : chat.user}</span>
                     </div>
                     <div>${chat.text}</div>
