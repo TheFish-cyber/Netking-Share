@@ -102,15 +102,17 @@
         }
 
         /* Tabs Menu */
-        .tabs-container { display: flex; gap: 6px; margin-bottom: 18px; width: 100%; max-width: 600px; z-index: 5; }
+        .tabs-container { display: flex; gap: 6px; margin-bottom: 18px; width: 100%; max-width: 600px; z-index: 5; flex-wrap: wrap; }
         .tab-btn {
-            flex: 1; padding: 10px 4px; background: rgba(15, 15, 25, 0.7); border: 1px solid rgba(0, 240, 255, 0.15);
+            flex: 1; min-width: 80px; padding: 10px 4px; background: rgba(15, 15, 25, 0.7); border: 1px solid rgba(0, 240, 255, 0.15);
             color: #8a8ab0; font-weight: bold; cursor: pointer; border-radius: 8px; transition: all 0.2s; text-align: center; font-size: 0.8rem;
         }
         .tab-btn.active, .tab-btn:hover {
             background: linear-gradient(45deg, rgba(0, 240, 255, 0.15), rgba(255, 0, 127, 0.15));
             color: #00f0ff; border-color: #00f0ff; box-shadow: 0 0 6px rgba(0, 240, 255, 0.15);
         }
+        #tab-btn-admin-panel { display: none; border-color: rgba(255, 0, 127, 0.3); color: #ff007f; }
+        #tab-btn-admin-panel.active, #tab-btn-admin-panel:hover { border-color: #ff007f; color: #ffffff; box-shadow: 0 0 6px rgba(255, 0, 127, 0.4); }
 
         /* MAIN CONTAINER */
         .container { width: 100%; max-width: 600px; padding: 18px; margin-bottom: 25px; z-index: 5; display: block !important; }
@@ -120,38 +122,27 @@
         /* Form UI */
         .form-group { margin-bottom: 14px; position: relative; z-index: 10; }
         label { display: block; margin-bottom: 5px; color: #00f0ff; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.5px; }
-        input[type="text"], input[type="password"], input[type="file"], textarea {
+        input[type="text"], input[type="password"], textarea {
             width: 100%; padding: 10px; background: rgba(10, 10, 15, 0.95) !important;
             border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 8px; color: white; outline: none; transition: 0.3s; font-size: 0.85rem;
             position: relative; z-index: 15;
         }
         input:focus, textarea:focus { border-color: #ff007f; box-shadow: 0 0 6px rgba(255, 0, 127, 0.3); }
 
-        .remember-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; color: #8a8ab0; font-size: 0.8rem;}
-        .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 14px; height: 14px;}
-
         .btn-submit {
             width: 100%; padding: 11px; color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem;
             letter-spacing: 1px; display: block; text-align: center; border-radius: 10px; border: none;
         }
-        .btn-logout-danger {
-            background: transparent; border: 1.5px solid #ff003c; color: #ff003c; transition: 0.2s;
-        }
-        .btn-logout-danger:hover { background: #ff003c; color: #fff; box-shadow: 0 0 10px #ff003c; }
 
-        .btn-mute-temporary {
-            background: transparent; border: 1px solid #5a5a75; color: #8a8ab0; font-size: 0.75rem; padding: 9px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.2s; display: block; text-align: center; font-weight: 500;
-        }
-        .btn-mute-temporary:hover { border-color: #8a8ab0; color: #ffffff; background: rgba(255,255,255,0.05); }
-
-        /* Items File */
-        .file-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .file-item h4 { font-size: 0.95rem; color: #fff; display: flex; align-items: center; justify-content: space-between; }
-        .file-meta { display: flex; gap: 10px; color: #6a6a90; font-size: 0.7rem; }
+        /* Items List */
+        .file-item, .notice-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .file-item h4, .notice-item h4 { font-size: 0.95rem; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+        .file-meta, .notice-meta { display: flex; gap: 10px; color: #6a6a90; font-size: 0.7rem; }
         .badge-verified { color: #00f0ff; border: 1px solid #00f0ff; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #00f0ff; }
+        .badge-admin { color: #ff007f; border: 1px solid #ff007f; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #ff007f; }
         
         .file-actions-group { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px; }
-        .btn-view, .btn-admin-verify {
+        .btn-view {
             width: 100%; text-align: center; padding: 8px; border-radius: 8px; font-weight: bold; 
             cursor: pointer; text-decoration: none; font-size: 0.8rem; display: block; transition: 0.2s;
         }
@@ -166,8 +157,6 @@
             padding: 15px; overflow-y: auto;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        #status-modal { z-index: 10050 !important; }
 
         .modal-box { 
             padding: 22px; max-width: 380px; width: 100%; position: relative; 
@@ -180,7 +169,6 @@
             width: 30px; height: 30px; text-align: center; line-height: 30px;
         }
         .auth-links a { color: #00f0ff; font-weight: bold; text-decoration: none; margin: 0 5px; cursor: pointer;}
-        .note-rules { font-size: 0.72rem; color: #ff007f; margin-top: 4px; display: block; line-height: 1.3;}
 
         /* Loader */
         #loading-frame {
@@ -195,13 +183,6 @@
         .status-icon { font-size: 3rem; font-weight: bold; margin-bottom: 12px; text-align: center; display: block; }
         .icon-success { color: #00ff66; text-shadow: 0 0 12px rgba(0, 255, 102, 0.6); }
         .icon-error { color: #ff003c; text-shadow: 0 0 12px rgba(255, 0, 60, 0.6); }
-
-        .upload-manifest {
-            width: 100%; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 10px; margin: 12px 0;
-            border: 1px solid rgba(255,255,255,0.05); text-align: left; font-size: 0.8rem;
-        }
-        .upload-manifest p { margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8ab0; }
-        .upload-manifest strong { color: #00f0ff; }
 
         .info-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
         .info-row span { color: #8a8ab0; }
@@ -225,15 +206,6 @@
     <div id="loading-frame">
         <div class="spinner"></div>
         <div id="loading-text" style="margin-top: 15px; color: #00f0ff; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;" class="blink-text">SYSTEM LOADING...</div>
-        
-        <div id="upload-progress-box" style="display: none; width: 85%; max-width: 380px; text-align: center;">
-            <div class="upload-manifest">
-                <p>📂 FILE NAME: <strong id="p-title">N/A</strong></p>
-                <p>📝 DESCRIPTION: <strong id="p-desc">N/A</strong></p>
-                <p>⚙️ VERSION: <strong id="p-ver">v1.0.0</strong></p>
-            </div>
-            <div id="upload-timer-text" style="color: #ff007f; font-weight: bold; font-size: 1rem;">ENCRYPTING IN 5s...</div>
-        </div>
     </div>
 
     <div id="status-modal" class="modal-overlay">
@@ -242,9 +214,7 @@
             <span id="status-icon" class="status-icon">✓</span>
             <h3 id="status-title" class="text-gradient" style="font-size: 1.1rem; margin-bottom: 8px;">SUCCESS</h3>
             <p id="status-desc" style="color: #8a8ab0; font-size: 0.82rem; line-height: 1.5; margin-bottom: 15px;">Thao tác hoàn tất.</p>
-            
             <button class="btn-submit" onclick="closeStatusModal()" style="background: linear-gradient(45deg, #00f0ff, #7000ff); border:none;">XÁC NHẬN</button>
-            <button class="btn-mute-temporary" onclick="muteStatusModalOneHour()">🔕 Ẩn thông báo này trong 1h</button>
         </div>
     </div>
 
@@ -272,26 +242,14 @@
                 <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.05rem;">ĐĂNG NHẬP SYSTEMS</h3>
                 <div class="form-group"><label>USERNAME</label><input type="text" id="login-user" placeholder="Nhập tên tài khoản..."></div>
                 <div class="form-group"><label>PASSWORD</label><input type="password" id="login-pass" placeholder="Nhập mật khẩu..."></div>
-                <div class="remember-wrapper">
-                    <input type="checkbox" id="remember-me">
-                    <label for="remember-me">Ghi nhớ đăng nhập</label>
-                </div>
                 <button class="btn-submit" style="background: linear-gradient(45deg, #00f0ff, #7000ff);" onclick="handleAuth('login')">LOGIN NOW</button>
                 <p style="margin-top: 12px; font-size: 0.78rem; color:#8a8ab0;">Chưa có nick? <a onclick="toggleAuthForm('signin')">Đăng ký</a></p>
             </div>
 
             <div id="signin-form-wrapper" style="display: none;">
                 <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.05rem;">ĐĂNG KÝ USER</h3>
-                <div class="form-group">
-                    <label>USERNAME TÀI KHOẢN</label>
-                    <input type="text" id="reg-user" placeholder="Tối đa 10 kí tự">
-                    <small class="note-rules">* Tối đa 10 kí tự. Chỉ dùng chữ, số và _</small>
-                </div>
-                <div class="form-group">
-                    <label>PASSWORD BẢO MẬT</label>
-                    <input type="password" id="reg-pass" placeholder="Tối đa 20 kí tự">
-                    <small class="note-rules">* Tối đa 20 kí tự. Không chứa kí tự đặc biệt cấm.</small>
-                </div>
+                <div class="form-group"><label>USERNAME TÀI KHOẢN</label><input type="text" id="reg-user" placeholder="Tối đa 10 kí tự"></div>
+                <div class="form-group"><label>PASSWORD BẢO MẬT</label><input type="password" id="reg-pass" placeholder="Tối đa 20 kí tự"></div>
                 <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="handleAuth('register')">HOÀN TẤT ĐĂNG KÝ</button>
                 <p style="margin-top: 12px; font-size: 0.78rem; color:#8a8ab0;">Có nick rồi? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
             </div>
@@ -301,31 +259,22 @@
     <div id="account-info-modal" class="modal-overlay">
         <div class="modal-box cyber-frame" style="max-width: 360px;">
             <button onclick="closeAccountInfoModal()" class="modal-close-btn">×</button>
-            <h3 class="text-gradient" style="margin-bottom: 166px; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
+            <h3 class="text-gradient" style="margin-bottom: 15px; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
             
             <div style="margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
-                <div class="info-row">
-                    <span>ACCOUNT NAME:</span>
-                    <strong id="info-display-username">N/A</strong>
-                </div>
-                <div class="info-row">
-                    <span>PASSWORD:</span>
-                    <strong id="info-display-password">••••••••</strong>
-                </div>
-                <div class="info-row" style="border:none;">
-                    <span>RANK LEVEL:</span>
-                    <strong id="info-display-rank" style="color: #00f0ff;">MEMBER</strong>
-                </div>
+                <div class="info-row"><span>ACCOUNT NAME:</span><strong id="info-display-username">N/A</strong></div>
+                <div class="info-row"><span>PASSWORD:</span><strong id="info-display-password">••••••••</strong></div>
+                <div class="info-row" style="border:none;"><span>RANK LEVEL:</span><strong id="info-display-rank" style="color: #00f0ff;">MEMBER</strong></div>
             </div>
-
-            <button class="btn-submit btn-logout-danger" onclick="processLogout()">🚪 LOG OUT ACC</button>
+            <button class="btn-submit" style="background: transparent; border: 1.5px solid #ff003c; color: #ff003c;" onclick="processLogout()">🚪 LOG OUT ACC</button>
         </div>
     </div>
 
     <div class="tabs-container">
         <button class="tab-btn active" onclick="switchTab('tab-files')">1. Files</button>
         <button class="tab-btn" onclick="switchTab('tab-verified')">2. Verified Files</button>
-        <button class="tab-btn" onclick="switchTab('tab-share')">3. Share Files</button>
+        <button class="tab-btn" onclick="switchTab('tab-announcements')">3. Thông báo</button>
+        <button class="tab-btn" id="tab-btn-admin-panel" onclick="switchTab('tab-admin-panel')">4. Admin Panel</button>
     </div>
 
     <div class="container cyber-frame">
@@ -339,20 +288,27 @@
             <div id="verified-container"></div>
         </div>
 
-        <div id="tab-share" class="tab-content">
-            <div class="form-group"><label>TÊN FILE / TIÊU ĐỀ *</label><input type="text" id="file-title"></div>
-            <div class="form-group"><label>MÔ TẢ CHI TIẾT FILE</label><textarea id="file-desc" rows="3" style="resize:none;"></textarea></div>
-            <div class="form-group"><label>PHIÊN BẢN FILE</label><input type="text" id="file-version" placeholder="v1.0.0"></div>
-            <div class="form-group"><label>ĐƯỜNG DẪN TẢI / LIÊN KẾT (URL)</label><input type="text" id="file-url" placeholder="https://..."></div>
-            <div class="form-group"><label>HOẶC TẢI TỆP TIN TỪ THIẾT BỊ</label><input type="file" id="file-upload"></div>
-            <button class="btn-submit" style="background: linear-gradient(45deg, #00f0ff, #ff007f);" onclick="handleUpload()">TẢI LÊN MÁY CHỦ</button>
+        <div id="tab-announcements" class="tab-content">
+            <label style="margin-bottom: 12px; color: #ff007f;" class="blink-text">📢 THÔNG BÁO HỆ THỐNG (ADMIN NOTES)</label>
+            <div id="announcements-container"></div>
+        </div>
+
+        <div id="tab-admin-panel" class="tab-content">
+            <label style="margin-bottom: 15px; color: #ff007f; display: block;" class="text-gradient">⚙️ HỆ THỐNG ĐĂNG THÔNG BÁO TOÀN SERVER</label>
+            <div class="form-group">
+                <label>TIÊU ĐỀ THÔNG BÁO *</label>
+                <input type="text" id="notice-title" placeholder="Ví dụ: Cập nhật Fake Lag v1.0.2...">
+            </div>
+            <div class="form-group">
+                <label>NỘI DUNG CHI TIẾT *</label>
+                <textarea id="notice-content" rows="4" style="resize:none;" placeholder="Nhập nội dung thông báo gửi đến các member..."></textarea>
+            </div>
+            <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="handlePostAnnouncement()">PHÁT HÀNH THÔNG BÁO</button>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        //  🔒 ĐÃ GHÉP CẤU HÌNH FIREBASE CHUẨN CỦA ÔNG
-        // ==========================================
+        // CẤU HÌNH FIREBASE CONFIG CHUẨN CỦA ÔNG
         const firebaseConfig = {
             apiKey: "AIzaSyA1jVOVPHECGp27Qgi4U4r71fiKm_a3biM",
             authDomain: "netking-b0ad0.firebaseapp.com",
@@ -363,11 +319,11 @@
             appId: "1:374692503086:web:0c46168ddfb8dadf45c9bf"
         };
         
-        // Khởi tạo Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         let databaseFiles = []; 
+        let databaseNotices = [];
         let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
 
@@ -376,13 +332,53 @@
             checkUserSession();
             updateHeaderAuthButtonUI();
             
-            // Lắng nghe dữ liệu thời gian thực từ Server Firebase toàn cầu
+            // Tự động kiểm tra và khởi tạo 2 file mặc định lên server nếu trống
+            checkAndInitDefaultFiles();
+
+            // Lắng nghe danh sách file từ Firebase
             db.ref("files").on("value", (snapshot) => {
                 const data = snapshot.val();
                 databaseFiles = data ? Object.values(data) : [];
-                renderServerData();
+                renderServerFiles();
+            });
+
+            // Lắng nghe danh sách thông báo từ Firebase
+            db.ref("announcements").on("value", (snapshot) => {
+                const data = snapshot.val();
+                databaseNotices = data ? Object.values(data) : [];
+                databaseNotices.reverse(); // Hiện thông báo mới nhất lên đầu
+                renderServerAnnouncements();
             });
         };
+
+        // Hàm tự động nạp 2 file của ông lên server Firebase hoàn toàn miễn phí
+        function checkAndInitDefaultFiles() {
+            db.ref("files").once("value", (snapshot) => {
+                if (!snapshot.exists()) {
+                    const defaultFiles = {
+                        "file_001": {
+                            id: "file_001",
+                            title: "Netking Fake Lag",
+                            desc: "Fake Lag Modern, 3 Options:\n1. Freeze Infinity\n2. Invisible\n3. Teleporter",
+                            version: "v1.0.1",
+                            views: 0,
+                            verified: true,
+                            url: "https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file"
+                        },
+                        "file_002": {
+                            id: "file_002",
+                            title: "Netking Fake Lag OG Version",
+                            desc: "Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:\nFreeze The Game For 2s Have About 1.5s To Shoot",
+                            version: "v1.0.2",
+                            views: 0,
+                            verified: true,
+                            url: "https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file"
+                        }
+                    };
+                    db.ref("files").set(defaultFiles);
+                }
+            });
+        }
 
         function initBackgroundEffects() {
             const canvas = document.getElementById("bg-canvas");
@@ -400,11 +396,6 @@
                 size: Math.random() * 2, alpha: Math.random(), speed: 0.02 + Math.random() * 0.03
             }));
 
-            const snowflakes = Array.from({ length: 10 }, () => ({
-                x: Math.random() * w, y: Math.random() * h,
-                speedY: 0.6 + Math.random() * 1.2, speedX: (Math.random() - 0.5) * 0.5, size: 9 + Math.random() * 5
-            }));
-
             function animate() {
                 ctx.clearRect(0, 0, w, h);
                 stars.forEach(s => {
@@ -413,35 +404,35 @@
                     ctx.fillStyle = `rgba(0, 240, 255, ${Math.max(0, s.alpha)})`;
                     ctx.fillRect(s.x, s.y, s.size, s.size);
                 });
-                ctx.fillStyle = "rgba(255, 0, 127, 0.35)";
-                snowflakes.forEach(f => {
-                    ctx.font = `${f.size}px Arial`;
-                    ctx.fillText("☆", f.x, f.y);
-                    f.y += f.speedY; f.x += f.speedX;
-                    if (f.y > h) { f.y = -20; f.x = Math.random() * w; }
-                });
                 requestAnimationFrame(animate);
             }
             animate();
         }
 
         function handleHeaderAuthClick() {
-            if (currentUser === "guest") {
-                openAuthModal('signin');
-            } else {
-                openAccountInfoModal();
-            }
+            if (currentUser === "guest") openAuthModal('signin');
+            else openAccountInfoModal();
         }
 
         function updateHeaderAuthButtonUI() {
             const authBtn = document.getElementById("header-auth-action");
+            const adminTabBtn = document.getElementById("tab-btn-admin-panel");
+            const savedDisplayUser = localStorage.getItem("netking_session_username") || "Account";
+
             if (currentUser === "guest") {
                 authBtn.innerText = "🔑 Sign In";
                 authBtn.className = "header-auth-btn auth-state-signin";
+                adminTabBtn.style.display = "none";
             } else {
-                const savedDisplayUser = localStorage.getItem("netking_session_username") || "Account";
                 authBtn.innerText = `👤 ${savedDisplayUser}`;
                 authBtn.className = "header-auth-btn auth-state-logged";
+                
+                // KIỂM TRA NẾU LÀ ADMIN XINE3D THÌ MỞ TAB THỨ 4
+                if (savedDisplayUser.toLowerCase() === "xine3d") {
+                    adminTabBtn.style.display = "block";
+                } else {
+                    adminTabBtn.style.display = "none";
+                }
             }
         }
 
@@ -464,10 +455,9 @@
             localStorage.removeItem("netking_session_password");
             
             updateHeaderAuthButtonUI();
+            switchTab('tab-files');
             
-            nextActionFlow = "just_close";
-            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản khỏi hệ thống.");
-            
+            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản.");
             document.getElementById("welcome-modal").classList.add("active");
             startWelcomeCounter();
         }
@@ -483,9 +473,7 @@
 
         function startWelcomeCounter() {
             const closeBtn = document.getElementById("close-welcome-btn");
-            let sec = 3;
-            closeBtn.disabled = true;
-            closeBtn.innerText = `Close (${sec}s)`;
+            let sec = 3; closeBtn.disabled = true; closeBtn.innerText = `Close (${sec}s)`;
             const timer = setInterval(() => {
                 sec--;
                 if(sec > 0) closeBtn.innerText = `Close (${sec}s)`;
@@ -499,8 +487,6 @@
 
         function switchTab(tabId) {
             const loader = document.getElementById("loading-frame");
-            document.getElementById("loading-text").style.display = "block";
-            document.getElementById("upload-progress-box").style.display = "none";
             loader.classList.add("active");
 
             setTimeout(() => {
@@ -508,42 +494,42 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 
                 document.getElementById(tabId).style.display = "block";
-                const btnIndex = tabId === 'tab-files' ? 0 : tabId === 'tab-verified' ? 1 : 2;
-                document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+                document.getElementById(tabId === 'tab-files' ? 'tab-files' : tabId).classList.add('active');
+                
+                // Active nút tab tương ứng
+                if(tabId === 'tab-files') document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                if(tabId === 'tab-verified') document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                if(tabId === 'tab-announcements') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                if(tabId === 'tab-admin-panel') document.getElementById('tab-btn-admin-panel').classList.add('active');
                 
                 loader.classList.remove("active");
-            }, 1000);
+            }, 400);
         }
 
-        function renderServerData() {
+        function renderServerFiles() {
             const cAll = document.getElementById("files-container");
             const cVer = document.getElementById("verified-container");
             cAll.innerHTML = ""; cVer.innerHTML = "";
 
             if(databaseFiles.length === 0) {
-                const emptyHtml = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Hệ thống trống. Chưa có tệp tin nào được đồng bộ trên Server.</p>`;
+                const emptyHtml = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Chưa có tệp tin nào trên Server.</p>`;
                 cAll.innerHTML = emptyHtml; cVer.innerHTML = emptyHtml;
                 return;
             }
 
-            databaseFiles.forEach((file, index) => {
-                const adminVerifyButton = (currentUser === "admin" && !file.verified) 
-                    ? `<button class="btn-admin-verify" onclick="verifyFileByAdmin('${file.id}')">Verify File</button>` 
-                    : '';
-
+            databaseFiles.forEach((file) => {
                 const html = `
                     <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
                         <div>
                             <h4>${file.title} ${file.verified ? '<span class="badge-verified">Verified</span>' : ''}</h4>
-                            <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4;">${file.desc || 'Không có mô tả.'}</p>
+                            <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">${file.desc || 'Không có mô tả.'}</p>
                             <div class="file-meta" style="margin-top:6px;">
                                 <span>Ver: ${file.version || '1.0'}</span>
                                 <span>Views: ${file.views || 0}</span>
                             </div>
                         </div>
                         <div class="file-actions-group">
-                            <a href="${file.url || '#'}" target="_blank" class="btn-view" onclick="registerClick('${file.id}', ${file.views || 0})">Xem File</a>
-                            ${adminVerifyButton}
+                            <a href="${file.url || '#'}" target="_blank" class="btn-view" onclick="registerClick('${file.id}', ${file.views || 0})">Tải Ngay (MediaFire)</a>
                         </div>
                     </div>
                 `;
@@ -552,171 +538,104 @@
             });
         }
 
-        function verifyFileByAdmin(fileId) {
-            if(currentUser !== "admin") return;
-            db.ref("files/" + fileId).update({ verified: true });
-            nextActionFlow = "just_close";
-            showStatusModal(true, "VERIFIED", "Tệp tin đã được xác minh thành công toàn hệ thống!");
-        }
+        function renderServerAnnouncements() {
+            const container = document.getElementById("announcements-container");
+            container.innerHTML = "";
 
-        function handleUpload() {
-            const title = document.getElementById("file-title").value.trim();
-            const desc = document.getElementById("file-desc").value.trim();
-            const version = document.getElementById("file-version").value.trim() || "v1.0.0";
-            const urlInput = document.getElementById("file-url").value.trim();
-
-            if(!title) {
-                nextActionFlow = "just_close";
-                showStatusModal(false, "ERROR SYSTEM", "Vui lòng điền tiêu đề tên file!");
+            if (databaseNotices.length === 0) {
+                container.innerHTML = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Chưa có thông báo nào từ Ban Quản Trị Admin Netking.</p>`;
                 return;
             }
 
-            if (currentUser !== "admin" && databaseFiles.length >= 2) {
-                nextActionFlow = "just_close";
-                showStatusModal(false, "LIMIT REACHED", "Tài khoản Member chỉ được up tối đa 2 files trên Server!");
-                return;
+            databaseNotices.forEach(notice => {
+                const html = `
+                    <div class="notice-item cyber-frame" style="border: 1px solid rgba(255, 0, 127, 0.25);">
+                        <div>
+                            <h4>📌 ${notice.title} <span class="badge-admin">ADMIN NOTE</span></h4>
+                            <p style="font-size:0.82rem; color:#d1d1e0; margin-top:6px; line-height:1.5; white-space: pre-line;">${notice.content}</p>
+                            <div class="notice-meta" style="margin-top:8px;">
+                                <span>Đăng bởi: 🌐 ${notice.author}</span>
+                                <span>Thời gian: ${notice.date}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function handlePostAnnouncement() {
+            const title = document.getElementById("notice-title").value.trim();
+            const content = document.getElementById("notice-content").value.trim();
+            const savedDisplayUser = localStorage.getItem("netking_session_username") || "guest";
+
+            if (savedDisplayUser.toLowerCase() !== "xine3d") {
+                return showStatusModal(false, "ERROR", "Quyền hạn của ông không đủ để đăng bài!");
             }
 
-            document.getElementById("loading-text").style.display = "none";
-            document.getElementById("p-title").innerText = title;
-            document.getElementById("p-desc").innerText = desc || "No description.";
-            document.getElementById("p-ver").innerText = version;
-            
-            const progressBox = document.getElementById("upload-progress-box");
-            const timerText = document.getElementById("upload-timer-text");
-            progressBox.style.display = "block";
-            
-            const loader = document.getElementById("loading-frame");
-            loader.classList.add("active");
+            if (!title || !content) {
+                return showStatusModal(false, "ERROR", "Vui lòng nhập đầy đủ tiêu đề và nội dung thông báo!");
+            }
 
-            let countdown = 5;
-            timerText.innerText = `ENCRYPTING IN ${countdown}s...`;
+            const newNoticeRef = db.ref("announcements").push();
+            const now = new Date();
+            const dateString = now.toLocaleDateString('vi-VN') + " - " + now.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
 
-            const interval = setInterval(() => {
-                countdown--;
-                if(countdown > 0) {
-                    timerText.innerText = `ENCRYPTING IN ${countdown}s...`;
-                } else {
-                    clearInterval(interval);
-                    
-                    // Tạo một ID ngẫu nhiên duy nhất cho File trên Firebase
-                    const newFileRef = db.ref("files").push();
-                    const fileId = newFileRef.key;
-
-                    const fileData = {
-                        id: fileId,
-                        title: title, 
-                        desc: desc, 
-                        version: version, 
-                        views: 0, 
-                        verified: false, 
-                        url: urlInput || "#"
-                    };
-
-                    // Đẩy dữ liệu trực tiếp lên Server Cloud
-                    newFileRef.set(fileData);
-
-                    document.getElementById("file-title").value = "";
-                    document.getElementById("file-desc").value = "";
-                    document.getElementById("file-version").value = "";
-                    document.getElementById("file-url").value = "";
-                    document.getElementById("file-upload").value = "";
-
-                    loader.classList.remove("active");
-                    nextActionFlow = "go_to_files_tab";
-                    showStatusModal(true, "SUCCESS UPLOAD", "Tập tin đã đẩy lên Server toàn cầu thành công!");
-                }
-            }, 1000);
-        }
-
-        function isMuted() {
-            const muteExpiry = localStorage.getItem("status_modal_mute_expiry");
-            if (!muteExpiry) return false;
-            return Date.now() < parseInt(muteExpiry);
-        }
-
-        function muteStatusModalOneHour() {
-            const oneHourWindow = Date.now() + (60 * 60 * 1000); 
-            localStorage.setItem("status_modal_mute_expiry", oneHourWindow.toString());
-            document.getElementById("status-modal").classList.remove("active");
-            executeHiddenFlows();
+            newNoticeRef.set({
+                id: newNoticeRef.key,
+                title: title,
+                content: content,
+                author: savedDisplayUser,
+                date: dateString
+            }).then(() => {
+                document.getElementById("notice-title").value = "";
+                document.getElementById("notice-content").value = "";
+                
+                nextActionFlow = "go_to_announcements";
+                showStatusModal(true, "SUCCESS", "Thông báo đã được phát hành toàn server!");
+            });
         }
 
         function showStatusModal(isSuccess, title, msg) {
-            if (isMuted()) {
-                executeHiddenFlows();
-                return;
-            }
-
             const sModal = document.getElementById("status-modal");
             const sIcon = document.getElementById("status-icon");
-            const sTitle = document.getElementById("status-title");
-            const sDesc = document.getElementById("status-desc");
-
-            if (isSuccess) {
-                sIcon.innerText = "✓"; sIcon.className = "status-icon icon-success";
-            } else {
-                sIcon.innerText = "×"; sIcon.className = "status-icon icon-error";
-            }
-            sTitle.innerText = title; sDesc.innerText = msg;
+            if (isSuccess) { sIcon.innerText = "✓"; sIcon.className = "status-icon icon-success"; } 
+            else { sIcon.innerText = "×"; sIcon.className = "status-icon icon-error"; }
+            document.getElementById("status-title").innerText = title;
+            document.getElementById("status-desc").innerText = msg;
             sModal.classList.add("active");
-        }
-
-        function executeHiddenFlows() {
-            if (nextActionFlow === "open_login") {
-                openAuthModal('login');
-            } else if (nextActionFlow === "login_success_clear") {
-                closeAuthModal();
-                document.getElementById("welcome-modal").classList.remove("active");
-            } else if (nextActionFlow === "go_to_files_tab") {
-                document.querySelectorAll('.tab-content').forEach(c => c.style.display = "none");
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('tab-files').style.display = "block";
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            }
-            nextActionFlow = "just_close";
         }
 
         function closeStatusModal() {
             document.getElementById("status-modal").classList.remove("active");
-            executeHiddenFlows();
+            if (nextActionFlow === "login_success_clear") {
+                closeAuthModal();
+                document.getElementById("welcome-modal").classList.remove("active");
+            } else if (nextActionFlow === "go_to_announcements") {
+                switchTab('tab-announcements');
+            }
+            nextActionFlow = "just_close";
         }
 
-        async function handleAuth(action) {
+        function handleAuth(action) {
             if (action === 'register') {
                 const user = document.getElementById("reg-user").value.trim();
                 const pass = document.getElementById("reg-pass").value.trim();
+                if (user.length > 10 || pass.length > 20) return showStatusModal(false, "ERROR", "Tài khoản tối đa 10 kí tự, mật khẩu tối đa 20 kí tự!");
 
-                if (user.length > 10) return showStatusModal(false, "VALIDATION ERROR", "Tên không được quá 10 kí tự!");
-                if (pass.length > 20) return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu không được quá 20 kí tự!");
-
-                const usernameRegex = /^[a-zA-Z0-9_]+$/;
-                if (!usernameRegex.test(user)) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Tên chỉ gồm chữ, số và (_).");
-                }
-
-                const forbiddenPassChars = /[+×÷=/<>[\]!@#$^%\-"']/;
-                if (forbiddenPassChars.test(pass)) {
-                    return showStatusModal(false, "VALIDATION ERROR", "Mật khẩu chứa ký tự bị cấm!");
-                }
-
-                // Lưu thông tin User lên Server Firebase để tụi bạn có thể đăng nhập chéo thiết bị
-                db.ref("users/" + user.toLowerCase()).set({
-                    username: user,
-                    password: pass
-                });
-
-                nextActionFlow = "open_login"; 
-                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký thành công! Tiến hành đăng nhập hệ thống.");
+                db.ref("users/" + user.toLowerCase()).set({ username: user, password: pass });
+                nextActionFlow = "just_close"; 
+                showStatusModal(true, "SUCCESS", "Đăng ký thành công! Hãy chuyển qua đăng nhập.");
+                toggleAuthForm('login');
             } 
             else {
                 let userInput = document.getElementById("login-user").value.trim();
                 const passInput = document.getElementById("login-pass").value.trim();
-                
                 if(!userInput || !passInput) return alert("Vui lòng nhập tài khoản mật khẩu!");
 
                 let userLower = userInput.toLowerCase();
 
+                // TÀI KHOẢN ADMIN MẶC ĐỊNH
                 if (userLower === "xine3d" && passInput === "Thinh_2012") {
                     currentUser = "admin";
                     localStorage.setItem("netking_current_user", "admin"); 
@@ -725,11 +644,10 @@
                     
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
-                    showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại!");
+                    showStatusModal(true, "ADMIN SYSTEM", "Chào mừng Admin xine3d quay trở lại hệ thống!");
                     return;
                 }
 
-                // Kiểm tra tài khoản trên Server Cloud
                 db.ref("users/" + userLower).once("value", (snapshot) => {
                     const userData = snapshot.val();
                     if (userData && userData.password === passInput) {
@@ -740,9 +658,9 @@
 
                         nextActionFlow = "login_success_clear"; 
                         updateHeaderAuthButtonUI();
-                        showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành công!");
+                        showStatusModal(true, "SUCCESS", "Đăng nhập thành công!");
                     } else {
-                        showStatusModal(false, "AUTH FAILED", "Tài khoản hoặc mật khẩu không chính xác!");
+                        showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác!");
                     }
                 });
             }
@@ -752,22 +670,11 @@
             db.ref("files/" + fileId).update({ views: currentViews + 1 });
         }
 
-        function openAuthModal(type) { 
-            document.getElementById("auth-modal").classList.add("active"); 
-            toggleAuthForm(type); 
-        }
-        function closeAuthModal() { 
-            document.getElementById("auth-modal").classList.remove("active"); 
-        }
-        
+        function openAuthModal(type) { document.getElementById("auth-modal").classList.add("active"); toggleAuthForm(type); }
+        function closeAuthModal() { document.getElementById("auth-modal").classList.remove("active"); }
         function toggleAuthForm(type) {
-            if (type === 'login') {
-                document.getElementById("login-form-wrapper").style.display = "block";
-                document.getElementById("signin-form-wrapper").style.display = "none";
-            } else {
-                document.getElementById("login-form-wrapper").style.display = "none";
-                document.getElementById("signin-form-wrapper").style.display = "block";
-            }
+            document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
+            document.getElementById("signin-form-wrapper").style.display = type === 'login' ? "none" : "block";
         }
     </script>
 </body>
