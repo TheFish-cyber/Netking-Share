@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files</title>
+    <title>Netking Files - Ultimate Cyber Systems</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -192,6 +192,31 @@
         .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
         .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 6px #00f0ff; }
 
+        /* ABOUT US SOCIAL BUTTONS SYSTEM */
+        .social-link-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px; margin-bottom: 12px;
+            background: rgba(12, 12, 24, 0.75);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.25s ease-in-out;
+        }
+        .social-link-card:hover {
+            border-color: #00f0ff;
+            background: rgba(0, 240, 255, 0.04);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+            transform: scale(1.01);
+        }
+        .social-card-info { display: flex; align-items: center; gap: 14px; }
+        .social-icon-wrapper {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05);
+        }
+        .social-title { font-weight: bold; font-size: 0.9rem; color: #ffffff; }
+        .social-desc { font-size: 0.72rem; color: #6a6a90; margin-top: 2px; }
+        .social-action-tag { font-size: 0.75rem; color: #00f0ff; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+
         /* MODAL OVERLAYS */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 6, 0.93);
@@ -328,7 +353,8 @@
         <button class="tab-btn active" onclick="switchTab('tab-files')">1. Files</button>
         <button class="tab-btn" onclick="switchTab('tab-verified')">2. Verified Files</button>
         <button class="tab-btn" onclick="switchTab('tab-announcements')">3. Thông báo</button>
-        <button class="tab-btn" id="tab-btn-admin-panel" onclick="switchTab('tab-admin-panel')">4. Admin Panel</button>
+        <button class="tab-btn" onclick="switchTab('tab-about-us')">4. About Us</button>
+        <button class="tab-btn" id="tab-btn-admin-panel" onclick="switchTab('tab-admin-panel')">5. Admin Panel</button>
     </div>
 
     <div class="container cyber-frame">
@@ -393,6 +419,57 @@
             <div id="announcements-container"></div>
         </div>
 
+        <div id="tab-about-us" class="tab-content">
+            <label style="margin-bottom: 15px; color: #00f0ff;" class="blink-text">🌐 NETKING COMMUNITY ECOSYSTEM</label>
+            <div id="about-us-container">
+                
+                <a href="https://www.tiktok.com/@netking.com?_r=1&_t=ZS-97Ve8ehmYgn" target="_blank" class="social-link-card">
+                    <div class="social-card-info">
+                        <div class="social-icon-wrapper" style="color: #ff007f;">🎵</div>
+                        <div>
+                            <div class="social-title">TikTok Channel</div>
+                            <div class="social-desc">Theo dõi video trải nghiệm & update mẹo công nghệ mới nhất</div>
+                        </div>
+                    </div>
+                    <span class="social-action-tag">FOLLOW</span>
+                </a>
+
+                <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="social-link-card">
+                    <div class="social-card-info">
+                        <div class="social-icon-wrapper" style="color: #5865F2;">💬</div>
+                        <div>
+                            <div class="social-title">Discord Server</div>
+                            <div class="social-desc">Tham gia giao lưu, đàm thoại và chat cùng ban quản trị</div>
+                        </div>
+                    </div>
+                    <span class="social-action-tag" style="color: #5865F2;">JOIN</span>
+                </a>
+
+                <a href="https://netkinggo.vercel.app/" target="_blank" class="social-link-card">
+                    <div class="social-card-info">
+                        <div class="social-icon-wrapper" style="color: #00f0ff;">🌍</div>
+                        <div>
+                            <div class="social-title">Official Website</div>
+                            <div class="social-desc">Cổng thông tin dữ liệu trung tâm Netking Go Portal</div>
+                        </div>
+                    </div>
+                    <span class="social-action-tag">VISIT</span>
+                </a>
+
+                <a href="https://netking-store.vercel.app/" target="_blank" class="social-link-card">
+                    <div class="social-card-info">
+                        <div class="social-icon-wrapper" style="color: #ffaa00;">🛒</div>
+                        <div>
+                            <div class="social-title">Netking Store</div>
+                            <div class="social-desc">Hệ thống mua sắm dịch vụ Premium & Tools VIP Cyber</div>
+                        </div>
+                    </div>
+                    <span class="social-action-tag" style="color: #ffaa00;">SHOP NOW</span>
+                </a>
+
+            </div>
+        </div>
+
         <div id="tab-admin-panel" class="tab-content">
             <label style="margin-bottom: 15px; color: #ff007f; display: block;" class="text-gradient">⚙️ HỆ THỐNG ĐĂNG THÔNG BÁO TẠM THỜI</label>
             <div class="form-group">
@@ -412,12 +489,11 @@
         let nextActionFlow = ""; 
 
         const updateNotesList = [
-            { id: 50, title: "Cập nhật v1.5.5: Nâng cấp luồng Live Traffic Real-time Simulation", content: "Đồng bộ hóa lượt xem tự động tăng tương tác trực tiếp khi hệ thống quét thấy hoạt động tải file.", time: "Vừa xong" },
-            { id: 49, title: "Cập nhật v1.4.9: Gỡ bỏ Firebase Realtime Database hoàn toàn", content: "Chuyển cấu trúc source code sang cơ chế No-DB độc lập giúp tăng tốc độ tải trang gấp 3 lần.", time: "1 giờ trước" },
-            { id: 1, title: "Cập nhật v1.0.0: Triển khai dự án Netking Files Share", content: "Thiết lập cấu trúc layout nền móng, hoàn thành bộ khung xương giao diện HTML tĩnh đầu tiên.", time: "6 tháng trước" }
+            { id: 51, title: "Cập nhật v1.6.0: Tích hợp phân vùng thông tin About Us", content: "Chèn danh sách liên kết mạng xã hội chính thức của Netking Community gồm TikTok, Discord, Portal Website và Store.", time: "Vừa xong" },
+            { id: 50, title: "Cập nhật v1.5.5: Nâng cấp luồng Live Traffic Real-time Simulation", content: "Đồng bộ hóa lượt xem tự động tăng tương tác trực tiếp khi hệ thống quét thấy hoạt động tải file.", time: "10 phút trước" },
+            { id: 49, title: "Cập nhật v1.4.9: Gỡ bỏ Firebase Realtime Database hoàn toàn", content: "Chuyển cấu trúc source code sang cơ chế No-DB độc lập giúp tăng tốc độ tải trang gấp 3 lần.", time: "1 giờ trước" }
         ];
 
-        // DANH SÁCH MÔ PHỎNG USER
         const fakeUsers = [
             "asin_cyber", "xine3d", "giabao2009", "hoanglong_pro", "minhtuan9x", "alex_hacker", 
             "shadow99", "matrix_vnn", "ghost_king", "skylight", "cyberfish", "kuro_neko", 
@@ -425,7 +501,6 @@
             "thanhdat_ff", "huuphuoc_og", "khanhduy_termux", "trongnghia_vip"
         ];
         
-        // Key để ánh xạ từ tên file text sang key localstorage
         const fileMapping = {
             "Netking Fake Lag": "file1",
             "Netking Fake Lag OG Version": "file2"
@@ -438,29 +513,23 @@
             updateHeaderAuthButtonUI();
             loadViews(); 
             renderUpdateNotes();
-            setupNextTrafficEvent(); // Kích hoạt bộ đếm thời gian ngẫu nhiên thông minh
+            setupNextTrafficEvent();
         };
 
-        // HÀM CHẠY LIVE TRAFFIC BẰNG TIMEOUT NGẪU NHIÊN KHÔNG THEO CHU KỲ CỐ ĐỊNH
         function setupNextTrafficEvent() {
-            // Random khoảng cách thời gian cho mỗi event (Ví dụ: Từ 15 giây đến 55 giây, hoặc chỉnh tùy ý ông)
-            // Muốn khoảng 2 phút xuất hiện tầm 3 user => trung bình tầm 30 - 45s chạy một lần là chuẩn bài.
             let randomDelay = Math.floor(Math.random() * (55000 - 15000 + 1)) + 15000; 
-
             setTimeout(() => {
                 triggerLiveTrafficUpdate();
-                setupNextTrafficEvent(); // Đệ quy tạo vòng lặp vô hạn ngẫu nhiên tiếp theo
+                setupNextTrafficEvent();
             }, randomDelay);
         }
 
         function triggerLiveTrafficUpdate() {
             const textElement = document.getElementById("live-dynamic-text");
-            
             textElement.style.transform = "translateY(-25px)";
             textElement.style.opacity = "0";
             
             setTimeout(() => {
-                // Thuật toán bốc ngẫu nhiên không trùng lặp tuần hoàn đơn điệu
                 const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
                 const randomFile = fakeFiles[Math.floor(Math.random() * fakeFiles.length)];
                 const randomAgo = Math.floor(Math.random() * 45) + 5;
@@ -472,13 +541,12 @@
                     textElement.style.transform = "translateY(0px)";
                     textElement.style.opacity = "1";
                     
-                    // KHI CÓ USER TẢI FILE NÀO -> TỰ ĐỘNG CỘNG DỒN VIEW CHO FILE ĐÓ TRÊN GIAO DIỆN LẬP TỨC
                     const matchedFileKey = fileMapping[randomFile];
                     if (matchedFileKey) {
                         let currentView = parseInt(localStorage.getItem("netking_v2_view_" + matchedFileKey)) || 0;
                         currentView += 1;
                         localStorage.setItem("netking_v2_view_" + matchedFileKey, currentView.toString());
-                        loadViews(); // Update lại toàn bộ text hiển thị view trên các Tab
+                        loadViews();
                     }
                 }, 50);
             }, 500);
@@ -525,7 +593,6 @@
 
             const loader = document.getElementById("loading-frame");
             const label = document.getElementById("loading-text");
-            
             loader.classList.add("active");
             
             const statusTexts = [
@@ -548,7 +615,6 @@
 
             setTimeout(() => {
                 clearInterval(textInterval);
-                
                 let currentView = parseInt(localStorage.getItem("netking_v2_view_" + fileKey)) || 0;
                 currentView += 1;
                 localStorage.setItem("netking_v2_view_" + fileKey, currentView.toString());
@@ -556,7 +622,6 @@
 
                 loader.classList.remove("active");
                 label.innerText = "SYSTEM LOADING...";
-
                 window.open(downloadUrl, '_blank');
             }, 10000);
         }
@@ -622,9 +687,7 @@
             document.getElementById("account-info-modal").classList.add("active");
         }
         
-        function closeAccountInfoModal() {
-            document.getElementById("account-info-modal").classList.remove("active");
-        }
+        function closeAccountInfoModal() { document.getElementById("account-info-modal").classList.remove("active"); }
 
         function processLogout() {
             closeAccountInfoModal();
@@ -674,9 +737,11 @@
                 
                 document.getElementById(tabId).style.display = "block";
                 
+                // Active nút tương ứng trên menu
                 if(tabId === 'tab-files') document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 if(tabId === 'tab-verified') document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 if(tabId === 'tab-announcements') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                if(tabId === 'tab-about-us') document.querySelectorAll('.tab-btn')[3].classList.add('active');
                 if(tabId === 'tab-admin-panel') document.getElementById('tab-btn-admin-panel').classList.add('active');
                 
                 loader.classList.remove("active");
@@ -743,7 +808,7 @@
                     updateHeaderAuthButtonUI();
                     showStatusModal(true, "SUCCESS", "Đăng nhập thành công!");
                 } else {
-                    showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác (hoặc thử acc admin xine3d)!");
+                    showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác!");
                 }
             }
         }
