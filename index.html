@@ -401,7 +401,7 @@
             animate();
         }
 
-        /* FIX HÀM ĐIỀU PHỐI ĐỂ KHÔNG BỊ SAI TRẠNG THÁI KHUNG */
+        /* FIX HOÀN TOÀN HÀM LOGIC ĐIỀU PHỐI CLICK HEADER */
         function handleHeaderAuthClick() {
             if (currentUser === "guest") {
                 openAuthModal('signin');
@@ -722,7 +722,7 @@
             renderServerData();
         }
 
-        /* FIX HOÀN TOÀN TRẠNG THÁI CHUYỂN ĐỔI FORM ĐỂ TRÁNH BỊ TRANH CHẤP TRỐNG KHUNG */
+        /* FIX HOÀN TOÀN TRẠNG THÁI CHUYỂN ĐỔI FORM */
         function openAuthModal(type) { 
             document.getElementById("auth-modal").classList.add("active"); 
             toggleAuthForm(type); 
