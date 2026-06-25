@@ -3,636 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Share Portal</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
+    <title>Netking Files</title>
     <style>
-        /* --- GIAO DIỆN CHỦ ĐẠO CYBERPUNK MODERNIZE --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: #05050a;
             color: #ffffff;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             padding: 20px;
-        }
-        .container { max-width: 800px; margin: 0 auto; }
-        
-        header { text-align: center; margin-bottom: 25px; }
-        h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(45deg, #00f0ff, #ff007f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* HỆ THỐNG MENU 3 TAB CHÍNH */
-        .tab-navigation {
             display: flex;
-            background: rgba(20, 20, 35, 0.8);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 14px;
-            padding: 5px;
-            margin-bottom: 25px;
-            gap: 5px;
-        }
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: #8a8ab0;
-            padding: 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s;
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            min-height: 100vh;
         }
-        .tab-btn:hover { color: #00f0ff; background: rgba(0, 240, 255, 0.05); }
-        .tab-btn.active {
+
+        .text-gradient {
             background: linear-gradient(45deg, #00f0ff, #ff007f);
-            color: white;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
+        h1 { font-size: 2.2rem; margin-bottom: 5px; text-align: center; letter-spacing: 1px;}
+        p.subtitle { color: #8a8ab0; font-size: 0.95rem; margin-bottom: 30px; text-align: center; }
 
-        /* Khối Thống kê */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; text-align: center; }
-        .stat-box { background: rgba(20, 20, 35, 0.6); border: 1px solid rgba(0, 240, 255, 0.2); padding: 15px; border-radius: 14px; }
-        .stat-box h3 { color: #8a8ab0; font-size: 0.9rem; margin-bottom: 5px; }
-        .stat-box p { font-size: 1.5rem; font-weight: bold; color: #00f0ff; }
-
-        /* Form Nhập liệu / Upload */
-        .upload-section {
-            background: rgba(10, 10, 20, 0.8);
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(10, 10, 20, 0.85);
             border-radius: 16px;
             padding: 25px;
-            border: 1px solid rgba(255, 0, 127, 0.2);
+            position: relative;
+            backdrop-filter: blur(10px);
         }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; color: #8a8ab0; font-size: 0.85rem; margin-bottom: 6px; font-weight: bold; }
-        .input-cyber { width: 100%; background: #05050a; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 10px; padding: 12px; color: white; outline: none; transition: 0.2s; }
-        .input-cyber:focus { border-color: #ff007f; box-shadow: 0 0 10px rgba(255, 0, 127, 0.3); }
+        .container::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 18px; background: linear-gradient(135deg, #00f0ff, #7000ff, #ff007f);
+            z-index: -1; pointer-events: none;
+        }
 
-        .btn-cyber { border: none; color: white; background: linear-gradient(45deg, #00f0ff, #ff007f); padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        .btn-cyber:hover { opacity: 0.9; transform: scale(1.01); }
-        
-        .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 10px; }
-        .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
-        #upload-status { margin-top: 10px; color: #00ff66; font-size: 0.9rem; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #00f0ff; font-weight: bold; font-size: 0.9rem; }
+        input[type="text"], input[type="file"] {
+            width: 100%; padding: 12px; background: rgba(20, 20, 35, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 8px;
+            color: white; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: #ff007f; box-shadow: 0 0 10px rgba(255, 0, 127, 0.2); }
 
-        /* Danh sách File */
-        .file-list { display: flex; flex-direction: column; gap: 15px; }
+        .btn-submit {
+            width: 100%; padding: 14px; background: linear-gradient(45deg, #00f0ff, #ff007f);
+            border: none; border-radius: 8px; color: white; font-weight: bold;
+            cursor: pointer; font-size: 1rem; transition: transform 0.1s ease, box-shadow 0.3s;
+        }
+        .btn-submit:active { transform: scale(0.96); }
+        .btn-submit:hover { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+
+        .file-list { margin-top: 30px; width: 100%; }
         .file-item {
-            background: rgba(20, 20, 35, 0.5); padding: 18px; border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center;
+            background: rgba(20, 20, 35, 0.7); padding: 15px; border-radius: 8px;
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .file-info h4 { color: #00f0ff; margin-bottom: 4px; word-break: break-all; }
-        .file-info p { color: #8a8ab0; font-size: 0.85rem; }
-        .file-actions { display: flex; gap: 8px; align-items: center; }
+        .file-info h4 { color: #ffffff; font-size: 1rem; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; max-width: 350px; }
+        .file-info span { color: #8a8ab0; font-size: 0.8rem; }
         
-        .btn-download { background: #ff007f; border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 0.9rem; }
-        .btn-verify { background: #00ff66; border: none; color: #05050a; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; display: none; }
+        .btn-view {
+            background: transparent; border: 1px solid #00f0ff; color: #00f0ff;
+            padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;
+            text-decoration: none; font-size: 0.85rem; transition: all 0.2s;
+        }
+        .btn-view:hover { background: #00f0ff; color: #05050a; }
 
-        /* HE THONG POPUP THONG BAO & AUTH OVERLAY */
-        .auth-overlay {
+        /* 1. KHUNG LOADING RIÊNG */
+        #loading-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 3, 8, 0.85); backdrop-filter: blur(10px);
-            z-index: 20000; display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease;
+            background: rgba(5, 5, 10, 0.9); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-        .auth-overlay.show { opacity: 1; visibility: visible; }
-        
-        .auth-modal {
-            background: #0d0d18; border: 1px solid rgba(0, 240, 255, 0.3);
-            width: 90%; max-width: 420px; border-radius: 20px; padding: 30px;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2); position: relative;
-            transform: scale(0.85); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: none;
+        #loading-frame.active { opacity: 1; pointer-events: auto; }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(0, 240, 255, 0.1); border-left-color: #00f0ff; border-right-color: #ff007f;
+            border-radius: 50%; animation: spin 1s infinite linear;
         }
-        .auth-overlay.show .auth-modal.active { display: block; transform: scale(1); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loading-text { margin-top: 15px; color: #00f0ff; font-weight: bold; letter-spacing: 1px; }
 
-        .close-modal-btn { position: absolute; top: 20px; right: 20px; font-size: 20px; color: #8a8ab0; cursor: pointer; transition: 0.2s; }
-        .close-modal-btn:hover { color: #ff007f; }
-
-        .auth-modal h2 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 800; background: linear-gradient(45deg, #00f0ff, #ff007f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
-        .auth-modal p { color: #8a8ab0; text-align: center; font-size: 0.9rem; margin-bottom: 25px; }
-
-        .auth-options-btn { display: flex; gap: 15px; margin-top: 15px; }
-        .btn-outline { flex: 1; padding: 12px; border: 1px solid #00f0ff; background: transparent; color: #00f0ff; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; text-align: center; }
-        .btn-outline:hover { background: #00f0ff; color: #000; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-
-        .close-countdown { position: absolute; top: 20px; right: 20px; color: #ff3333; font-weight: bold; font-size: 0.9rem; background: rgba(255, 51, 51, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255, 51, 51, 0.3); }
-        .close-countdown.ready { cursor: pointer; background: #ff3333; color: white; }
-
-        /* WIDGET CHAT BONG BÓNG */
-        #chat-widget-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
-        #chat-launcher { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(45deg, #ff007f, #7000ff); box-shadow: 0 0 15px rgba(255, 0, 127, 0.5); border: none; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #chat-launcher:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 0 25px rgba(0, 240, 255, 0.8); }
-        
-        #chat-box {
-            display: flex; flex-direction: column; width: 330px; height: 460px; background: rgba(11, 11, 22, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 16px; position: absolute; bottom: 75px; right: 0; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(30px) scale(0.9); transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.4s; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        #chat-box.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); border-color: #ff007f; box-shadow: 0 0 30px rgba(255, 0, 127, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.1); }
-        .chat-header { background: linear-gradient(45deg, #7000ff, #ff007f); padding: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header span { font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
-        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: rgba(5, 5, 10, 0.4); }
-        
-        .msg { max-width: 85%; padding: 8px 12px; border-radius: 10px; font-size: 0.9rem; line-height: 1.4; word-break: break-all; }
-        .msg.other { background: rgba(30, 30, 55, 0.8); align-self: flex-start; border-bottom-left-radius: 0; }
-        .msg.me { background: linear-gradient(135deg, #ff007f, #b0005d); align-self: flex-end; border-bottom-right-radius: 0; }
-        .msg-user-container { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-        .msg-avatar { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid #00f0ff; }
-        .msg-user { font-size: 0.75rem; color: #00f0ff; font-weight: bold; }
-
-        .chat-login-area { padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .chat-input-area { padding: 12px; display: flex; gap: 8px; background: rgba(15, 15, 30, 0.9); border-top: 1px solid rgba(255,255,255,0.05); }
-        .chat-input-area input { flex: 1; background: #05050a; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 8px; padding: 10px 14px; color: white; outline: none; }
-        .chat-input-area button { background: linear-gradient(45deg, #00f0ff, #7000ff); border: none; color: #ffffff; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .error-msg { color: #ff0055; font-size: 0.85rem; margin-top: 5px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="auth-overlay" id="global-auth-overlay">
-        
-        <div class="auth-modal" id="modal-welcome">
-            <div class="close-countdown" id="welcome-countdown-btn" onclick="closeWelcomePopup()">Close (3s)</div>
-            <h2 style="margin-top: 20px;">WELCOME TO NETKING!</h2>
-            <p>Kho lưu trữ dữ liệu đám mây tối tân. Chúng tôi khuyến nghị bạn nên tạo tài khoản hoặc đăng nhập để có trải nghiệm upload không giới hạn.</p>
-            <div class="auth-options-btn">
-                <button class="btn-cyber" onclick="openAuthSubFrame('sign-in')"><i class="fa-solid fa-user-plus"></i> Sign In</button>
-                <button class="btn-outline" onclick="openAuthSubFrame('log-in')"><i class="fa-solid fa-right-to-bracket"></i> Log In</button>
-            </div>
-        </div>
-
-        <div class="auth-modal" id="modal-signin">
-            <div class="close-modal-btn" onclick="backToWelcomeFrame()"><i class="fa-solid fa-circle-xmark"></i></div>
-            <h2>CREATE ACCOUNT</h2>
-            <p>Đăng ký tài khoản lưu trên hệ thống Cloud</p>
-            <div class="input-group">
-                <label>TÊN ĐĂNG NHẬP (USERNAME)</label>
-                <input type="text" id="reg-username" class="input-cyber" placeholder="Nhập tên tài khoản...">
-            </div>
-            <div class="input-group">
-                <label>MẬT KHẨU (PASSWORD)</label>
-                <input type="password" id="reg-password" class="input-cyber" placeholder="Nhập mật khẩu...">
-            </div>
-            <button class="btn-cyber" onclick="handleCloudRegister()">XÁC NHẬN ĐĂNG KÝ</button>
-        </div>
-
-        <div class="auth-modal" id="modal-login">
-            <div class="close-modal-btn" onclick="backToWelcomeFrame()"><i class="fa-solid fa-circle-xmark"></i></div>
-            <h2>MEMBER LOGIN</h2>
-            <p>Vui lòng đăng nhập bằng tài khoản Cloud của bạn</p>
-            <div class="input-group">
-                <label>TÊN ĐĂNG NHẬP</label>
-                <input type="text" id="login-username" class="input-cyber" placeholder="Nhập tên đăng nhập...">
-            </div>
-            <div class="input-group">
-                <label>MẬT KHẨU</label>
-                <input type="password" id="login-password" class="input-cyber" placeholder="Nhập mật khẩu...">
-            </div>
-            <button class="btn-cyber" style="background: linear-gradient(45deg, #00ff66, #00f0ff); color: black;" onclick="handleCloudLogin()">ĐĂNG NHẬP HỆ THỐNG</button>
-        </div>
-
+    <div id="loading-frame">
+        <div class="spinner"></div>
+        <div class="loading-text">ĐANG LƯU FILE VÀO SERVER WEB CỦA BẠN...</div>
     </div>
+
+    <h1 class="text-gradient">NETKING SHARE PORTAL</h1>
+    <p class="subtitle">Hệ thống tự lưu trữ và chia sẻ file độc lập</p>
 
     <div class="container">
-        <header>
-            <h1>NETKING SHARE PORTAL</h1>
-            <p style="color: #8a8ab0; margin-top: 5px;" id="welcome-user-tag">Chào mừng bạn đến với mạng phân phối Cloud</p>
-        </header>
-
-        <div class="stats-grid">
-            <div class="stat-box">
-                <h3>Tổng Hệ Thống</h3>
-                <p id="stat-total-files">0</p>
-            </div>
-            <div class="stat-box">
-                <h3>Lượt Tải Toàn Sàn</h3>
-                <p id="stat-total-downloads">0</p>
-            </div>
-            <div class="stat-box">
-                <h3>Đang Truy Cập</h3>
-                <p id="stat-active-users">1</p>
-            </div>
+        <div class="form-group">
+            <label>TÊN FILE / TIÊU ĐỀ</label>
+            <input type="text" id="file-title" placeholder="Nhập tên tệp tin hoặc tiêu đề...">
         </div>
 
-        <div class="tab-navigation">
-            <button class="tab-btn active" onclick="switchTab('tab-shared')"><i class="fa-solid fa-users"></i> Files Shared</button>
-            <button class="tab-btn" onclick="switchTab('tab-verified')"><i class="fa-solid fa-shield-halved"></i> Verified By Netking</button>
-            <button class="tab-btn" onclick="switchTab('tab-upload')"><i class="fa-solid fa-cloud-arrow-up"></i> Share File</button>
+        <div class="form-group">
+            <label>ĐƯỜNG DẪN LIÊN KẾT (Tùy chọn)</label>
+            <input type="text" id="file-url" placeholder="https://example.com">
+            <div id="url-error" class="error-msg">Lỗi: Định dạng link giả mạo hoặc sai tên miền chuẩn (TLD)!</div>
         </div>
 
-        <div id="tab-shared" class="tab-content active">
-            <h3 style="margin-bottom: 15px; color: #00f0ff;"><i class="fa-solid fa-folder-open"></i> Tệp tin do thành viên đăng tải</h3>
-            <div class="file-list" id="shared-container"></div>
+        <div class="form-group">
+            <label>HOẶC CHỌN TỆP TIN TỪ THIẾT BỊ</label>
+            <input type="file" id="file-upload">
         </div>
 
-        <div id="tab-verified" class="tab-content">
-            <h3 style="margin-bottom: 15px; color: #00ff66;"><i class="fa-solid fa-circle-check"></i> Tệp tin đã được Netking phê duyệt bảo mật</h3>
-            <div class="file-list" id="verified-container"></div>
-        </div>
+        <button class="btn-submit" onclick="handleUpload()">TẢI LÊN SERVER RIÊNG</button>
 
-        <div id="tab-upload" class="tab-content">
-            <div class="upload-section">
-                <h3 style="color: #ff007f; margin-bottom: 15px;"><i class="fa-solid fa-share-nodes"></i> Đăng tải dữ liệu mới</h3>
-                <div class="input-group">
-                    <label>TÊN TỆP TIN / TIÊU ĐỀ LIÊN KẾT</label>
-                    <input type="text" id="custom-file-name" class="input-cyber" placeholder="Nhập tiêu đề hoặc tên tệp...">
-                </div>
-                <div class="input-group">
-                    <label>ĐƯỜNG DẪN TẢI NGOÀI (NẾU CÓ)</label>
-                    <input type="text" id="custom-file-url" class="input-cyber" placeholder="Dán link tải từ Mediafire, Drive hoặc Mega tại đây...">
-                </div>
-                <div class="upload-btn-wrapper">
-                    <button class="btn-cyber"><i class="fa-solid fa-file-arrow-up"></i> HOẶC CHỌN TỆP ĐỂ UP TRỰC TIẾP</button>
-                    <input type="file" id="file-uploader" />
-                </div>
-                <div style="text-align: center; margin-top: 15px;">
-                    <button class="btn-cyber" style="background: #7000ff; width: auto; padding: 10px 30px;" onclick="publishCustomShare()">XÁC NHẬN ĐĂNG LINK</button>
-                </div>
-                <div id="upload-status"></div>
-            </div>
+        <div class="file-list" id="files-container">
+            <label>TỆP TIN MỚI NHẤT</label>
         </div>
     </div>
-
-    <div id="chat-widget-container">
-        <button id="chat-launcher" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
-        <div id="chat-box">
-            <div class="chat-header">
-                <span><i class="fa-solid fa-circle" style="color: #00ff66; font-size: 8px;"></i> NETKING GLOBAL CHAT</span>
-                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="toggleChat()"></i>
-            </div>
-            <div class="chat-messages" id="chat-messages-container"></div>
-            <div id="chat-controls">
-                <div class="chat-login-area" id="google-login-box">
-                    <div id="buttonDiv"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, increment, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
-        import { getDatabase, ref as rRef, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
-
-        // ⚠️ QUAN TRỌNG: Hãy điền chính xác các chuỗi cấu hình Firebase của dự án Netking vào đây để không bị lỗi kết nối mây!
-        const firebaseConfig = {
-            apiKey: "AIzaSyA1...", 
-            authDomain: "netking-share.firebaseapp.com",
-            projectId: "netking-share",
-            storageBucket: "netking-share.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456:web:abcde",
-            databaseURL: "https://netking-share-default-rtdb.firebaseio.com"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-        const rtdb = getDatabase(app);
-
-        let currentUserData = null;
-        let sessionID = 'User_' + Math.floor(1000 + Math.random() * 9000);
-        const adminEmail = "thinhbcn2012@gmail.com"; 
-
-        // Khởi tạo tài khoản Admin xine3d cố định trên Cloud theo chuẩn sếp yêu cầu
-        async function initAdminAccount() {
-            try {
-                await setDoc(doc(db, "accounts", "xine3d"), {
-                    username: "xine3d",
-                    password: "Thinh_2012",
-                    role: "admin",
-                    name: "Netking Admin (xine3d)",
-                    picture: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                }, { merge: true });
-            } catch (e) {
-                console.error("Lỗi tạo admin: ", e);
-            }
-        }
-        initAdminAccount();
-
-        // --- HỆ THỐNG KIỂM SOÁT THỜI GIAN ĐẾM NGƯỢC POPUP ---
-        let countdownTime = 3;
-        let countdownInterval;
-        let canCloseWelcome = false;
-
-        window.startWelcomeCountdown = function() {
-            const overlay = document.getElementById('global-auth-overlay');
-            const welcomeModal = document.getElementById('modal-welcome');
-            const cdBtn = document.getElementById('welcome-countdown-btn');
-            
-            overlay.classList.add('show');
-            welcomeModal.classList.add('active');
-
-            countdownInterval = setInterval(() => {
-                countdownTime--;
-                if(countdownTime > 0) {
-                    cdBtn.innerText = `Close (${countdownTime}s)`;
-                } else {
-                    clearInterval(countdownInterval);
-                    cdBtn.innerText = "Close";
-                    cdBtn.style.color = "#00ff66";
-                    cdBtn.style.background = "rgba(0, 255, 102, 0.1)";
-                    cdBtn.style.borderColor = "rgba(0, 255, 102, 0.3)";
-                    cdBtn.classList.add('ready');
-                    canCloseWelcome = true;
-                }
-            }, 1000);
-        }
-        startWelcomeCountdown();
-
-        window.closeWelcomePopup = function() {
-            if(!canCloseWelcome) return;
-            document.getElementById('global-auth-overlay').classList.remove('show');
-        }
-
-        window.openAuthSubFrame = function(type) {
-            document.getElementById('modal-welcome').classList.remove('active');
-            if(type === 'sign-in') {
-                document.getElementById('modal-signin').classList.add('active');
-            } else if(type === 'log-in') {
-                document.getElementById('modal-login').classList.add('active');
-            }
-        }
-
-        window.backToWelcomeFrame = function() {
-            document.getElementById('modal-signin').classList.remove('active');
-            document.getElementById('modal-login').classList.remove('active');
-            document.getElementById('modal-welcome').classList.add('active');
-        }
-
-        // --- XỬ LÝ ĐĂNG KÝ VÀ LƯU VÀO ĐÁM MÂY CLOUD FIRESTORE ---
-        window.handleCloudRegister = async function() {
-            const u = document.getElementById('reg-username').value.trim();
-            const p = document.getElementById('reg-password').value.trim();
-            
-            if(!u || !p) { alert("Vui lòng điền đầy đủ tài khoản và mật khẩu!"); return; }
-            
-            try {
-                const docRef = doc(db, "accounts", u);
-                const docSnap = await getDoc(docRef);
-                
-                if(docSnap.exists()) {
-                    alert("Tên tài khoản này đã có người đăng ký trên hệ thống!");
-                    return;
-                }
-
-                await setDoc(docRef, {
-                    username: u,
-                    password: p,
-                    role: "member",
-                    name: u,
-                    picture: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                });
-
-                alert("Đăng ký tài khoản Đám mây thành công! Tiến hành đăng nhập nào.");
-                document.getElementById('reg-username').value = '';
-                document.getElementById('reg-password').value = '';
-                openAuthSubFrame('log-in');
-            } catch (error) {
-                console.error(error);
-                alert("Lỗi Firebase (Hãy kiểm tra Rules Firestore hoặc Khóa ApiKey): " + error.message);
-            }
-        }
-
-        // --- XỬ LÝ ĐĂNG NHẬP TÀI KHOẢN CLOUD ---
-        window.handleCloudLogin = async function() {
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
-
-            if(!u || !p) { alert("Vui lòng điền thông tin đăng nhập!"); return; }
-
-            try {
-                const docRef = doc(db, "accounts", u);
-                const docSnap = await getDoc(docRef);
-
-                if(docSnap.exists() && docSnap.data().password === p) {
-                    const userData = docSnap.data();
-                    currentUserData = {
-                        name: userData.name,
-                        email: userData.username === 'xine3d' ? adminEmail : userData.username + "@cloud.netking",
-                        picture: userData.picture
-                    };
-
-                    alert(`Đăng nhập thành công! Chào mừng ${userData.name}.`);
-                    document.getElementById('global-auth-overlay').classList.remove('show');
-                    document.getElementById('welcome-user-tag').innerText = `ID Đang Kết Nối: [${userData.name}]`;
-                    
-                    // Mở khóa Chat
-                    document.getElementById('chat-controls').innerHTML = `
-                        <div class="chat-input-area">
-                            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleChatKey(event)"/>
-                            <button onclick="sendChatMessage()">Gửi</button>
-                        </div>
-                    `;
-
-                    // Kích hoạt đặc quyền Verify nếu là Admin xine3d hoặc Gmail sếp
-                    if(userData.username === 'xine3d') {
-                        document.querySelectorAll('.btn-verify').forEach(btn => btn.style.display = 'inline-block');
-                    }
-                } else {
-                    alert("Sai tên đăng nhập hoặc mật khẩu, vui lòng thử lại!");
-                }
-            } catch (error) {
-                alert("Lỗi kết nối Firebase: " + error.message);
-            }
-        }
-
-        // --- ĐƯỜNG TRUYỀN ACTIVE USERS REALTIME ---
-        const myConnectionsRef = rRef(rtdb, `connections/${sessionID}`);
-        onValue(rRef(rtdb, '.info/connected'), (snap) => {
-            if (snap.val() === true) { set(myConnectionsRef, true); onDisconnect(myConnectionsRef).remove(); }
-        });
-        onValue(rRef(rtdb, 'connections'), (snap) => {
-            document.getElementById('stat-active-users').innerText = snap.exists() ? Object.keys(snap.val()).length : 1;
-        });
-
-        // --- ĐĂNG LINK NGOÀI HOẶC UPLOAD TỆP TIN ---
-        window.publishCustomShare = async function() {
-            const name = document.getElementById('custom-file-name').value.trim();
-            const url = document.getElementById('custom-file-url').value.trim();
-            if(!name || !url) { alert("Vui lòng điền đủ Tên và Đường dẫn link!"); return; }
-            
-            try {
-                await addDoc(collection(db, "files"), {
-                    name: name, url: url, size: "External Link", downloads: 0, verified: false, timestamp: serverTimestamp()
-                });
-                alert("Đăng dữ liệu liên kết thành công lên mây!");
-                document.getElementById('custom-file-name').value = '';
-                document.getElementById('custom-file-url').value = '';
-                switchTab('tab-shared');
-            } catch (error) {
-                alert("Không thể lưu file (Hãy kiểm tra Rules Firestore): " + error.message);
-            }
-        };
-
-        const fileInput = document.getElementById('file-uploader');
-        const uploadStatus = document.getElementById('upload-status');
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            let customName = document.getElementById('custom-file-name').value.trim() || file.name;
-            uploadStatus.innerText = "Đang đẩy tệp lên đám mây...";
-            
-            const storageRef = ref(storage, 'shares/' + Date.now() + '_' + file.name);
-            const uploadTask = uploadBytesResumable(storageRef, file);
-
-            uploadTask.on('state_changed', 
-                (snap) => { uploadStatus.innerText = `Đang tải: ${Math.round((snap.bytesTransferred / snap.totalBytes) * 100)}%`; },
-                (err) => { uploadStatus.innerText = "Lỗi Storage (Kiểm tra Rules Storage): " + err.message; },
-                () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-                        try {
-                            await addDoc(collection(db, "files"), {
-                                name: customName, url: downloadURL, size: (file.size / (1024 * 1024)).toFixed(2) + " MB", downloads: 0, verified: false, timestamp: serverTimestamp()
-                            });
-                            uploadStatus.innerText = "Tải lên thành công!";
-                            document.getElementById('custom-file-name').value = '';
-                            fileInput.value = '';
-                            switchTab('tab-shared');
-                        } catch(err) {
-                            alert("Tải file lên kho chứa tốt nhưng không thể ghi bản ghi vào Firestore: " + err.message);
-                        }
-                    });
-                }
-            );
-        });
-
-        // --- ĐỒNG BỘ HAI TAB FILES REALTIME ---
-        const qFiles = query(collection(db, "files"), orderBy("timestamp", "desc"));
-        onSnapshot(qFiles, (snapshot) => {
-            const sharedContainer = document.getElementById('shared-container');
-            const verifiedContainer = document.getElementById('verified-container');
-            sharedContainer.innerHTML = ''; verifiedContainer.innerHTML = '';
-            let totalDownloads = 0; let totalFiles = snapshot.size;
-
-            snapshot.forEach((docSnap) => {
-                const fileData = docSnap.data();
-                const fileId = docSnap.id;
-                totalDownloads += (fileData.downloads || 0);
-
-                const isAdmin = currentUserData && (currentUserData.email === adminEmail || currentUserData.email === "xine3d@cloud.netking");
-                const showVerifyBtn = isAdmin && !fileData.verified ? 'inline-block' : 'none';
-
-                const itemHTML = `
-                    <div class="file-item">
-                        <div class="file-info">
-                            <h4>${fileData.name}</h4>
-                            <p>Dung lượng: ${fileData.size} | Lượt tải: <span>${fileData.downloads || 0}</span></p>
-                        </div>
-                        <div class="file-actions">
-                            <button class="btn-verify" id="vbtn-${fileId}" style="display: ${showVerifyBtn}" data-id="${fileId}"><i class="fa-solid fa-check"></i> Verify</button>
-                            <button class="btn-download" data-id="${fileId}" data-url="${fileData.url}">Tải Xuống</button>
-                        </div>
-                    </div>
-                `;
-
-                if(fileData.verified === true) {
-                    verifiedContainer.insertAdjacentHTML('beforeend', itemHTML);
-                } else {
-                    sharedContainer.insertAdjacentHTML('beforeend', itemHTML);
-                }
-            });
-
-            document.getElementById('stat-total-files').innerText = totalFiles;
-            document.getElementById('stat-total-downloads').innerText = totalDownloads;
-
-            document.querySelectorAll('.btn-download').forEach(button => {
-                button.addEventListener('click', async () => {
-                    const id = button.getAttribute('data-id');
-                    const url = button.getAttribute('data-url');
-                    try {
-                        await updateDoc(doc(db, "files", id), { downloads: increment(1) });
-                    } catch(e) { console.error("Lỗi tăng lượt tải: ", e); }
-                    window.open(url, '_blank');
-                });
-            });
-
-            document.querySelectorAll('.btn-verify').forEach(button => {
-                button.addEventListener('click', async () => {
-                    const id = button.getAttribute('data-id');
-                    try {
-                        await updateDoc(doc(db, "files", id), { verified: true });
-                        alert("Đã xác minh file thành công!");
-                    } catch(e) { alert("Lỗi xác minh: " + e.message); }
-                });
-            });
-        });
-
-        // --- REALTIME CHATROOM ---
-        const qChat = query(collection(db, "chats"), orderBy("timestamp", "asc"));
-        onSnapshot(qChat, (snapshot) => {
-            const chatContainer = document.getElementById('chat-messages-container');
-            chatContainer.innerHTML = '';
-            snapshot.forEach((docSnap) => {
-                const chat = docSnap.data();
-                const msgDiv = document.createElement('div');
-                const isMe = currentUserData && chat.email === currentUserData.email;
-                msgDiv.className = `msg ${isMe ? 'me' : 'other'}`;
-                msgDiv.innerHTML = `
-                    <div class="msg-user-container">
-                        <img class="msg-avatar" src="${chat.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" alt="Avatar">
-                        <span class="msg-user">${chat.email === adminEmail ? '[🛡️ Netking Admin] ' + chat.user : chat.user}</span>
-                    </div>
-                    <div>${chat.text}</div>
-                `;
-                chatContainer.appendChild(msgDiv);
-            });
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        });
-
-        window.sendChatMessage = function() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if(!text || !currentUserData) return;
-
-            addDoc(collection(db, "chats"), {
-                user: currentUserData.name, email: currentUserData.email, avatar: currentUserData.picture, text: text, timestamp: serverTimestamp()
-            });
-            input.value = '';
-        }
-        window.handleChatKey = function(e) { if(e.key === 'Enter') sendChatMessage(); }
-
-        // --- GOOGLE OAUTH BACKUP FOR CHAT ---
-        function parseJwt (token) {
-            var base64Url = token.split('.')[1];
-            return JSON.parse(decodeURIComponent(window.atob(base64Url.replace(/-/g, '+').replace(/_/g, '/')).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')));
-        }
-        window.handleCredentialResponse = function(response) {
-            currentUserData = parseJwt(response.credential);
-            document.getElementById('chat-controls').innerHTML = `
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleChatKey(event)"/>
-                    <button onclick="sendChatMessage()">Gửi</button>
-                </div>
-            `;
-            if(currentUserData.email === adminEmail) {
-                alert("Đăng nhập Admin Google thành công!");
-                document.querySelectorAll('.btn-verify').forEach(btn => btn.style.display = 'inline-block');
-            }
-        }
-        window.onload = function () {
-            google.accounts.id.initialize({ client_id: "799208696035-icbc4f2ghqkotqvro40iua27tmgbscc5.apps.googleusercontent.com", callback: handleCredentialResponse });
-            google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "dark", size: "medium", width: "240" });
-        }
-    </script>
 
     <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+        // API Endpoint hướng vào Server cục bộ của bạn
+        const API_URL = '/api/upload';
+
+        // 2. REGEX nhận diện link chuẩn TLD (Chặn các đuôi lỗi kiểu .cooooo)
+        const urlPattern = /^(https:\/\/)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(\/[a-zA-Z0-9._%+-]*)*$/;
+
+        window.onload = function() {
+            fetchFiles();
+        };
+
+        // Lấy danh sách file từ server riêng
+        async function fetchFiles() {
+            try {
+                const res = await fetch(API_URL);
+                const files = await res.json();
+                const container = document.getElementById("files-container");
+                container.innerHTML = '<label>TỆP TIN MỚI NHẤT</label>';
+                
+                files.forEach(file => {
+                    const item = document.createElement("div");
+                    item.className = "file-item";
+                    
+                    // 4. Nhấp nút Xem file sẽ mở Link web hoặc tải file được up lên
+                    const targetLink = file.fileUrl ? file.fileUrl : file.downloadUrl;
+
+                    item.innerHTML = `
+                        <div class="file-info">
+                            <h4>${file.title}</h4>
+                            <span>${new Date(file.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <a href="${targetLink}" target="_blank" class="btn-view">Xem File</a>
+                    `;
+                    container.appendChild(item);
+                });
+            } catch (err) {
+                console.error("Không thể tải danh sách file:", err);
+            }
         }
-        function toggleChat() { document.getElementById('chat-box').classList.toggle('open'); }
+
+        // Thực hiện tải lên dữ liệu
+        async function handleUpload() {
+            const title = document.getElementById("file-title").value.trim();
+            const urlInput = document.getElementById("file-url").value.trim();
+            const fileInput = document.getElementById("file-upload").files[0];
+            const urlError = document.getElementById("url-error");
+
+            urlError.style.display = "none";
+
+            if (!title) {
+                alert("Vui lòng điền tiêu đề!");
+                return;
+            }
+
+            // 3. GIỚI HẠN LƯỢT TẢI: Tối đa 2 files / ngày dựa trên LocalStorage máy client
+            const today = new Date().toDateString();
+            let uploadCount = localStorage.getItem("local_up_count_" + today) ? parseInt(localStorage.getItem("local_up_count_" + today)) : 0;
+
+            if (uploadCount >= 2) {
+                alert("Bạn đã hết lượt tải lên cho ngày hôm nay (Tối đa 2 file/ngày)!");
+                return;
+            }
+
+            // Kiểm tra tính hợp lệ của Link (nếu có nhập)
+            if (urlInput !== "") {
+                if (!urlPattern.test(urlInput)) {
+                    urlError.style.display = "block";
+                    return;
+                }
+            }
+
+            if (!fileInput && urlInput === "") {
+                alert("Vui lòng chọn một file vật lý hoặc dán đường dẫn link hợp lệ!");
+                return;
+            }
+
+            // Bật Khung Loading tải dữ liệu
+            document.getElementById("loading-frame").classList.add("active");
+
+            // Đóng gói dữ liệu dạng Form để gửi lên server riêng
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("urlInput", urlInput);
+            if (fileInput) {
+                formData.append("fileUpload", fileInput);
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    body: formData // Gửi trực tiếp lên back-end server của bạn
+                });
+
+                if (response.ok) {
+                    // Tăng số lượt giới hạn tải trong ngày lên 1 đơn vị
+                    uploadCount++;
+                    localStorage.setItem("local_up_count_" + today, uploadCount);
+
+                    // Reset form
+                    document.getElementById("file-title").value = "";
+                    document.getElementById("file-url").value = "";
+                    document.getElementById("file-upload").value = "";
+                    
+                    alert("Tải lên hệ thống máy chủ thành công!");
+                    fetchFiles(); // Làm mới lại danh sách
+                } else {
+                    alert("Tải lên thất bại do lỗi cấu hình server.");
+                }
+            } catch (error) {
+                alert("Không thể kết nối đến máy chủ: " + error.message);
+            } finally {
+                // Tắt hiệu ứng loading
+                document.getElementById("loading-frame").classList.remove("active");
+            }
+        }
     </script>
 </body>
 </html>
