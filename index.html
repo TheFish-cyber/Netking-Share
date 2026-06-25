@@ -30,7 +30,7 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* HEADER CAPSULE TRÊN CÙNG TÍCH HỢP NÚT DÀNH CHO AUTH */
+        /* HEADER TOP BAR */
         .top-header {
             position: fixed; top: 15px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 600px;
@@ -46,7 +46,7 @@
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
         .top-header h1 { font-size: 1.05rem; letter-spacing: 1px; margin: 0; }
 
-        /* BUTTON AUTH BO GÓC CẠNH HEADER */
+        /* BUTTON AUTH TRÊN HEADER */
         .header-auth-btn {
             padding: 6px 14px;
             font-size: 0.8rem;
@@ -60,7 +60,7 @@
             align-items: center;
             gap: 5px;
         }
-        /* Style lúc chưa đăng nhập (Sign In) */
+        /* Chưa đăng nhập (Sign In) */
         .auth-state-signin {
             background: transparent;
             border: 1px solid #00f0ff;
@@ -72,20 +72,20 @@
             color: #030308;
             box-shadow: 0 0 10px #00f0ff;
         }
-        /* Style lúc đã đăng nhập (Log Out) */
-        .auth-state-logout {
+        /* Đã đăng nhập (Account Info) */
+        .auth-state-logged {
             background: transparent;
-            border: 1px solid #ff007f;
-            color: #ff007f;
-            box-shadow: inset 0 0 4px rgba(255, 0, 127, 0.2);
+            border: 1px solid #7000ff;
+            color: #b070ff;
+            box-shadow: inset 0 0 4px rgba(112, 0, 255, 0.2);
         }
-        .auth-state-logout:hover {
-            background: #ff007f;
+        .auth-state-logged:hover {
+            background: #7000ff;
             color: #ffffff;
-            box-shadow: 0 0 10px #ff007f;
+            box-shadow: 0 0 10px #7000ff;
         }
 
-        /* CYBER STROKE GRADIENT VIỀN + SMOKE */
+        /* CYBER FRAME + SMOKE */
         .cyber-frame {
             position: relative;
             background: linear-gradient(#06060c, #06060c) padding-box, 
@@ -149,6 +149,13 @@
             width: 100%; padding: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 0.88rem;
             letter-spacing: 1px; display: block; text-align: center; border-radius: 10px;
         }
+        /* Nút Log Out đỏ */
+        .btn-logout-danger {
+            background: transparent; border: 1.5px solid #ff003c; color: #ff003c; transition: 0.2s;
+        }
+        .btn-logout-danger:hover {
+            background: #ff003c; color: #fff; box-shadow: 0 0 12px #ff003c;
+        }
 
         /* Items File */
         .file-item {
@@ -178,7 +185,7 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
-        /* ĐỀ KHUNG TRẠNG THÁI STATUS LÊN TRÊN CÙNG */
+        /* ĐÈ KHUNG TRẠNG THÁI STATUS LÊN TRÊN CÙNG */
         #status-modal { z-index: 10000 !important; }
 
         .modal-box { padding: 25px; max-width: 440px; width: 90%; position: relative; }
@@ -205,6 +212,11 @@
         }
         .upload-manifest p { margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8ab0; }
         .upload-manifest strong { color: #00f0ff; }
+
+        /* CSS thông tin tài khoản hiển thị dạng text nhãn phát sáng nhẹ */
+        .info-row { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .info-row span { color: #8a8ab0; }
+        .info-row strong { color: #00f0ff; text-shadow: 0 0 5px rgba(0, 240, 255, 0.3); }
     </style>
 </head>
 <body>
@@ -284,6 +296,30 @@
                 <button class="btn-submit cyber-frame" style="background: transparent;" onclick="handleAuth('register')">HOÀN TẤT ĐĂNG KÝ</button>
                 <p style="margin-top: 15px; font-size: 0.8rem; color:#8a8ab0;">Có nick rồi? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
             </div>
+        </div>
+    </div>
+
+    <div id="account-info-modal" class="modal-overlay">
+        <div class="modal-box cyber-frame" style="max-width: 380px;">
+            <button onclick="closeAccountInfoModal()" class="modal-close-btn">×</button>
+            <h3 class="text-gradient" style="margin-bottom: 20px; font-size: 1.2rem; text-align: center; letter-spacing: 1px;">⚙️ ACCOUNT INFO</h3>
+            
+            <div style="margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+                <div class="info-row">
+                    <span>ACCOUNT NAME:</span>
+                    <strong id="info-display-username">N/A</strong>
+                </div>
+                <div class="info-row">
+                    <span>PASSWORD:</span>
+                    <strong id="info-display-password">••••••••</strong>
+                </div>
+                <div class="info-row" style="border:none;">
+                    <span>RANK LEVEL:</span>
+                    <strong id="info-display-rank" style="color: #ff007f;">MEMBER</strong>
+                </div>
+            </div>
+
+            <button class="btn-submit btn-logout-danger cyber-frame" onclick="processLogout()">🚪 LOG OUT ACC</button>
         </div>
     </div>
 
@@ -370,36 +406,53 @@
         // XỬ LÝ SỰ KIỆN KHI ẤN VÀO BUTTON AUTH TRÊN HEADER
         function handleHeaderAuthClick() {
             if (currentUser === "guest") {
-                // Chưa đăng nhập thì mở thẳng khung đăng ký như ý ông bạn
+                // Chưa đăng nhập: Mở thẳng khung Đăng ký (Sign In)
                 openAuthModal('signin');
             } else {
-                // Đã đăng nhập thì chạy hàm Logout xóa session sạch sẽ
-                processLogout();
+                // Đã đăng nhập: Mở frame Account Info xem chi tiết tài khoản
+                openAccountInfoModal();
             }
         }
 
-        // CẬP NHẬT GIAO DIỆN NÚT AUTH TRÊN HEADER THEO TRẠNG THÁI LOGIN
+        // CẬP NHẬT GIAO DIỆN NÚT TRÊN HEADER TRỰC QUAN KHÁC BIỆT
         function updateHeaderAuthButtonUI() {
             const authBtn = document.getElementById("header-auth-action");
             if (currentUser === "guest") {
                 authBtn.innerText = "🔑 Sign In";
                 authBtn.className = "header-auth-btn auth-state-signin";
             } else {
-                authBtn.innerText = "🚪 Log Out";
-                authBtn.className = "header-auth-btn auth-state-logout";
+                // Lấy tên lưu trữ hiển thị lên nút cho xịn sò
+                const savedDisplayUser = localStorage.getItem("netking_session_username") || "Account";
+                authBtn.innerText = `👤 ${savedDisplayUser}`;
+                authBtn.className = "header-auth-btn auth-state-logged";
             }
         }
 
+        // ĐIỀU KHIỂN ĐÓNG/MỞ FRAME ACCOUNT INFO
+        function openAccountInfoModal() {
+            document.getElementById("info-display-username").innerText = localStorage.getItem("netking_session_username") || "N/A";
+            document.getElementById("info-display-password").innerText = localStorage.getItem("netking_session_password") || "••••••••";
+            document.getElementById("info-display-rank").innerText = currentUser.toUpperCase();
+            document.getElementById("account-info-modal").classList.add("active");
+        }
+        function closeAccountInfoModal() {
+            document.getElementById("account-info-modal").classList.remove("active");
+        }
+
         function processLogout() {
+            closeAccountInfoModal();
+            
             currentUser = "guest";
             localStorage.setItem("netking_current_user", "guest");
+            localStorage.removeItem("netking_session_username");
+            localStorage.removeItem("netking_session_password");
+            
             updateHeaderAuthButtonUI();
             renderServerData();
             
             nextActionFlow = "just_close";
             showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản khỏi hệ thống Cyber.");
             
-            // Hiện lại màn hình Welcome giới thiệu ban đầu
             document.getElementById("welcome-modal").classList.add("active");
             startWelcomeCounter();
         }
@@ -593,13 +646,17 @@
         async function handleAuth(action) {
             if (action === 'register') {
                 nextActionFlow = "open_login"; 
-                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký tài khoản thành công! Nhấn xác nhận hoặc dấu X để đăng nhập hệ thống.");
+                showStatusModal(true, "REGISTER SUCCESS", "Đăng ký tài khoản thành công! Nhấn xác nhận để chuyển sang Đăng nhập hệ thống.");
             } else {
                 const user = document.getElementById("login-user").value.trim();
                 const pass = document.getElementById("login-pass").value.trim();
                 const remember = document.getElementById("remember-me").checked;
                 
                 if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu!");
+
+                // Lưu dữ liệu tài khoản tạm thời để hiển thị trong Account Info
+                localStorage.setItem("netking_session_username", user);
+                localStorage.setItem("netking_session_password", pass);
 
                 if (user === "xine3d" && pass === "Thinh_2012") {
                     currentUser = "admin";
