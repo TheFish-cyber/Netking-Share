@@ -3,390 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Share File & Chat</title>
+    <title>Netking Share Portal</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <style>
-        /* --- RESET & CHỦ ĐỀ CYBERPUNK --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: #06060c; color: #ffffff; overflow-x: hidden; padding-bottom: 30px; }
+        /* --- GIAO DIỆN CHỦ ĐẠO CYBERPUNK --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #05050a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
         
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { font-size: 2.5rem; font-weight: 800; background: linear-gradient(45deg, #00f0ff, #ff007f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Thống kê */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; text-align: center; }
+        .stat-box { background: rgba(20, 20, 35, 0.6); border: 1px solid rgba(0, 240, 255, 0.2); padding: 15px; border-radius: 12px; }
+        .stat-box h3 { color: #8a8ab0; font-size: 0.9rem; margin-bottom: 5px; }
+        .stat-box p { font-size: 1.5rem; font-weight: bold; color: #00f0ff; }
+
+        /* Khối tính năng Upload */
+        .upload-section {
+            background: rgba(10, 10, 20, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            border: 1px solid rgba(255, 0, 127, 0.2);
         }
-        .animate-load { animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) both; }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        .btn-cyber {
+            border: none; color: white; background: linear-gradient(45deg, #00f0ff, #ff007f);
+            padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s;
+        }
+        .btn-cyber:hover { opacity: 0.9; transform: scale(1.01); }
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer;
+        }
+        #upload-status { margin-top: 10px; color: #00ff66; font-size: 0.9rem; text-align: center; }
 
-        .text-gradient {
-            background: linear-gradient(45deg, #00f0ff, #ff007f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Danh sách File */
+        .file-list { display: flex; flex-direction: column; gap: 15px; }
+        .file-item {
+            background: rgba(20, 20, 35, 0.5); padding: 20px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center;
+        }
+        .file-info h4 { color: #00f0ff; margin-bottom: 5px; }
+        .file-info p { color: #8a8ab0; font-size: 0.85rem; }
+        .btn-download {
+            background: #ff007f; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none;
         }
 
-        /* --- TOP NAV --- */
-        .top-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: rgba(10, 10, 20, 0.8);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1); backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 100;
+        /* --- NÚT CHAT BỔI NỔI NỔI GÓC DƯỚI PHẢI MÀN HÌNH --- */
+        #chat-widget-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 10000; font-family: sans-serif;
         }
-        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: 1px; cursor: pointer; }
-        .btn-login-nav {
-            background: transparent; border: 1px solid #00f0ff; color: #00f0ff;
-            padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: all 0.3s;
+        #chat-launcher {
+            width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(45deg, #ff007f, #7000ff);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6); border: none; color: white; font-size: 24px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
         }
-        .btn-login-nav:hover { background: #00f0ff; color: #000; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
-
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-
-        /* --- CÁC PHÂN ĐOẠN WEB (GIAO DIỆN CHÍNH / ADMIN) --- */
-        .page-section { display: none; }
-        .page-section.active { display: block; }
-
-        /* --- BOX PHONG CÁCH NEON BO GÓC --- */
-        .neon-box {
-            background: rgba(12, 12, 25, 0.9); border-radius: 16px; padding: 20px;
-            margin-bottom: 25px; border: 1px solid rgba(0, 240, 255, 0.15);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        #chat-launcher:hover { transform: scale(1.1) rotate(10deg); }
+        
+        /* Hộp thoại Chat */
+        #chat-box {
+            display: none; flex-direction: column; width: 340px; height: 480px; 
+            background: #0b0b16; border: 1px solid #ff007f; border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.5); position: absolute; bottom: 75px; right: 0; overflow: hidden;
         }
-        .neon-box h2 { font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        #chat-box.open { display: flex; animation: fadeInUp 0.3s ease; }
+        .chat-header { background: linear-gradient(45deg, #7000ff, #ff007f); padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header span { font-size: 0.95rem; letter-spacing: 1px; }
+        .chat-header i { cursor: pointer; opacity: 0.8; }
+        
+        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: rgba(5, 5, 10, 0.95); }
+        .msg { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-break: break-all; position: relative; }
+        .msg.other { background: #1a1a30; align-self: flex-start; border-bottom-left-radius: 0; color: #fff; }
+        .msg.me { background: #ff007f; align-self: flex-end; border-bottom-right-radius: 0; color: white; }
+        
+        .msg-user-container { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+        .msg-avatar { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
+        .msg-user { font-size: 0.75rem; color: #00f0ff; font-weight: bold; }
 
-        /* --- STATS BOX --- */
-        .stats-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-bottom: 25px; }
-        .stat-card { background: rgba(15, 15, 30, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px 5px; border-radius: 12px; }
-        .stat-card h3 { font-size: 1.5rem; color: #ffaa00; }
-        .stat-card p { font-size: 0.8rem; color: #8a8ab0; margin-top: 5px; }
+        /* Vùng điểu khiển đăng nhập / Chat */
+        .chat-login-area { padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; background: #0b0b16; border-top: 1px solid rgba(255,255,255,0.05); }
+        .chat-input-area { padding: 10px; display: flex; gap: 8px; background: #0b0b16; border-top: 1px solid rgba(255,255,255,0.05); }
+        .chat-input-area input { flex: 1; background: #121225; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 6px; padding: 8px 12px; color: white; outline: none; }
+        .chat-input-area button { background: #00f0ff; border: none; color: #05050a; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        /* --- FILE CARD --- */
-        .file-list { margin-top: 10px; }
-        .file-card {
-            background: rgba(20, 20, 35, 0.6); border-radius: 12px; padding: 15px;
-            margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.05); position: relative;
-        }
-        .file-tag { display: inline-block; background: rgba(0, 240, 255, 0.1); color: #00f0ff; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
-        .file-info { font-size: 0.85rem; color: #8a8ab0; margin: 8px 0; display: flex; gap: 15px; }
-        .btn-download { display: block; width: 100%; background: linear-gradient(45deg, #00f0ff, #7000ff); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; margin-top: 10px; }
-        .btn-delete-file { position: absolute; top: 15px; right: 15px; background: #ff0055; border: none; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold;}
-
-        /* --- CHAT AREA --- */
-        .chat-area { height: 220px; overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(5, 5, 10, 0.5); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
-        .msg-box { margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; max-width: 85%; font-size: 0.9rem; word-break: break-word; }
-        .msg-receive { background: rgba(255, 255, 255, 0.08); margin-right: auto; }
-        .msg-send { background: linear-gradient(135deg, #7000ff, #ff007f); margin-left: auto; }
-        .msg-user { font-size: 0.75rem; font-weight: bold; color: #00f0ff; margin-bottom: 3px; }
-        .chat-input-group { display: flex; gap: 8px; }
-        .chat-input { flex: 1; background: rgba(20, 20, 35, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 15px; border-radius: 8px; color: white; outline: none; }
-        .btn-send { background: #00f0ff; border: none; padding: 0 15px; border-radius: 8px; color: #000; font-weight: bold; cursor: pointer; }
-
-        /* --- INPUT CỦA TRANG ADMIN --- */
-        .admin-form-group { margin-bottom: 15px; }
-        .admin-form-group label { display: block; font-size: 0.85rem; color: #8a8ab0; margin-bottom: 5px; }
-        .admin-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px; color: white; outline: none; }
-        .admin-input:focus { border-color: #ff007f; }
-        .btn-admin-submit { width: 100%; background: linear-gradient(45deg, #ff007f, #00f0ff); border: none; color: white; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-
-        /* --- POPUP LOGIN --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: #0c0c17; border: 1px solid #ff007f; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; position: relative; }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.2rem; color: #8a8ab0; cursor: pointer; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="top-nav">
-        <div class="logo" onclick="navigateToHome()">NETKING <span class="text-gradient">PRO</span></div>
-        <div id="nav-right-btn">
-            <button class="btn-login-nav" onclick="toggleModal(true)">ĐĂNG NHẬP</button>
-        </div>
-    </div>
-
     <div class="container">
-        
-        <div id="home-page" class="page-section active animate-load">
-            <div class="stats-box">
-                <div class="stat-card"><h3 id="totalFilesText">0</h3><p>TỔNG FILE</p></div>
-                <div class="stat-card"><h3>2.4K</h3><p>LƯỢT TẢI</p></div>
-                <div class="stat-card" style="border-color: #00f0ff;"><h3 style="color: #00f0ff;">🟢 12</h3><p>ONLINE</p></div>
-            </div>
+        <header>
+            <h1>NETKING SHARE PORTAL</h1>
+            <p style="color: #8a8ab0; margin-top: 5px;">Kho lưu trữ và chia sẻ tệp tin trực tuyến công khai</p>
+        </header>
 
-            <div class="neon-box">
-                <h2><i class="fa-solid fa-box-open" style="color: #00f0ff;"></i> Kho File Miễn Phí</h2>
-                <div class="file-list" id="userFileContainer">
-                    <p style="color: #8a8ab0; text-align: center; font-size: 0.9rem;">Đang tải danh sách file từ đám mây...</p>
-                </div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>Tổng File</h3>
+                <p id="stat-total-files">0</p>
             </div>
-
-            <div class="neon-box">
-                <h2><i class="fa-solid fa-comments" style="color: #ff007f;"></i> Chat Toàn Cầu</h2>
-                <div class="chat-area" id="chatBox"></div>
-                <div class="chat-input-group">
-                    <input type="text" class="chat-input" id="chatInput" placeholder="Nhập tin nhắn...">
-                    <button class="btn-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
+            <div class="stat-box">
+                <h3>Lượt Tải Hệ Thống</h3>
+                <p id="stat-total-downloads">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>Đang Online (Active)</h3>
+                <p id="stat-active-users">1</p>
             </div>
         </div>
 
-        <div id="admin-page" class="page-section animate-load">
+        <div class="upload-section">
+            <div class="upload-btn-wrapper">
+                <button class="btn-cyber"><i class="fa-solid fa-cloud-arrow-up"></i> TẢI FILE LÊN ĐÂY</button>
+                <input type="file" id="file-uploader" />
+            </div>
+            <div id="upload-status"></div>
+        </div>
+
+        <h3 style="margin-bottom: 15px; color: #ff007f;"><i class="fa-solid fa-folder-open"></i> Tệp tin mới nhất</h3>
+        <div class="file-list" id="files-container">
+            </div>
+    </div>
+
+    <div id="chat-widget-container">
+        <button id="chat-launcher" onclick="toggleChat()"><i class="fa-solid fa-comments"></i></button>
+        
+        <div id="chat-box">
+            <div class="chat-header">
+                <span><i class="fa-solid fa-circle" style="color: #00ff66; font-size: 10px;"></i> NETKING CHATROOM</span>
+                <i class="fa-solid fa-xmark" onclick="toggleChat()"></i>
+            </div>
+            <div class="chat-messages" id="chat-messages-container">
+                </div>
             
-            <div class="neon-box" id="admin-auth-box">
-                <h2><i class="fa-solid fa-user-shield" style="color: #ff007f;"></i> Xác Minh Quyền Hạn Admin</h2>
-                <p style="font-size: 0.85rem; color: #8a8ab0; margin-bottom: 15px;">Mọi lượt truy cập trái phép đều được ghi lại. Vui lòng nhập mã bảo mật để tiếp tục:</p>
-                <div class="admin-form-group">
-                    <input type="password" class="admin-input" id="adminKeyInput" placeholder="Nhập Mật Mã Admin Của Bạn...">
-                </div>
-                <button class="btn-admin-submit" onclick="verifyAdminKey()">XÁC NHẬN TRUY CẬP</button>
-            </div>
-
-            <div id="admin-control-panel" style="display: none;">
-                <div class="neon-box" style="border-color: #ffaa00;">
-                    <h2 style="color: #ffaa00;"><i class="fa-solid fa-folder-plus"></i> Đăng Tải File Mới Lên Hệ Thống</h2>
-                    <div class="admin-form-group">
-                        <label>Tên File / Tiêu đề hiển thị</label>
-                        <input type="text" class="admin-input" id="newFileName" placeholder="Ví dụ: Mod Antiban Skin FF Max...">
-                    </div>
-                    <div class="admin-form-group">
-                        <label>Dung lượng file</label>
-                        <input type="text" class="admin-input" id="newFileSize" placeholder="Ví dụ: 15 MB, 1.2 GB...">
-                    </div>
-                    <div class="admin-form-group">
-                        <label>Đường dẫn Tải xuống (Link File Gốc hoặc Link Rút Gọn Kiếm Tiền)</label>
-                        <input type="text" class="admin-input" id="newFileLink" placeholder="https://mediafire.com/file/...">
-                    </div>
-                    <button class="btn-admin-submit" onclick="uploadNewFile()">ĐĂNG TẢI NGAY</button>
-                </div>
-
-                <div class="neon-box">
-                    <h2><i class="fa-solid fa-list-check" style="color: #00f0ff;"></i> Quản Lý Danh Sách File Đã Đăng</h2>
-                    <div class="file-list" id="adminFileContainer"></div>
+            <div id="chat-controls">
+                <div class="chat-login-area" id="google-login-box">
+                    <p style="font-size: 0.8rem; color: #8a8ab0; text-align: center;">Vui lòng đăng nhập Google để tham gia nhắn tin</p>
+                    <div id="buttonDiv"></div>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="toggleModal(false)">&times;</span>
-            <h2 style="margin-bottom: 15px; text-align: center;">ĐĂNG NHẬP <span class="text-gradient">CHAT</span></h2>
-            <div style="margin-bottom: 15px;">
-                <input type="text" class="admin-input" id="usernameInput" placeholder="Nhập biệt danh của bạn...">
-            </div>
-            <button class="btn-admin-submit" onclick="loginProcess()">XÁC NHẬN</button>
-        </div>
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
+        import { getDatabase, ref as rRef, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-    <script>
-        // =========================================================================
-        // BƯỚC 1: THAY THÔNG SỐ CONFIG FIREBASE CỦA BẠN VÀO ĐÂY ĐỂ ĐỒNG BỘ DỮ LIỆU CHAT + FILE
-        // =========================================================================
+        // CẤU HÌNH FIREBASE CỦA BẠN (GIỮ NGUYÊN NẾU ĐÃ CẤU HÌNH TRƯỚC ĐÓ)
         const firebaseConfig = {
-            apiKey: "AIzaSy...",
-            authDomain: "YOUR-PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR-PROJECT-default-rtdb.firebaseio.com",
-            projectId: "YOUR-PROJECT",
-            storageBucket: "YOUR-PROJECT.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyA1...",
+            authDomain: "netking-share.firebaseapp.com",
+            projectId: "netking-share",
+            storageBucket: "netking-share.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456:web:abcde",
+            databaseURL: "https://netking-share-default-rtdb.firebaseio.com"
         };
-        
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
 
-        // Cấu hình mã PIN admin của bạn tại đây (Ai biết mã này mới đăng file được)
-        const REAL_ADMIN_SECRET_KEY = "netking123"; 
+        // Khởi tạo các dịch vụ
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const rtdb = getDatabase(app);
 
-        let currentNickname = "Ẩn Danh";
+        // Biến lưu trữ thông tin user sau khi Login Google thành công
+        let currentUserData = null;
+        // Tạo ID tạm thời để đếm số user Online thực tế
+        let sessionID = 'User_' + Math.floor(1000 + Math.random() * 9000);
 
-        // =========================================================================
-        // BƯỚC 2: HỆ THỐNG PHÂN PHỐI ĐƯỜNG DẪN URL (ROUTING SYSTEM)
-        // Lắng nghe xem URL trên Vercel là "/" hay "/admin01"
-        // =========================================================================
-        function handleRouting() {
-            const path = window.location.pathname;
-            const homePage = document.getElementById('home-page');
-            const adminPage = document.getElementById('admin-page');
-            const navRightBtn = document.getElementById('nav-right-btn');
-
-            if (path === '/admin01') {
-                // Chuyển sang chế độ xem trang Admin
-                homePage.classList.remove('active');
-                adminPage.classList.add('active');
-                navRightBtn.innerHTML = `<button class="btn-login-nav" onclick="navigateToHome()" style="border-color: #ff007f; color: #ff007f;">VỀ TRANG CHỦ</button>`;
-            } else {
-                // Chế độ trang chủ mặc định
-                adminPage.classList.remove('active');
-                homePage.classList.add('active');
-                navRightBtn.innerHTML = `<button class="btn-login-nav" onclick="toggleModal(true)">ĐĂNG NHẬP</button>`;
+        // --- 1. THỐNG KÊ ACTIVE USERS REALTIME ---
+        const myConnectionsRef = rRef(rtdb, `connections/${sessionID}`);
+        const connectedRef = rRef(rtdb, '.info/connected');
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true) {
+                set(myConnectionsRef, true);
+                onDisconnect(myConnectionsRef).remove();
             }
-        }
-
-        // Điều hướng mượt mà không cần tải lại trang
-        function navigateToHome() {
-            window.history.pushState({}, "", "/");
-            handleRouting();
-        }
-
-        // Lắng nghe các sự kiện bấm nút Tiến/Lùi trên trình duyệt trình duyệt
-        window.addEventListener('popstate', handleRouting);
-        
-        // Chạy kiểm tra đường dẫn ngay khi mở web lần đầu tiên
-        handleRouting();
-
-        // =========================================================================
-        // BƯỚC 3: XỬ LÝ KHÓA/MỞ ADMIN BẰNG SECRET KEY 
-        // =========================================================================
-        function verifyAdminKey() {
-            const enteredKey = document.getElementById('adminKeyInput').value;
-            const authBox = document.getElementById('admin-auth-box');
-            const controlPanel = document.getElementById('admin-control-panel');
-
-            if (enteredKey === REAL_ADMIN_SECRET_KEY) {
-                alert("Mã khoá chính xác! Chào mừng Admin Netking quay trở lại.");
-                authBox.style.display = "none";
-                controlPanel.style.display = "block";
-            } else {
-                alert("❌ Mã bảo mật sai! Quyền truy cập bị từ chối.");
-            }
-        }
-
-        // =========================================================================
-        // BƯỚC 4: REALTIME CHAT SYSTEM (XỬ LÝ DỮ LIỆU ĐÁM MÂY)
-        // =========================================================================
-        function toggleModal(show) {
-            const modal = document.getElementById('loginModal');
-            if (show) modal.classList.add('active');
-            else modal.classList.remove('active');
-        }
-
-        function loginProcess() {
-            const name = document.getElementById('usernameInput').value.trim();
-            if(name !== "") {
-                currentNickname = name;
-                alert("Xin chào chiến thần chat: " + currentNickname);
-                toggleModal(false);
-            }
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            if(input.value.trim() !== "") {
-                database.ref("chats").push({
-                    username: currentNickname,
-                    message: input.value,
-                    timestamp: Date.now()
-                });
-                input.value = "";
-            }
-        }
-
-        // Nhận tin nhắn chat tự động đổ về từ Firebase
-        database.ref("chats").limitToLast(40).on("child_added", (snapshot) => {
-            const data = snapshot.val();
-            const chatBox = document.getElementById('chatBox');
-            const isMe = data.username === currentNickname;
-            const msgClass = isMe ? "msg-send" : "msg-receive";
-
-            chatBox.innerHTML += `
-                <div class="msg-box ${msgClass}">
-                    <div class="msg-user">${data.username}</div>
-                    ${data.message}
-                </div>
-            `;
-            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+        onValue(rRef(rtdb, 'connections'), (snap) => {
+            const count = snap.exists() ? Object.keys(snap.val()).length : 1;
+            document.getElementById('stat-active-users').innerText = count;
         });
 
-        // =========================================================================
-        // BƯỚC 5: REALTIME CLOUD FILES MANAGEMENT (ADMIN ĐĂNG TẢI & XÓA FILE)
-        // =========================================================================
-        
-        // Hàm Admin đẩy dữ liệu file mới lên mây Firebase
-        function uploadNewFile() {
-            const name = document.getElementById('newFileName').value.trim();
-            const size = document.getElementById('newFileSize').value.trim();
-            const link = document.getElementById('newFileLink').value.trim();
+        // --- 2. XỬ LÝ UPLOAD FILE CÔNG KHAI ---
+        const fileInput = document.getElementById('file-uploader');
+        const uploadStatus = document.getElementById('upload-status');
 
-            if (!name || !size || !link) {
-                alert("Vui lòng điền đầy đủ cả 3 thông tin file nhé!");
-                return;
-            }
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-            database.ref("shared_files").push({
-                fileName: name,
-                fileSize: size,
-                downloadUrl: link,
-                downloadsCount: 0,
-                timestamp: Date.now()
+            uploadStatus.innerText = "Đang chuẩn bị đẩy tệp lên máy chủ...";
+            const storageRef = ref(storage, 'shares/' + Date.now() + '_' + file.name);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    uploadStatus.innerText = `Đang tải lên: ${Math.round(progress)}%`;
+                }, 
+                (error) => {
+                    uploadStatus.innerText = "Lỗi tải lên tệp: " + error.message;
+                }, 
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        addDoc(collection(db, "files"), {
+                            name: file.name,
+                            url: downloadURL,
+                            size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
+                            downloads: 0,
+                            timestamp: serverTimestamp()
+                        });
+                        uploadStatus.innerText = "Tải lên tệp thành công tuyệt đối!";
+                        fileInput.value = ''; 
+                    });
+                }
+            );
+        });
+
+        // --- 3. ĐỒNG BỘ DANH SÁCH FILE VÀ LƯỢT TẢI ---
+        const qFiles = query(collection(db, "files"), orderBy("timestamp", "desc"));
+        onSnapshot(qFiles, (snapshot) => {
+            const filesContainer = document.getElementById('files-container');
+            filesContainer.innerHTML = '';
+            let totalDownloads = 0;
+            let totalFiles = snapshot.size;
+
+            snapshot.forEach((docSnap) => {
+                const fileData = docSnap.data();
+                const fileId = docSnap.id;
+                totalDownloads += (fileData.downloads || 0);
+
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <div class="file-info">
+                        <h4>${fileData.name}</h4>
+                        <p>Dung lượng: ${fileData.size} | Lượt tải: <span>${fileData.downloads || 0}</span></p>
+                    </div>
+                    <button class="btn-download" data-id="${fileId}" data-url="${fileData.url}">Tải Xuống</button>
+                `;
+                filesContainer.appendChild(item);
             });
 
-            alert("🎉 Đã phát hành file thành công lên trang chính!");
-            // Reset form nhập liệu
-            document.getElementById('newFileName').value = "";
-            document.getElementById('newFileSize').value = "";
-            document.getElementById('newFileLink').value = "";
-        }
+            document.getElementById('stat-total-files').innerText = totalFiles;
+            document.getElementById('stat-total-downloads').innerText = totalDownloads;
 
-        // Hàm xóa file dựa trên ID của file trên Firebase
-        function deleteFile(fileId) {
-            if (confirm("Bạn có chắc chắn muốn xóa vĩnh viễn file này không?")) {
-                database.ref("shared_files").child(fileId).remove();
-                alert("Đã gỡ file thành công!");
-            }
-        }
-
-        // Đồng bộ dữ liệu mảng File liên tục và hiển thị ra cho cả User lẫn Admin quản lý
-        database.ref("shared_files").on("value", (snapshot) => {
-            const filesData = snapshot.val();
-            const userContainer = document.getElementById('userFileContainer');
-            const adminContainer = document.getElementById('adminFileContainer');
-            const totalFilesText = document.getElementById('totalFilesText');
-
-            userContainer.innerHTML = "";
-            adminContainer.innerHTML = "";
-
-            if (!filesData) {
-                userContainer.innerHTML = `<p style="color: #8a8ab0; text-align: center; font-size: 0.9rem;">Hiện tại chưa có file nào được chia sẻ.</p>`;
-                adminContainer.innerHTML = `<p style="color: #8a8ab0; text-align: center; font-size: 0.9rem;">Chưa có file nào trong kho lưu trữ.</p>`;
-                totalFilesText.innerText = "0";
-                return;
-            }
-
-            let count = 0;
-            // Duyệt qua tất cả các file nhận về từ server
-            for (let id in filesData) {
-                count++;
-                const file = filesData[id];
-
-                // 1. Tạo giao diện hiển thị cho Người dùng tải file ở Trang Chủ
-                userContainer.innerHTML += `
-                    <div class="file-card">
-                        <span class="file-tag">✓ ĐÃ KIỂM TRA</span>
-                        <h4>${file.fileName}</h4>
-                        <div class="file-info">
-                            <span><i class="fa-solid fa-microchip"></i> ${file.fileSize}</span>
-                            <span><i class="fa-solid fa-arrow-down"></i> ${file.downloadsCount || 0} lượt</span>
-                        </div>
-                        <a href="${file.downloadUrl}" target="_blank" class="btn-download">TẢI XUỐNG (FREE)</a>
-                    </div>
-                `;
-
-                // 2. Tạo giao diện quản lý (Có nút Xóa) cho Admin ở Trang Admin01
-                adminContainer.innerHTML += `
-                    <div class="file-card">
-                        <h4>${file.fileName}</h4>
-                        <div class="file-info">
-                            <span>Dung lượng: ${file.fileSize}</span>
-                        </div>
-                        <button class="btn-delete-file" onclick="deleteFile('${id}')">XÓA FILE</button>
-                    </div>
-                `;
-            }
-
-            totalFilesText.innerText = count; // Cập nhật số lượng tổng file lên thống kê đầu trang
+            document.querySelectorAll('.btn-download').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const id = button.getAttribute('data-id');
+                    const url = button.getAttribute('data-url');
+                    const fileRef = doc(db, "files", id);
+                    await updateDoc(fileRef, { downloads: increment(1) });
+                    window.open(url, '_blank');
+                });
+            });
         });
+
+        // --- 4. HỆ THỐNG ĐỒNG BỘ CHAT REALTIME (CÓ AVATAR GOOGLE) ---
+        const qChat = query(collection(db, "chats"), orderBy("timestamp", "asc"));
+        onSnapshot(qChat, (snapshot) => {
+            const chatContainer = document.getElementById('chat-messages-container');
+            chatContainer.innerHTML = '';
+            snapshot.forEach((docSnap) => {
+                const chat = docSnap.data();
+                const msgDiv = document.createElement('div');
+                
+                // Kiểm tra xem tin nhắn có phải của chính mình gửi dựa theo email
+                const isMe = currentUserData && chat.email === currentUserData.email;
+                msgDiv.className = `msg ${isMe ? 'me' : 'other'}`;
+                
+                // Hiển thị Avatar và Tên tài khoản Google của người gửi tin nhắn
+                msgDiv.innerHTML = `
+                    <div class="msg-user-container">
+                        <img class="msg-avatar" src="${chat.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" alt="Avatar">
+                        <span class="msg-user">${isMe ? 'Bạn' : chat.user}</span>
+                    </div>
+                    <div>${chat.text}</div>
+                `;
+                chatContainer.appendChild(msgDiv);
+            });
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+
+        // Xử lý gửi tin nhắn kèm thông tin định danh Google
+        window.sendChatMessage = function() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text || !currentUserData) return;
+
+            addDoc(collection(db, "chats"), {
+                user: currentUserData.name,
+                email: currentUserData.email,
+                avatar: currentUserData.picture,
+                text: text,
+                timestamp: serverTimestamp()
+            });
+            input.value = '';
+        }
+
+        window.handleChatKey = function(e) {
+            if(e.key === 'Enter') sendChatMessage();
+        }
+
+        // --- 5. ĐIỀU HƯỚNG ĐĂNG NHẬP GOOGLE API CHÍNH THỨC ---
+        function parseJwt (token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // Callback nhận kết quả khi đăng nhập thành công
+        window.handleCredentialResponse = function(response) {
+            const responsePayload = parseJwt(response.credential);
+            currentUserData = responsePayload; // Lưu thông tin Tên, Email, Ảnh đại diện
+
+            // Chuyển giao diện từ nút "Đăng nhập" sang "Khung nhập nội dung chat"
+            const controls = document.getElementById('chat-controls');
+            controls.innerHTML = `
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleChatKey(event)"/>
+                    <button onclick="sendChatMessage()">Gửi</button>
+                </div>
+            `;
+        }
+
+        // Khởi chạy bộ cài đặt nút Google khi load trang web
+        window.onload = function () {
+            google.accounts.id.initialize({
+                // client_id chính xác trích xuất từ chuỗi liên kết OAuth của bạn cung cấp
+                client_id: "799208696035-icbc4f2ghqkotqvro40iua27tmgbscc5.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "dark", size: "medium", width: "240" }  // Thiết lập nút giao diện Dark Mode khớp với trang web
+            );
+        }
+    </script>
+
+    <script>
+        function toggleChat() {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.classList.toggle('open');
+        }
     </script>
 </body>
 </html>
