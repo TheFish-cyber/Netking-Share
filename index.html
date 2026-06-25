@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netking Files - Ultimate Cyber Systems</title>
+    <title>Netking Files</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
@@ -45,7 +45,7 @@
         .top-header img { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
         .top-header h1 { font-size: 1.1rem; letter-spacing: 1.5px; }
 
-        /* CYBER STROKE GRADIENT VIỀN + SMOKE CHUẨN ĐÉT */
+        /* CYBER STROKE GRADIENT VIỀN + SMOKE */
         .cyber-frame {
             position: relative;
             background: linear-gradient(#06060c, #06060c) padding-box, 
@@ -105,13 +105,12 @@
         .remember-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; color: #8a8ab0; font-size: 0.82rem;}
         .remember-wrapper input { cursor: pointer; accent-color: #00f0ff; width: 15px; height: 15px;}
 
-        /* NÚT SUBMIT TRẢI NGANG ĐẸP MẮT */
         .btn-submit {
             width: 100%; padding: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 0.88rem;
             letter-spacing: 1px; display: block; text-align: center; border-radius: 10px;
         }
 
-        /* Items File UI Dàn Hàng Dọc Hợp Lý */
+        /* Items File */
         .file-item {
             background: rgba(15, 15, 25, 0.8) !important; padding: 16px; margin-bottom: 15px;
             display: flex; flex-direction: column; gap: 12px;
@@ -138,11 +137,17 @@
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        /* ĐƯA FRAME STATUS LÊN TRÊN CÙNG TUYỆT ĐỐI */
+        #status-modal {
+            z-index: 10000 !important; 
+        }
+
         .modal-box { padding: 25px; max-width: 440px; width: 90%; position: relative; }
         .modal-close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff007f; font-weight: bold; cursor: pointer; font-size: 1rem; z-index: 10; width: 25px; height: 25px; text-align: center; line-height: 25px;}
         .auth-links a { color: #00f0ff; font-weight: bold; text-decoration: none; margin: 0 5px; cursor: pointer;}
 
-        /* Tab Loader (1.5s delay) & Upload Loader (5s delay) */
+        /* Loader */
         #loading-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 4, 8, 0.94);
             z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -152,7 +157,6 @@
         .spinner { width: 45px; height: 45px; border: 3px solid rgba(0, 240, 255, 0.1); border-left-color: #00f0ff; border-right-color: #ff007f; border-radius: 50%; animation: spin 0.9s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Icon vẽ thông báo bự phát sáng */
         .status-icon { font-size: 3.5rem; font-weight: bold; margin-bottom: 15px; text-align: center; display: block; }
         .icon-success { color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.7); }
         .icon-error { color: #ff003c; text-shadow: 0 0 15px rgba(255, 0, 60, 0.7); }
@@ -198,7 +202,7 @@
         </div>
     </div>
 
-    <div id="welcome-modal" class="modal-overlay active">
+    <div id="welcome-modal" class="modal-overlay">
         <div class="modal-box cyber-frame">
             <button id="close-welcome-btn" class="modal-close-btn" disabled style="font-size:0.75rem; width:80px;">Close (3s)</button>
             <div style="text-align: center; margin-bottom: 10px;">
@@ -266,14 +270,14 @@
     </div>
 
     <script>
-        let databaseFiles = []; 
-        let currentUser = "member"; 
+        // KHỞI TẠO VÀ LẤY DỮ LIỆU TỪ LOCALSTORAGE ĐỂ KHÔNG BỊ XOÁ KHI F5
+        let databaseFiles = JSON.parse(localStorage.getItem("netking_database_files")) || []; 
+        let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
 
         window.onload = function() {
             initBackgroundEffects();
-            startWelcomeCounter();
-            checkRememberedLogin();
+            checkUserSession();
             renderServerData();
         };
 
@@ -318,9 +322,27 @@
             animate();
         }
 
+        // KIỂM TRA PHIÊN ĐĂNG NHẬP ĐỂ TRÁNH AUTO LOGOUT KHI RESET WEB
+        function checkUserSession() {
+            if (currentUser === "guest") {
+                document.getElementById("welcome-modal").classList.add("active");
+                startWelcomeCounter();
+            } else {
+                document.getElementById("welcome-modal").classList.remove("active");
+            }
+            
+            const savedUser = localStorage.getItem("remembered_netking_user");
+            if (savedUser === "xine3d") {
+                document.getElementById("login-user").value = savedUser;
+                document.getElementById("remember-me").checked = true;
+            }
+        }
+
         function startWelcomeCounter() {
             const closeBtn = document.getElementById("close-welcome-btn");
             let sec = 3;
+            closeBtn.disabled = true;
+            closeBtn.innerText = `Close (${sec}s)`;
             const timer = setInterval(() => {
                 sec--;
                 if(sec > 0) closeBtn.innerText = `Close (${sec}s)`;
@@ -390,6 +412,7 @@
         function verifyFileByAdmin(index) {
             if(currentUser !== "admin") return;
             databaseFiles[index].verified = true;
+            localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles)); // Lưu lại trạng thái verify
             nextActionFlow = "just_close";
             showStatusModal(true, "VERIFIED", "Tệp tin đã được xác minh thành công trên trang chủ!");
             renderServerData();
@@ -437,6 +460,9 @@
                     databaseFiles.push({
                         title: title, desc: desc, version: version, views: 0, verified: false, url: urlInput || "#"
                     });
+
+                    // LƯU DANH SÁCH FILE VÀO STORAGE ĐỂ MÁY KHÁC LOAD HOẶC F5 ĐỀU KHÔNG MẤT
+                    localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
 
                     document.getElementById("file-title").value = "";
                     document.getElementById("file-desc").value = "";
@@ -495,9 +521,9 @@
                 
                 if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu!");
 
-                // Account Admin
                 if (user === "xine3d" && pass === "Thinh_2012") {
                     currentUser = "admin";
+                    localStorage.setItem("netking_current_user", "admin"); // Lưu trạng thái session admin
                     if (remember) localStorage.setItem("remembered_netking_user", user);
                     nextActionFlow = "login_success_clear"; 
                     showStatusModal(true, "ADMIN ACCESS", "Chào mừng Admin quay trở lại quyền kiểm soát!");
@@ -505,8 +531,8 @@
                     return;
                 }
 
-                // Member
                 currentUser = "member";
+                localStorage.setItem("netking_current_user", "member"); // Lưu trạng thái session member
                 if (remember) localStorage.setItem("remembered_netking_user", user);
                 nextActionFlow = "login_success_clear"; 
                 showStatusModal(true, "MEMBER ACCESS", "Đăng nhập thành viên nhóm thành công.");
@@ -516,6 +542,7 @@
 
         function registerClick(index) {
             databaseFiles[index].views = (databaseFiles[index].views || 0) + 1;
+            localStorage.setItem("netking_database_files", JSON.stringify(databaseFiles));
             renderServerData();
         }
 
@@ -525,14 +552,6 @@
         function toggleAuthForm(type) {
             document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
             document.getElementById("signin-form-wrapper").style.display = type === 'signin' ? "block" : "none";
-        }
-        
-        function checkRememberedLogin() {
-            const savedUser = localStorage.getItem("remembered_netking_user");
-            if (savedUser === "xine3d") {
-                document.getElementById("login-user").value = savedUser;
-                document.getElementById("remember-me").checked = true;
-            }
         }
     </script>
 </body>
