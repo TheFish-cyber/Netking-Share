@@ -8,17 +8,54 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
     <link class="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        /* --- ĐỊNH NGHĨA BIẾN MÀU GIAO DIỆN (LIGHT/DARK) --- */
+        :root {
+            --bg-color: #f4f6fa;
+            --text-color: #1a1a1a;
+            --text-muted: #5f6368;
+            --text-title: #7a7e85;
+            --card-bg: #ffffff;
+            --card-border: rgba(255, 255, 255, 0.8);
+            --item-bg: #f8f9fa;
+            --header-bg: rgba(244, 246, 250, 0.82);
+            --header-border: rgba(0, 0, 0, 0.04);
+            --tab-container-bg: #e3e5ee;
+            --tab-btn-active: #ffffff;
+            --input-bg: #f2f3f8;
+            --glow-op: 0.45;
+            --glow-1: #8ca5ff;
+            --glow-2: #ffb6c1;
+            --glow-3: #c3a6ff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a0c;
+            --text-color: #f5f5f7;
+            --text-muted: #a1a1a9;
+            --text-title: #8e8e93;
+            --card-bg: #16161a;
+            --card-border: rgba(255, 255, 255, 0.05);
+            --item-bg: #1f1f24;
+            --header-bg: rgba(10, 10, 12, 0.82);
+            --header-border: rgba(255, 255, 255, 0.06);
+            --tab-container-bg: #222227;
+            --tab-btn-active: #2c2c35;
+            --input-bg: #25252b;
+            --glow-op: 0.25;
+            --glow-1: #3b5998;
+            --glow-2: #5c3a41;
+            --glow-3: #4a3475;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
         
         body {
-            background-color: #f4f6fa;
-            color: #1a1a1a;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             padding: 16px;
             padding-top: 80px;
             display: flex;
@@ -31,198 +68,166 @@
 
         /* HIGH-END ONE UI 8.5 DYNAMIC AMBIENT BACKGROUND */
         .ambient-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-            background: #f4f6fa;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; background: var(--bg-color);
         }
-        .glow-circle {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.45;
-        }
-        .glow-1 { top: -10%; left: -10%; width: 350px; height: 350px; background: #8ca5ff; }
-        .glow-2 { top: 5%; right: -5%; width: 280px; height: 280px; background: #ffb6c1; opacity: 0.3; }
-        .glow-3 { top: -20%; left: 40%; width: 400px; height: 400px; background: #c3a6ff; opacity: 0.35; }
+        .glow-circle { position: absolute; border-radius: 50%; filter: blur(80px); opacity: var(--glow-op); transition: background 0.5s ease; }
+        .glow-1 { top: -10%; left: -10%; width: 350px; height: 350px; background: var(--glow-1); }
+        .glow-2 { top: 5%; right: -5%; width: 280px; height: 280px; background: var(--glow-2); }
+        .glow-3 { top: -20%; left: 40%; width: 400px; height: 400px; background: var(--glow-3); }
 
         /* ONE UI TOP HEADER BAR */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%;
-            background: rgba(244, 246, 250, 0.82);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            padding: 14px 20px; 
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.04);
+            background: var(--header-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
+            z-index: 100; border-bottom: 1px solid var(--header-border);
         }
         .header-brand { display: flex; align-items: center; gap: 10px; }
         .top-header img { width: 28px; height: 28px; object-fit: contain; border-radius: 8px; }
-        .top-header h1 { font-size: 1.1rem; font-weight: 600; color: #000; letter-spacing: -0.3px; }
+        .top-header h1 { font-size: 1.1rem; font-weight: 600; color: var(--text-color); letter-spacing: -0.3px; }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+
+        /* BUTTON SETTING STYLE */
+        .btn-setting-toggle {
+            background: var(--input-bg); border: none; width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-color);
+        }
 
         /* HEADER AUTH BUTTON */
         .header-auth-btn {
-            padding: 6px 16px; font-size: 0.8rem; font-weight: 600; border-radius: 18px;
-            cursor: pointer; transition: all 0.2s ease; border: none;
+            padding: 6px 16px; font-size: 0.8rem; font-weight: 600; border-radius: 18px; cursor: pointer; border: none;
         }
         .auth-state-signin { background: #0381fe; color: #fff; }
         .auth-state-signin:hover { background: #0266cb; }
-        .auth-state-logged { background: #e3e5ee; color: #4a4a4a; }
+        .auth-state-logged { background: var(--tab-container-bg); color: var(--text-muted); }
 
         /* ONE UI PILL TABS MENUS */
         .tabs-container { 
             display: flex; gap: 6px; margin-bottom: 16px; width: 100%; max-width: 540px; 
-            z-index: 5; background: #e3e5ee; padding: 4px; border-radius: 24px;
+            z-index: 5; background: var(--tab-container-bg); padding: 4px; border-radius: 24px;
         }
         .tab-btn {
             flex: 1; padding: 10px 4px; background: transparent; border: none;
-            color: #5f6368; font-weight: 600; cursor: pointer; border-radius: 20px; 
-            transition: all 0.2s ease; text-align: center; font-size: 0.85rem;
+            color: var(--text-muted); font-weight: 600; cursor: pointer; border-radius: 20px; 
+            text-align: center; font-size: 0.85rem;
         }
-        .tab-btn.active { background: #ffffff; color: #0381fe; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .tab-btn.active { background: var(--tab-btn-active); color: #0381fe; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         #tab-btn-admin-panel { display: none; color: #e91e63; }
-        #tab-btn-admin-panel.active { background: #ffffff; color: #e91e63; }
+        #tab-btn-admin-panel.active { background: var(--tab-btn-active); color: #e91e63; }
 
-        /* MAIN CONTAINER CARD */
+        /* MAIN CONTAINER CARD WITH ANIMATION */
         .container { width: 100%; max-width: 540px; z-index: 5; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        
+        /* HIỆU ỨNG BLUR & FADE CHO CÁC TABS CONTENT */
+        .tab-content { 
+            display: none; 
+            opacity: 0;
+            transform: translateY(8px);
+            filter: blur(4px);
+            transition: opacity 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), filter 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+        .tab-content.active { 
+            display: block; 
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
 
         /* ONE UI CARD FORMAT */
         .oneui-card {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 14px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 14px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.02); border: 1px solid var(--card-border);
         }
-        .section-title { font-size: 0.9rem; font-weight: 700; color: #7a7e85; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-title); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* ABOUT US REGION */
-        .about-team-box { display: flex; align-items: center; gap: 14px; background: #f8f9fa; border-radius: 18px; padding: 14px; border: 1px solid rgba(0,0,0,0.01); }
+        .about-team-box { display: flex; align-items: center; gap: 14px; background: var(--item-bg); border-radius: 18px; padding: 14px; border: 1px solid rgba(0,0,0,0.01); }
         .about-team-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 12px; background: #000; }
-        .about-team-info h5 { font-size: 0.95rem; font-weight: 600; color: #000; margin-bottom: 2px; }
-        .about-team-info p { font-size: 0.82rem; color: #6e737a; line-height: 1.4; margin-bottom: 4px; }
+        .about-team-info h5 { font-size: 0.95rem; font-weight: 600; color: var(--text-color); margin-bottom: 2px; }
+        .about-team-info p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px; }
         
-        /* BLUE DISCORD LINK STYLE */
-        .discord-blue-link { display: inline-flex; align-items: center; color: #0381fe; text-decoration: none; font-size: 0.82rem; font-weight: 600; transition: opacity 0.2s; }
-        .discord-blue-link:hover { opacity: 0.8; text-decoration: underline; }
+        /* COUNTER GRID STATISTICS */
+        .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .counter-box { background: var(--input-bg); padding: 12px; border-radius: 16px; text-align: center; }
+        .counter-box p { font-size: 0.78rem; font-weight: 700; color: var(--text-title); text-transform: uppercase; margin-bottom: 4px; }
+        .counter-box h4 { font-size: 1.15rem; font-weight: 700; color: var(--text-color); }
+        .pulse-dot { width: 8px; height: 8px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 1.6s infinite; vertical-align: middle; }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.6; } }
 
-        /* --- NEW: COUNTER VISITS & ACTIVE USERS GRID --- */
-        .counter-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 14px;
-            width: 100%;
-        }
-        .counter-box {
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 22px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            position: relative;
-            overflow: hidden;
-        }
-        .counter-box i {
-            position: absolute;
-            right: 14px;
-            bottom: 14px;
-            font-size: 1.5rem;
-            color: rgba(3, 129, 254, 0.06);
-        }
-        .counter-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #7a7e85;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-        }
-        .counter-value {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #000000;
-        }
-        .pulse-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: #2e7d32;
-            border-radius: 50%;
-            margin-left: 6px;
-            animation: livePulse 1.6s infinite ease-in-out;
-        }
-        @keyframes livePulse {
-            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.6); }
-            70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(46, 125, 50, 0); }
-            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
-        }
+        /* BLUE DISCORD LINK STYLE */
+        .discord-blue-link { display: inline-flex; align-items: center; color: #0381fe; text-decoration: none; font-size: 0.82rem; font-weight: 600; }
+        .discord-blue-link:hover { opacity: 0.8; text-decoration: underline; }
 
         /* FORM FIELD DESIGN */
         .form-group { margin-bottom: 14px; }
-        label { display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.82rem; padding-left: 4px; }
+        label { display: block; margin-bottom: 6px; color: var(--text-color); font-weight: 600; font-size: 0.82rem; padding-left: 4px; }
         input[type="text"], input[type="password"], textarea {
-            width: 100%; padding: 14px; background: #f2f3f8; border: 1px solid transparent;
-            border-radius: 16px; color: #000; outline: none; transition: 0.2s; font-size: 0.9rem;
+            width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid transparent;
+            border-radius: 16px; color: var(--text-color); outline: none; font-size: 0.9rem;
         }
-        input:focus, textarea:focus { background: #ffffff; border-color: #0381fe; box-shadow: 0 0 0 3px rgba(3,129,254,0.15); }
+        input:focus, textarea:focus { background: var(--card-bg); border-color: #0381fe; box-shadow: 0 0 0 3px rgba(3,129,254,0.15); }
 
         .btn-submit {
             width: 100%; padding: 14px; color: white; font-weight: 600; cursor: pointer; font-size: 0.9rem;
-            display: block; text-align: center; border-radius: 18px; border: none; transition: 0.2s;
+            display: block; text-align: center; border-radius: 18px; border: none;
         }
 
         /* CARD ITEMS LIST (FILES & NOTICES) */
-        .file-item, .notice-item { background: #f8f9fa; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(0,0,0,0.01); }
-        .file-item h4, .notice-item h4 { font-size: 1rem; font-weight: 600; color: #000; display: flex; align-items: center; justify-content: space-between; }
+        .file-item, .notice-item { background: var(--item-bg); border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(0,0,0,0.01); }
+        .file-item h4, .notice-item h4 { font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; align-items: center; justify-content: space-between; }
         
         .badge-verified { background: rgba(3,129,254,0.1); color: #0381fe; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-risk { background: rgba(255,152,0,0.1); color: #ff9800; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-admin { background: rgba(233,30,99,0.1); color: #e91e63; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         
-        .file-desc { font-size: 0.85rem; color: #5f6368; line-height: 1.45; }
+        .file-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; }
         .file-meta { font-size: 0.75rem; color: #9aa0a6; font-weight: 500; }
 
         .btn-view {
             width: 100%; text-align: center; padding: 10px; border-radius: 14px; font-weight: 600; 
-            cursor: pointer; text-decoration: none; font-size: 0.85rem; display: block; transition: 0.2s;
+            cursor: pointer; text-decoration: none; font-size: 0.85rem; display: block;
             background: #e8f0fe; color: #1a73e8; border: none; margin-top: 4px;
         }
         .btn-view:hover { background: #1a73e8; color: #fff; }
         .btn-view.risk-btn { background: #fff3e0; color: #e65100; }
         .btn-view.risk-btn:hover { background: #e65100; color: #fff; }
 
-        /* ONE UI DIALOG MODAL SQUARES */
+        /* ONE UI DIALOG MODAL SQUARES WITH BLUR & FADE ANIMATION */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.35);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4);
             z-index: 9999; display: flex; justify-content: center; align-items: flex-end;
-            opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+            opacity: 0; pointer-events: none; backdrop-filter: blur(0px);
+            transition: opacity 0.28s ease, backdrop-filter 0.28s ease;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; backdrop-filter: blur(6px); }
 
         .modal-box { 
             padding: 24px; max-width: 540px; width: 100%; position: relative; 
-            background: #ffffff; border-radius: 28px 28px 0 0;
-            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.06);
-            transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+            background: var(--card-bg); border-radius: 28px 28px 0 0;
+            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(100%); 
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
         .modal-overlay.active .modal-box { transform: translateY(0); }
         
         .modal-close-btn { 
-            position: absolute; top: 16px; right: 20px; background: #f1f3f4; border: none; 
-            color: #5f6368; font-weight: bold; cursor: pointer; font-size: 1.1rem;
+            position: absolute; top: 16px; right: 20px; background: var(--input-bg); border: none; 
+            color: var(--text-muted); font-weight: bold; cursor: pointer; font-size: 1.1rem;
             width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px;
         }
         .auth-links a { color: #0381fe; font-weight: 600; text-decoration: none; margin: 0 6px; cursor: pointer;}
+
+        /* ONE UI SETTINGS SWITCH SYSTEM */
+        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 4px; border-bottom: 1px solid var(--header-border); }
+        .setting-info h5 { font-size: 0.95rem; font-weight: 600; color: var(--text-color); }
+        .setting-info p { font-size: 0.78rem; color: var(--text-muted); }
+        
+        .switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #bdc3c7; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #0381fe; }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         /* ONE UI LOADER SQUIRCLE */
         #loading-frame {
@@ -230,13 +235,14 @@
             z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
         }
+        body[data-theme="dark"] #loading-frame { background: rgba(10, 10, 12, 0.9); }
         #loading-frame.active { opacity: 1; pointer-events: auto; }
-        .spinner { width: 36px; height: 36px; border: 3.5px solid #e3e5ee; border-left-color: #0381fe; border-radius: 50%; animation: spin 0.8s infinite linear; }
+        .spinner { width: 36px; height: 36px; border: 3.5px solid var(--tab-container-bg); border-left-color: #0381fe; border-radius: 50%; animation: spin 0.8s infinite linear; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .info-row { display: flex; justify-content: space-between; padding: 12px 4px; border-bottom: 1px solid #f1f3f4; font-size: 0.9rem; }
-        .info-row span { color: #5f6368; }
-        .info-row strong { color: #000; font-weight: 600; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 4px; border-bottom: 1px solid var(--header-border); font-size: 0.9rem; }
+        .info-row span { color: var(--text-muted); }
+        .info-row strong { color: var(--text-color); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -252,9 +258,14 @@
             <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Logo">
             <h1>Netking Files</h1>
         </div>
-        <button id="header-auth-action" class="header-auth-btn auth-state-signin" onclick="handleHeaderAuthClick()">
-            Đăng nhập
-        </button>
+        <div class="header-actions">
+            <button class="btn-setting-toggle" onclick="openSettingsModal()" title="Cài đặt giao diện">
+                ⚙️
+            </button>
+            <button id="header-auth-action" class="header-auth-btn auth-state-signin" onclick="handleHeaderAuthClick()">
+                Đăng nhập
+            </button>
+        </div>
     </div>
 
     <div id="loading-frame">
@@ -262,10 +273,40 @@
         <div style="margin-top: 14px; color: #0381fe; font-weight: 600; font-size: 0.85rem;">Đang tải...</div>
     </div>
 
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box">
+            <button onclick="closeSettingsModal()" class="modal-close-btn">×</button>
+            <h3 style="margin-bottom: 18px; font-size: 1.1rem; font-weight:600;">Cài đặt bảng điều khiển</h3>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h5>Chế độ tối (Dark Mode)</h5>
+                    <p>Bảo vệ mắt, tối ưu năng lượng thiết bị</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="theme-switch" onchange="toggleThemeMode(this)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row" style="border:none;">
+                <div class="setting-info">
+                    <h5>Hiệu ứng chuyển cảnh nâng cao</h5>
+                    <p>Bật hiệu ứng Blur và Fade In/Out mượt mà</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="animation-switch" checked disabled>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p style="text-align: center; font-size:0.75rem; color:var(--text-muted); margin-top:16px;">Netking UI v8.5 Engine • Active</p>
+        </div>
+    </div>
+
     <div id="status-modal" class="modal-overlay">
         <div class="modal-box" style="text-align: center; border-radius: 24px; margin: 16px; margin-top: auto;">
             <h3 id="status-title" style="font-size: 1.15rem; margin-bottom: 6px; font-weight: 600;">Thông báo</h3>
-            <p id="status-desc" style="color: #5f6368; font-size: 0.88rem; line-height: 1.5; margin-bottom: 20px;">Thao tác thành công.</p>
+            <p id="status-desc" style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 20px;">Thao tác thành công.</p>
             <button class="btn-submit" onclick="closeStatusModal()" style="background: #0381fe;">Xác nhận</button>
         </div>
     </div>
@@ -276,11 +317,11 @@
             <div style="text-align: center; margin-bottom: 12px; margin-top: 10px;">
                 <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Logo" style="width: 56px; height: 56px; object-fit: contain; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
             </div>
-            <h2 style="margin-bottom: 8px; font-size: 1.25rem; font-weight:600; text-align: center; color:#000;">Chào mừng đến với Netking Files</h2>
-            <p style="color: #5f6368; font-size: 0.88rem; line-height: 1.5; margin-bottom: 22px; text-align: center; padding: 0 10px;">
+            <h2 style="margin-bottom: 8px; font-size: 1.25rem; font-weight:600; text-align: center; color:var(--text-color);">Chào mừng đến với Netking Files</h2>
+            <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 22px; text-align: center; padding: 0 10px;">
                 Hệ thống đám mây lưu trữ dữ liệu chính thức của Netking Team. Vui lòng đăng nhập tài khoản hệ thống của ông để tiếp tục.
             </p>
-            <div class="auth-links" style="border-top: 1px solid #f1f3f4; padding-top: 16px; text-align: center; padding-bottom: 10px;">
+            <div class="auth-links" style="border-top: 1px solid var(--header-border); padding-top: 16px; text-align: center; padding-bottom: 10px;">
                 <a onclick="openAuthModal('signin')">Đăng ký</a> <span style="color: #d1d1d6;">|</span> <a onclick="openAuthModal('login')">Đăng nhập</a>
             </div>
         </div>
@@ -295,15 +336,15 @@
                 <div class="form-group"><label>TÀI KHOẢN</label><input type="text" id="login-user" placeholder="Nhập tên tài khoản..."></div>
                 <div class="form-group"><label>MẬT KHẨU</label><input type="password" id="login-pass" placeholder="Nhập mật khẩu..."></div>
                 <button class="btn-submit" style="background: #0381fe; margin-top: 8px;" onclick="handleAuth('login')">Đăng nhập</button>
-                <p style="margin-top: 16px; text-align:center; font-size: 0.85rem; color:#5f6368;">Chưa có tài khoản? <a onclick="toggleAuthForm('signin')">Tạo tài khoản</a></p>
+                <p style="margin-top: 16px; text-align:center; font-size: 0.85rem; color:var(--text-muted);">Chưa có tài khoản? <a onclick="toggleAuthForm('signin')">Tạo tài khoản</a></p>
             </div>
 
             <div id="signin-form-wrapper" style="display: none;">
                 <h3 style="margin-bottom: 18px; font-size: 1.1rem; font-weight:600;">Đăng ký tài khoản</h3>
                 <div class="form-group"><label>TÊN TÀI KHOẢN</label><input type="text" id="reg-user" placeholder="Tối đa 10 kí tự"></div>
                 <div class="form-group"><label>MẬT KHẨU BẢO MẬT</label><input type="password" id="reg-pass" placeholder="Tối đa 20 kí tự"></div>
-                <button class="btn-submit" style="background: #000; margin-top: 8px;" onclick="handleAuth('register')">Đăng ký ngay</button>
-                <p style="margin-top: 16px; text-align:center; font-size: 0.85rem; color:#5f6368;">Đã có tài khoản? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
+                <button class="btn-submit" style="background: #000; color: #fff; margin-top: 8px;" onclick="handleAuth('register')">Đăng ký ngay</button>
+                <p style="margin-top: 16px; text-align:center; font-size: 0.85rem; color:var(--text-muted);">Đã có tài khoản? <a onclick="toggleAuthForm('login')">Đăng nhập</a></p>
             </div>
         </div>
     </div>
@@ -313,7 +354,7 @@
             <button onclick="closeAccountInfoModal()" class="modal-close-btn">×</button>
             <h3 style="margin-bottom: 18px; font-size: 1.1rem; font-weight:600; text-align: center;">Thông tin tài khoản</h3>
             
-            <div style="margin-bottom: 24px; background: #f2f3f8; padding: 6px 14px; border-radius: 18px;">
+            <div style="margin-bottom: 24px; background: var(--input-bg); padding: 6px 14px; border-radius: 18px;">
                 <div class="info-row"><span>Tài khoản:</span><strong id="info-display-username">N/A</strong></div>
                 <div class="info-row"><span>Mật khẩu:</span><strong id="info-display-password">••••••••</strong></div>
                 <div class="info-row" style="border:none;"><span>Cấp bậc:</span><strong id="info-display-rank" style="color: #0381fe;">MEMBER</strong></div>
@@ -341,18 +382,16 @@
                     <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="discord-blue-link">➔ Tham gia Discord của nhóm</a>
                 </div>
             </div>
-        </div>
-
-        <div class="counter-grid">
-            <div class="counter-box">
-                <div class="counter-title">Tổng truy cập</div>
-                <div class="counter-value" id="totalVisits">---</div>
-                <i class="fa-solid fa-chart-simple"></i>
-            </div>
-            <div class="counter-box">
-                <div class="counter-title">Đang Online <span class="pulse-dot"></span></div>
-                <div class="counter-value" id="activeUsers">--</div>
-                <i class="fa-solid fa-users"></i>
+            
+            <div class="counter-grid">
+                <div class="counter-box">
+                    <p>Lượt truy cập</p>
+                    <h4 id="totalVisits">0</h4>
+                </div>
+                <div class="counter-box">
+                    <p><span class="pulse-dot"></span>Trực tuyến</p>
+                    <h4 id="activeUsers">0</h4>
+                </div>
             </div>
         </div>
 
@@ -469,16 +508,70 @@
         window.onload = function() {
             checkUserSession();
             updateHeaderAuthButtonUI();
-            initNetkingCounters(); // Kích hoạt bộ đếm truy cập
-
-            // Đồng bộ lắng nghe thông báo thực tế từ server
-            db.ref("announcements").on("value", (snapshot) => {
-                const data = snapshot.val();
-                databaseNotices = data ? Object.values(data) : [];
-                databaseNotices.reverse(); 
-                renderServerAnnouncements();
-            });
+            initNetkingCounters();
+            loadAppliedTheme(); // Khởi tạo theme lưu trữ
         };
+
+        // --- CẤU HÌNH THAY ĐỔI GIAO DIỆN LIGHT / DARK MODE ---
+        function loadAppliedTheme() {
+            const savedTheme = localStorage.getItem("netking_theme") || "light";
+            document.body.setAttribute("data-theme", savedTheme);
+            document.getElementById("theme-switch").checked = (savedTheme === "dark");
+        }
+
+        function toggleThemeMode(checkbox) {
+            const targetTheme = checkbox.checked ? "dark" : "light";
+            document.body.setAttribute("data-theme", targetTheme);
+            localStorage.setItem("netking_theme", targetTheme);
+        }
+
+        function openSettingsModal() { document.getElementById("settings-modal").classList.add("active"); }
+        function closeSettingsModal() { document.getElementById("settings-modal").classList.remove("active"); }
+
+
+        // --- HỆ THỐNG BỘ ĐẾM TRUY CẬP TRANG FILES (AUTO-UPDATE REALISTIC) ---
+        function initNetkingCounters() {
+            let storageVisits = localStorage.getItem('netking_files_visits');
+            if (!storageVisits) {
+                storageVisits = Math.floor(Math.random() * 1200) + 6400;
+            } else {
+                storageVisits = parseInt(storageVisits) + 1;
+            }
+            localStorage.setItem('netking_files_visits', storageVisits);
+            document.getElementById('totalVisits').innerText = parseInt(storageVisits).toLocaleString();
+
+            function autoIncrementVisits() {
+                let randomTime = Math.floor(Math.random() * 5001) + 3000; 
+
+                setTimeout(() => {
+                    let currentVisits = parseInt(localStorage.getItem('netking_files_visits')) || 6400;
+                    let randomPlus = Math.floor(Math.random() * 4) + 1; 
+                    let newVisits = currentVisits + randomPlus;
+                    
+                    localStorage.setItem('netking_files_visits', newVisits);
+                    document.getElementById('totalVisits').innerText = newVisits.toLocaleString();
+
+                    autoIncrementVisits();
+                }, randomTime);
+            }
+
+            autoIncrementVisits();
+            updateLiveUsers();
+            setInterval(updateLiveUsers, 4000);
+        }
+
+        function updateLiveUsers() {
+            const hour = new Date().getHours();
+            let baseActive = 18; 
+            
+            if (hour >= 19 && hour <= 23) baseActive = 54; 
+            else if (hour >= 1 && hour <= 6) baseActive = 5;   
+            
+            const fluctuation = Math.floor(Math.random() * 9) - 4; 
+            const currentActive = Math.max(3, baseActive + fluctuation);
+            
+            document.getElementById('activeUsers').innerText = currentActive;
+        }
 
         // CHẶN TẢI FILE KHI CHƯA ĐĂNG NHẬP / ĐĂNG KÝ
         function downloadFileProtect(url, isRisk) {
@@ -568,17 +661,29 @@
             loader.classList.add("active");
 
             setTimeout(() => {
-                document.querySelectorAll('.tab-content').forEach(c => c.style.display = "none");
+                // Xóa trạng thái active cũ
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 
-                document.getElementById(tabId).style.display = "block";
-                document.getElementById(tabId === 'tab-files' ? 'tab-files' : tabId).classList.add('active');
+                // Active tab được chọn và kích hoạt hiệu ứng mờ + fade
+                const targetContent = document.getElementById(tabId);
+                targetContent.classList.add('active');
                 
                 if(tabId === 'tab-files') document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 if(tabId === 'tab-verified') document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 if(tabId === 'tab-announcements') document.querySelectorAll('.tab-btn')[2].classList.add('active');
                 if(tabId === 'tab-admin-panel') document.getElementById('tab-btn-admin-panel').classList.add('active');
                 
+                // Đồng bộ bảng tin từ Firebase nếu chuyển sang Tab thông báo
+                if(tabId === 'tab-announcements' && databaseNotices.length === 0) {
+                    db.ref("announcements").on("value", (snapshot) => {
+                        const data = snapshot.val();
+                        databaseNotices = data ? Object.values(data) : [];
+                        databaseNotices.reverse(); 
+                        renderServerAnnouncements();
+                    });
+                }
+
                 loader.classList.remove("active");
             }, 300);
         }
@@ -710,53 +815,6 @@
         function toggleAuthForm(type) {
             document.getElementById("login-form-wrapper").style.display = type === 'login' ? "block" : "none";
             document.getElementById("signin-form-wrapper").style.display = type === 'login' ? "none" : "block";
-        }
-
-        // --- HỆ THỐNG BỘ ĐẾM TRUY CẬP TRANG FILES ---
-        function initNetkingCounters() {
-            // Namespace riêng biệt để tránh trùng lặp số liệu với trang Hub
-            const namespace = "netkinggo_files_counter";
-            const key = "visits";
-            
-            fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.value) {
-                        document.getElementById('totalVisits').innerText = data.value.toLocaleString();
-                    } else {
-                        handleFallbackVisits();
-                    }
-                })
-                .catch(() => {
-                    handleFallbackVisits();
-                });
-
-            updateLiveUsers();
-            setInterval(updateLiveUsers, 4000);
-        }
-
-        function handleFallbackVisits() {
-            let storageVisits = localStorage.getItem('netking_files_visits');
-            if (!storageVisits) {
-                storageVisits = Math.floor(Math.random() * 1200) + 6400; 
-            } else {
-                storageVisits = parseInt(storageVisits) + 1;
-            }
-            localStorage.setItem('netking_files_visits', storageVisits);
-            document.getElementById('totalVisits').innerText = parseInt(storageVisits).toLocaleString();
-        }
-
-        function updateLiveUsers() {
-            const hour = new Date().getHours();
-            let baseActive = 18; // Trang tải file thường phân phối đều hơn
-            
-            if (hour >= 19 && hour <= 23) baseActive = 54; 
-            else if (hour >= 1 && hour <= 6) baseActive = 5;   
-            
-            const fluctuation = Math.floor(Math.random() * 9) - 4; 
-            const currentActive = Math.max(3, baseActive + fluctuation);
-            
-            document.getElementById('activeUsers').innerText = currentActive;
         }
     </script>
 </body>
