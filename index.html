@@ -15,7 +15,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
         body {
-            background: linear-gradient(180deg, #f3f4f9 0%, #e8ebf5 100%);
+            background-color: #f4f6fa;
             color: #1a1a1a;
             padding: 16px;
             padding-top: 80px;
@@ -27,21 +27,36 @@
             position: relative;
         }
 
-        /* ONE UI BLUR BACKGROUND GRADIENT */
-        .ambient-bg {
-            position: fixed; top: -10%; left: -10%; width: 120%; height: 50%;
-            background: radial-gradient(circle, rgba(140,165,255,0.4) 0%, rgba(255,255,255,0) 70%);
-            z-index: -1; pointer-events: none; filter: blur(50px);
+        /* HIGH-END ONE UI 8.5 DYNAMIC AMBIENT BACKGROUND */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: #f4f6fa;
         }
+        .glow-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.45;
+        }
+        .glow-1 { top: -10%; left: -10%; width: 350px; height: 350px; background: #8ca5ff; }
+        .glow-2 { top: 5%; right: -5%; width: 28px; height: 280px; background: #ffb6c1; opacity: 0.3; }
+        .glow-3 { top: -20%; left: 40%; width: 400px; height: 400px; background: #c3a6ff; opacity: 0.35; }
 
         /* ONE UI TOP HEADER BAR */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%;
-            background: rgba(243, 244, 249, 0.85);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(244, 246, 250, 0.82);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             padding: 14px 20px; 
             display: flex; align-items: center; justify-content: space-between;
-            z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.04);
         }
         .header-brand { display: flex; align-items: center; gap: 10px; }
         .top-header img { width: 28px; height: 28px; object-fit: contain; border-radius: 8px; }
@@ -54,7 +69,7 @@
         }
         .auth-state-signin { background: #0381fe; color: #fff; }
         .auth-state-signin:hover { background: #0266cb; }
-        .auth-state-logged { background: #e1e3ed; color: #4a4a4a; }
+        .auth-state-logged { background: #e3e5ee; color: #4a4a4a; }
 
         /* ONE UI PILL TABS MENUS */
         .tabs-container { 
@@ -66,7 +81,7 @@
             color: #5f6368; font-weight: 600; cursor: pointer; border-radius: 20px; 
             transition: all 0.2s ease; text-align: center; font-size: 0.85rem;
         }
-        .tab-btn.active { background: #ffffff; color: #0381fe; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .tab-btn.active { background: #ffffff; color: #0381fe; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         #tab-btn-admin-panel { display: none; color: #e91e63; }
         #tab-btn-admin-panel.active { background: #ffffff; color: #e91e63; }
 
@@ -81,8 +96,8 @@
             border-radius: 24px;
             padding: 20px;
             margin-bottom: 14px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
         .section-title { font-size: 0.9rem; font-weight: 700; color: #7a7e85; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -90,7 +105,11 @@
         .about-team-box { display: flex; align-items: center; gap: 14px; background: #f8f9fa; border-radius: 18px; padding: 14px; border: 1px solid rgba(0,0,0,0.01); }
         .about-team-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 12px; background: #000; }
         .about-team-info h5 { font-size: 0.95rem; font-weight: 600; color: #000; margin-bottom: 2px; }
-        .about-team-info p { font-size: 0.82rem; color: #6e737a; line-height: 1.4; }
+        .about-team-info p { font-size: 0.82rem; color: #6e737a; line-height: 1.4; margin-bottom: 4px; }
+        
+        /* BLUE DISCORD LINK STYLE */
+        .discord-blue-link { display: inline-flex; align-items: center; color: #0381fe; text-decoration: none; font-size: 0.82rem; font-weight: 600; transition: opacity 0.2s; }
+        .discord-blue-link:hover { opacity: 0.8; text-decoration: underline; }
 
         /* FORM FIELD DESIGN */
         .form-group { margin-bottom: 14px; }
@@ -107,7 +126,7 @@
         }
 
         /* CARD ITEMS LIST (FILES & NOTICES) */
-        .file-item, .notice-item { background: #f8f9fa; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(0,0,0,0.02); }
+        .file-item, .notice-item { background: #f8f9fa; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(0,0,0,0.01); }
         .file-item h4, .notice-item h4 { font-size: 1rem; font-weight: 600; color: #000; display: flex; align-items: center; justify-content: space-between; }
         
         .badge-verified { background: rgba(3,129,254,0.1); color: #0381fe; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
@@ -128,7 +147,7 @@
 
         /* ONE UI DIALOG MODAL SQUARES */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.35);
             z-index: 9999; display: flex; justify-content: center; align-items: flex-end;
             opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
         }
@@ -137,7 +156,7 @@
         .modal-box { 
             padding: 24px; max-width: 540px; width: 100%; position: relative; 
             background: #ffffff; border-radius: 28px 28px 0 0;
-            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.06);
             transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
         .modal-overlay.active .modal-box { transform: translateY(0); }
@@ -151,7 +170,7 @@
 
         /* ONE UI LOADER SQUIRCLE */
         #loading-frame {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(243, 244, 249, 0.9);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 246, 250, 0.9);
             z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
         }
@@ -166,7 +185,11 @@
 </head>
 <body>
 
-    <div class="ambient-bg"></div>
+    <div class="ambient-glow">
+        <div class="glow-circle glow-1"></div>
+        <div class="glow-circle glow-2"></div>
+        <div class="glow-circle glow-3"></div>
+    </div>
 
     <div class="top-header">
         <div class="header-brand">
@@ -259,6 +282,7 @@
                 <div class="about-team-info">
                     <h5>Team NetKing Official</h5>
                     <p>Hệ thống cung cấp, crack và phân phối các tệp tin ứng dụng di động an toàn, tối ưu hóa trải nghiệm người dùng cao cấp.</p>
+                    <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="discord-blue-link">➔ Tham gia Discord của nhóm</a>
                 </div>
             </div>
         </div>
