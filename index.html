@@ -6,7 +6,10 @@
     <title>Netking Files - Ultimate Cyber Systems</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
+    <link class="apple-touch-icon" href="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -71,52 +74,6 @@
         }
         .auth-state-logged:hover { background: #7000ff; color: #ffffff; box-shadow: 0 0 10px #7000ff; }
 
-        /* FRAME LIVE TRAFFIC */
-        .live-traffic-box {
-            width: 100%;
-            max-width: 600px;
-            background: rgba(10, 10, 20, 0.7);
-            border: 1px solid rgba(0, 240, 255, 0.25);
-            padding: 6px 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            overflow: hidden;
-            z-index: 5;
-        }
-        .live-label {
-            background: #ff007f;
-            color: #fff;
-            padding: 2px 6px;
-            font-weight: bold;
-            font-size: 0.65rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            box-shadow: 0 0 6px #ff007f;
-            white-space: nowrap;
-        }
-        .live-text-wrapper {
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            height: 24px;
-            display: flex;
-            align-items: center;
-        }
-        #live-dynamic-text {
-            position: absolute;
-            white-space: nowrap;
-            color: #00f0ff;
-            font-size: 0.72rem;
-            font-weight: 500;
-            text-shadow: 0 0 2px rgba(0, 240, 255, 0.4);
-            transition: all 0.5s ease-in-out;
-            transform: translateY(25px);
-            opacity: 0;
-        }
-
         /* CYBER FRAME */
         .cyber-frame {
             position: relative;
@@ -178,10 +135,11 @@
         }
 
         /* Items List */
-        .file-item, .notice-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px; }
+        .file-item, .notice-item { background: rgba(15, 15, 25, 0.8) !important; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
         .file-item h4, .notice-item h4 { font-size: 0.95rem; color: #fff; display: flex; align-items: center; justify-content: space-between; }
-        .file-meta, .notice-meta { display: flex; gap: 10px; color: #6a6a90; font-size: 0.7rem; }
+        .file-meta { display: flex; gap: 10px; color: #6a6a90; font-size: 0.7rem; align-items: center; }
         .badge-verified { color: #00f0ff; border: 1px solid #00f0ff; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #00f0ff; }
+        .badge-risk { color: #ffaa00; border: 1px solid #ffaa00; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #ffaa00; }
         .badge-admin { color: #ff007f; border: 1px solid #ff007f; padding: 1px 4px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-shadow: 0 0 4px #ff007f; }
         
         .file-actions-group { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px; }
@@ -191,31 +149,6 @@
         }
         .btn-view { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
         .btn-view:hover { background: #00f0ff; color: #05050a; box-shadow: 0 0 6px #00f0ff; }
-
-        /* ABOUT US SOCIAL BUTTONS SYSTEM */
-        .social-link-card {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 18px; margin-bottom: 12px;
-            background: rgba(12, 12, 24, 0.75);
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            border-radius: 10px;
-            text-decoration: none;
-            transition: all 0.25s ease-in-out;
-        }
-        .social-link-card:hover {
-            border-color: #00f0ff;
-            background: rgba(0, 240, 255, 0.04);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
-            transform: scale(1.01);
-        }
-        .social-card-info { display: flex; align-items: center; gap: 14px; }
-        .social-icon-wrapper {
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05);
-        }
-        .social-title { font-weight: bold; font-size: 0.9rem; color: #ffffff; }
-        .social-desc { font-size: 0.72rem; color: #6a6a90; margin-top: 2px; }
-        .social-action-tag { font-size: 0.75rem; color: #00f0ff; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* MODAL OVERLAYS */
         .modal-overlay {
@@ -255,10 +188,6 @@
         .info-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
         .info-row span { color: #8a8ab0; }
         .info-row strong { color: #00f0ff; text-shadow: 0 0 4px rgba(0, 240, 255, 0.3); }
-        
-        #announcements-container { max-height: 550px; overflow-y: auto; padding-right: 5px; }
-        #announcements-container::-webkit-scrollbar { width: 5px; }
-        #announcements-container::-webkit-scrollbar-thumb { background: #00f0ff; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -275,16 +204,9 @@
         </button>
     </div>
 
-    <div class="live-traffic-box">
-        <span class="live-label">LIVE</span>
-        <div class="live-text-wrapper">
-            <span id="live-dynamic-text">Hệ thống đang thiết lập các phiên giải mã...</span>
-        </div>
-    </div>
-
     <div id="loading-frame">
         <div class="spinner"></div>
-        <div id="loading-text" style="margin-top: 20px; color: #00f0ff; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px; text-align: center; max-width: 80%; line-height: 1.5;" class="blink-text">SYSTEM LOADING...</div>
+        <div id="loading-text" style="margin-top: 15px; color: #00f0ff; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px;" class="blink-text">SYSTEM LOADING...</div>
     </div>
 
     <div id="status-modal" class="modal-overlay">
@@ -353,64 +275,102 @@
         <button class="tab-btn active" onclick="switchTab('tab-files')">1. Files</button>
         <button class="tab-btn" onclick="switchTab('tab-verified')">2. Verified Files</button>
         <button class="tab-btn" onclick="switchTab('tab-announcements')">3. Thông báo</button>
-        <button class="tab-btn" onclick="switchTab('tab-about-us')">4. About Us</button>
-        <button class="tab-btn" id="tab-btn-admin-panel" onclick="switchTab('tab-admin-panel')">5. Admin Panel</button>
+        <button class="tab-btn" id="tab-btn-admin-panel" onclick="switchTab('tab-admin-panel')">4. Admin Panel</button>
     </div>
 
     <div class="container cyber-frame">
         <div id="tab-files" class="tab-content active">
-            <label style="margin-bottom: 12px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG</label>
+            <label style="margin-bottom: 12px;" class="blink-text">DANH SÁCH TỆP TIN HOẠT ĐỘNG (4 FILES)</label>
             <div id="files-container">
-                <div class="file-item">
+                
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
                     <div>
                         <h4>Netking Fake Lag <span class="badge-verified">Verified</span></h4>
                         <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Fake Lag Modern, 3 Options:
-                        1. Freeze Infinity
-                        2. Invisible
-                        3. Teleporter</p>
-                        <div class="file-meta" style="margin-top:6px;">
-                            <span>Ver: v1.0.1</span>
-                            <span>Views: <strong id="view-count-file1" style="color:#00f0ff;">0</strong></span>
-                        </div>
+1. Freeze Infinity
+2. Invisible
+3. Teleporter</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: v1.0.1</span></div>
                     </div>
                     <div class="file-actions-group">
-                        <button class="btn-view" onclick="startDownloadProcess('file1', 'https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file')">Tải Ngay (MediaFire)</button>
+                        <a href="https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a>
                     </div>
                 </div>
 
-                <div class="file-item">
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
                     <div>
                         <h4>Netking Fake Lag OG Version <span class="badge-verified">Verified</span></h4>
                         <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:
-                        Freeze The Game For 2s Have About 1.5s To Shoot</p>
-                        <div class="file-meta" style="margin-top:6px;">
-                            <span>Ver: v1.0.2</span>
-                            <span>Views: <strong id="view-count-file2" style="color:#00f0ff;">0</strong></span>
-                        </div>
+Freeze The Game For 2s Have About 1.5s To Shoot</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: v1.0.2</span></div>
                     </div>
                     <div class="file-actions-group">
-                        <button class="btn-view" onclick="startDownloadProcess('file2', 'https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file')">Tải Ngay (MediaFire)</button>
+                        <a href="https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a>
                     </div>
                 </div>
+
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
+                    <div>
+                        <h4>Netking Modern <span class="badge-risk">Unverified 丨 Risk</span></h4>
+                        <p style="font-size:0.8rem; color:#ffaa00; margin-top:4px; line-height:1.4; white-space: pre-line;">This app got cracked by Netking team, not made by Netking team. Can be risk!</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: V2.0.0</span></div>
+                    </div>
+                    <div class="file-actions-group">
+                        <a href="https://www.mediafire.com/file/e72t7fqxcis9hp0/Netking+Modern.apk/file" target="_blank" class="btn-view" style="border-color:#ffaa00; color:#ffaa00;">Tải Ngay (MediaFire)</a>
+                    </div>
+                </div>
+
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
+                    <div>
+                        <h4>Sky Ping <span class="badge-verified">Verified</span></h4>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Safe App, made by tunmod the frames and UIs look very cool and all free
+The key for the app is... join our server discord for key <3</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: V4</span></div>
+                    </div>
+                    <div class="file-actions-group">
+                        <a href="https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a>
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <div id="tab-verified" class="tab-content">
-            <label style="margin-bottom: 12px; color: #00f0ff;" class="blink-text">✓ TỆP TIN XÁC MINH</label>
+            <label style="margin-bottom: 12px; color: #00f0ff;" class="blink-text">✓ TỆP TIN XÁC MINH AN TOÀN</label>
             <div id="verified-container">
-                <div class="file-item">
+                
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
                     <div>
                         <h4>Netking Fake Lag <span class="badge-verified">Verified</span></h4>
-                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4;">Fake Lag Modern, 3 Options...</p>
-                        <div class="file-meta" style="margin-top:6px;">
-                            <span>Ver: v1.0.1</span>
-                            <span>Views: <strong id="view-count-file1-tab2" style="color:#00f0ff;">0</strong></span>
-                        </div>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Fake Lag Modern, 3 Options:
+1. Freeze Infinity
+2. Invisible
+3. Teleporter</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: v1.0.1</span></div>
                     </div>
-                    <div class="file-actions-group">
-                        <button class="btn-view" onclick="startDownloadProcess('file1', 'https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file')">Tải Ngay (MediaFire)</button>
-                    </div>
+                    <div class="file-actions-group"><a href="https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a></div>
                 </div>
+
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
+                    <div>
+                        <h4>Netking Fake Lag OG Version <span class="badge-verified">Verified</span></h4>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:
+Freeze The Game For 2s Have About 1.5s To Shoot</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: v1.0.2</span></div>
+                    </div>
+                    <div class="file-actions-group"><a href="https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a></div>
+                </div>
+
+                <div class="file-item cyber-frame" style="border: 1px solid rgba(0, 240, 255, 0.2);">
+                    <div>
+                        <h4>Sky Ping <span class="badge-verified">Verified</span></h4>
+                        <p style="font-size:0.8rem; color:#8a8ab0; margin-top:4px; line-height:1.4; white-space: pre-line;">Safe App, made by tunmod the frames and UIs look very cool and all free
+The key for the app is... join our server discord for key <3</p>
+                        <div class="file-meta" style="margin-top:6px;"><span>Ver: V4</span></div>
+                    </div>
+                    <div class="file-actions-group"><a href="https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file" target="_blank" class="btn-view">Tải Ngay (MediaFire)</a></div>
+                </div>
+
             </div>
         </div>
 
@@ -419,212 +379,52 @@
             <div id="announcements-container"></div>
         </div>
 
-        <div id="tab-about-us" class="tab-content">
-            <label style="margin-bottom: 15px; color: #00f0ff;" class="blink-text">🌐 NETKING COMMUNITY ECOSYSTEM</label>
-            <div id="about-us-container">
-                
-                <a href="https://www.tiktok.com/@netking.com?_r=1&_t=ZS-97Ve8ehmYgn" target="_blank" class="social-link-card">
-                    <div class="social-card-info">
-                        <div class="social-icon-wrapper" style="color: #ff007f;">🎵</div>
-                        <div>
-                            <div class="social-title">TikTok Channel</div>
-                            <div class="social-desc">Theo dõi video trải nghiệm & update mẹo công nghệ mới nhất</div>
-                        </div>
-                    </div>
-                    <span class="social-action-tag">FOLLOW</span>
-                </a>
-
-                <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="social-link-card">
-                    <div class="social-card-info">
-                        <div class="social-icon-wrapper" style="color: #5865F2;">💬</div>
-                        <div>
-                            <div class="social-title">Discord Server</div>
-                            <div class="social-desc">Tham gia giao lưu, đàm thoại và chat cùng ban quản trị</div>
-                        </div>
-                    </div>
-                    <span class="social-action-tag" style="color: #5865F2;">JOIN</span>
-                </a>
-
-                <a href="https://netkinggo.vercel.app/" target="_blank" class="social-link-card">
-                    <div class="social-card-info">
-                        <div class="social-icon-wrapper" style="color: #00f0ff;">🌍</div>
-                        <div>
-                            <div class="social-title">Official Website</div>
-                            <div class="social-desc">Cổng thông tin dữ liệu trung tâm Netking Go Portal</div>
-                        </div>
-                    </div>
-                    <span class="social-action-tag">VISIT</span>
-                </a>
-
-                <a href="https://netking-store.vercel.app/" target="_blank" class="social-link-card">
-                    <div class="social-card-info">
-                        <div class="social-icon-wrapper" style="color: #ffaa00;">🛒</div>
-                        <div>
-                            <div class="social-title">Netking Store</div>
-                            <div class="social-desc">Hệ thống mua sắm dịch vụ Premium & Tools VIP Cyber</div>
-                        </div>
-                    </div>
-                    <span class="social-action-tag" style="color: #ffaa00;">SHOP NOW</span>
-                </a>
-
-            </div>
-        </div>
-
         <div id="tab-admin-panel" class="tab-content">
-            <label style="margin-bottom: 15px; color: #ff007f; display: block;" class="text-gradient">⚙️ HỆ THỐNG ĐĂNG THÔNG BÁO TẠM THỜI</label>
+            <label style="margin-bottom: 15px; color: #ff007f; display: block;" class="text-gradient">⚙️ HỆ THỐNG ĐĂNG THÔNG BÁO TOÀN SERVER</label>
             <div class="form-group">
                 <label>TIÊU ĐỀ THÔNG BÁO *</label>
-                <input type="text" id="notice-title" placeholder="Ví dụ: Cập nhật Fake Lag v1.0.2...">
+                <input type="text" id="notice-title" placeholder="Ví dụ: Cập nhật thông tin bảo trì...">
             </div>
             <div class="form-group">
                 <label>NỘI DUNG CHI TIẾT *</label>
-                <textarea id="notice-content" rows="4" style="resize:none;" placeholder="Dữ liệu nhập ở đây sẽ không lưu trữ do không có Database..."></textarea>
+                <textarea id="notice-content" rows="4" style="resize:none;" placeholder="Nhập nội dung thông báo gửi đến các member..."></textarea>
             </div>
-            <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="showStatusModal(false, 'ERROR', 'Giao diện tĩnh không hỗ trợ gửi dữ liệu lên Server!')">PHÁT HÀNH THÔNG BÁO</button>
+            <button class="btn-submit" style="background: linear-gradient(45deg, #ff007f, #7000ff);" onclick="handlePostAnnouncement()">PHÁT HÀNH THÔNG BÁO</button>
         </div>
     </div>
 
     <script>
+        // CẤU HÌNH HỆ THỐNG ĐỒNG BỘ THÔNG BÁO QUA FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1jVOVPHECGp27Qgi4U4r71fiKm_a3biM",
+            authDomain: "netking-b0ad0.firebaseapp.com",
+            databaseURL: "https://netking-b0ad0-default-rtdb.firebaseio.com",
+            projectId: "netking-b0ad0",
+            storageBucket: "netking-b0ad0.firebasestorage.app",
+            messagingSenderId: "374692503086",
+            appId: "1:374692503086:web:0c46168ddfb8dadf45c9bf"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let databaseNotices = [];
         let currentUser = localStorage.getItem("netking_current_user") || "guest"; 
         let nextActionFlow = ""; 
-
-        const updateNotesList = [
-            { id: 51, title: "Cập nhật v1.6.0: Tích hợp phân vùng thông tin About Us", content: "Chèn danh sách liên kết mạng xã hội chính thức của Netking Community gồm TikTok, Discord, Portal Website và Store.", time: "Vừa xong" },
-            { id: 50, title: "Cập nhật v1.5.5: Nâng cấp luồng Live Traffic Real-time Simulation", content: "Đồng bộ hóa lượt xem tự động tăng tương tác trực tiếp khi hệ thống quét thấy hoạt động tải file.", time: "10 phút trước" },
-            { id: 49, title: "Cập nhật v1.4.9: Gỡ bỏ Firebase Realtime Database hoàn toàn", content: "Chuyển cấu trúc source code sang cơ chế No-DB độc lập giúp tăng tốc độ tải trang gấp 3 lần.", time: "1 giờ trước" }
-        ];
-
-        const fakeUsers = [
-            "asin_cyber", "xine3d", "giabao2009", "hoanglong_pro", "minhtuan9x", "alex_hacker", 
-            "shadow99", "matrix_vnn", "ghost_king", "skylight", "cyberfish", "kuro_neko", 
-            "xiao_lin", "vladimir88", "carlos_br", "johnny_dev", "alpha_bot", "nightmare", 
-            "thanhdat_ff", "huuphuoc_og", "khanhduy_termux", "trongnghia_vip"
-        ];
-        
-        const fileMapping = {
-            "Netking Fake Lag": "file1",
-            "Netking Fake Lag OG Version": "file2"
-        };
-        const fakeFiles = Object.keys(fileMapping);
 
         window.onload = function() {
             initBackgroundEffects();
             checkUserSession();
             updateHeaderAuthButtonUI();
-            loadViews(); 
-            renderUpdateNotes();
-            setupNextTrafficEvent();
-        };
 
-        function setupNextTrafficEvent() {
-            let randomDelay = Math.floor(Math.random() * (55000 - 15000 + 1)) + 15000; 
-            setTimeout(() => {
-                triggerLiveTrafficUpdate();
-                setupNextTrafficEvent();
-            }, randomDelay);
-        }
-
-        function triggerLiveTrafficUpdate() {
-            const textElement = document.getElementById("live-dynamic-text");
-            textElement.style.transform = "translateY(-25px)";
-            textElement.style.opacity = "0";
-            
-            setTimeout(() => {
-                const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
-                const randomFile = fakeFiles[Math.floor(Math.random() * fakeFiles.length)];
-                const randomAgo = Math.floor(Math.random() * 45) + 5;
-                
-                textElement.innerHTML = `User <strong style="color: #ff007f;">[${randomUser}]</strong> vừa tải <strong style="color: #fff;">${randomFile}</strong> (${randomAgo}s trước)`;
-                
-                textElement.style.transform = "translateY(25px)";
-                setTimeout(() => {
-                    textElement.style.transform = "translateY(0px)";
-                    textElement.style.opacity = "1";
-                    
-                    const matchedFileKey = fileMapping[randomFile];
-                    if (matchedFileKey) {
-                        let currentView = parseInt(localStorage.getItem("netking_v2_view_" + matchedFileKey)) || 0;
-                        currentView += 1;
-                        localStorage.setItem("netking_v2_view_" + matchedFileKey, currentView.toString());
-                        loadViews();
-                    }
-                }, 50);
-            }, 500);
-        }
-
-        function renderUpdateNotes() {
-            const container = document.getElementById("announcements-container");
-            container.innerHTML = "";
-            updateNotesList.forEach(note => {
-                const itemHTML = `
-                    <div class="notice-item" style="border: 1px solid rgba(0, 240, 255, 0.15); margin-bottom: 12px;">
-                        <div>
-                            <h4>📌 ${note.title} <span class="badge-admin">SYSTEM NOTE</span></h4>
-                            <p style="font-size:0.82rem; color:#d1d1e0; margin-top:6px; line-height:1.5;">${note.content}</p>
-                            <div class="notice-meta" style="margin-top:8px;">
-                                <span>Đăng bởi: 🌐 xine3d</span>
-                                <span>Thời gian: ${note.time}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += itemHTML;
+            // Lắng nghe danh sách thông báo từ Firebase Realtime
+            db.ref("announcements").on("value", (snapshot) => {
+                const data = snapshot.val();
+                databaseNotices = data ? Object.values(data) : [];
+                databaseNotices.reverse(); 
+                renderServerAnnouncements();
             });
-        }
-
-        function loadViews() {
-            if (!localStorage.getItem("netking_v2_view_file1")) localStorage.setItem("netking_v2_view_file1", "0");
-            if (!localStorage.getItem("netking_v2_view_file2")) localStorage.setItem("netking_v2_view_file2", "0");
-
-            const v1 = localStorage.getItem("netking_v2_view_file1");
-            const v2 = localStorage.getItem("netking_v2_view_file2");
-
-            document.getElementById("view-count-file1").innerText = v1;
-            document.getElementById("view-count-file1-tab2").innerText = v1;
-            document.getElementById("view-count-file2").innerText = v2;
-        }
-
-        function startDownloadProcess(fileKey, downloadUrl) {
-            if (currentUser === "guest") {
-                showStatusModal(false, "ACCESS DENIED", "Bạn phải Đăng nhập hoặc Đăng ký tài khoản trước khi tải tệp tin!");
-                setTimeout(() => { openAuthModal('login'); }, 1200);
-                return;
-            }
-
-            const loader = document.getElementById("loading-frame");
-            const label = document.getElementById("loading-text");
-            loader.classList.add("active");
-            
-            const statusTexts = [
-                "🔗 ĐANG KHỞI TẠO ĐƯỜNG TRUYỀN BẢO MẬT (0s)...",
-                "🛡️ ĐANG MÃ HÓA PACKET DATA GIAO DỊCH (2s)...",
-                "⚡ ĐANG BYPASS SECURE FIREWALL MEDIAFIRE (4s)...",
-                "🌀 ĐANG ĐỒNG BỘ LOCAL STORAGE VIEWS COUNTER (6s)...",
-                "💎 HOÀN TẤT THIẾT LẬP! ĐANG CHUYỂN HƯỚNG TẢI FILE (9s)..."
-            ];
-            
-            let currentStep = 0;
-            label.innerText = statusTexts[0];
-
-            const textInterval = setInterval(() => {
-                currentStep++;
-                if (currentStep < statusTexts.length) {
-                    label.innerText = statusTexts[currentStep];
-                }
-            }, 2000);
-
-            setTimeout(() => {
-                clearInterval(textInterval);
-                let currentView = parseInt(localStorage.getItem("netking_v2_view_" + fileKey)) || 0;
-                currentView += 1;
-                localStorage.setItem("netking_v2_view_" + fileKey, currentView.toString());
-                loadViews();
-
-                loader.classList.remove("active");
-                label.innerText = "SYSTEM LOADING...";
-                window.open(downloadUrl, '_blank');
-            }, 10000);
-        }
+        };
 
         function initBackgroundEffects() {
             const canvas = document.getElementById("bg-canvas");
@@ -672,6 +472,7 @@
             } else {
                 authBtn.innerText = `👤 ${savedDisplayUser}`;
                 authBtn.className = "header-auth-btn auth-state-logged";
+                
                 if (savedDisplayUser.toLowerCase() === "xine3d") {
                     adminTabBtn.style.display = "block";
                 } else {
@@ -699,7 +500,7 @@
             updateHeaderAuthButtonUI();
             switchTab('tab-files');
             
-            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản cục bộ.");
+            showStatusModal(true, "LOGGED OUT", "Đã đăng xuất tài khoản.");
             document.getElementById("welcome-modal").classList.add("active");
             startWelcomeCounter();
         }
@@ -736,16 +537,72 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 
                 document.getElementById(tabId).style.display = "block";
+                document.getElementById(tabId === 'tab-files' ? 'tab-files' : tabId).classList.add('active');
                 
-                // Active nút tương ứng trên menu
                 if(tabId === 'tab-files') document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 if(tabId === 'tab-verified') document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 if(tabId === 'tab-announcements') document.querySelectorAll('.tab-btn')[2].classList.add('active');
-                if(tabId === 'tab-about-us') document.querySelectorAll('.tab-btn')[3].classList.add('active');
                 if(tabId === 'tab-admin-panel') document.getElementById('tab-btn-admin-panel').classList.add('active');
                 
                 loader.classList.remove("active");
             }, 400);
+        }
+
+        function renderServerAnnouncements() {
+            const container = document.getElementById("announcements-container");
+            container.innerHTML = "";
+
+            if (databaseNotices.length === 0) {
+                container.innerHTML = `<p style="color:#6a6a90; font-size:0.8rem; padding:15px; text-align:center;">Chưa có thông báo nào từ Ban Quản Trị Admin Netking.</p>`;
+                return;
+            }
+
+            databaseNotices.forEach(notice => {
+                const html = `
+                    <div class="notice-item cyber-frame" style="border: 1px solid rgba(255, 0, 127, 0.25);">
+                        <div>
+                            <h4>📌 ${notice.title} <span class="badge-admin">ADMIN NOTE</span></h4>
+                            <p style="font-size:0.82rem; color:#d1d1e0; margin-top:6px; line-height:1.5; white-space: pre-line;">${notice.content}</p>
+                            <div class="notice-meta" style="margin-top:8px;">
+                                <span>Đăng bởi: 🌐 ${notice.author}</span>
+                                <span>Thời gian: ${notice.date}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function handlePostAnnouncement() {
+            const title = document.getElementById("notice-title").value.trim();
+            const content = document.getElementById("notice-content").value.trim();
+            const savedDisplayUser = localStorage.getItem("netking_session_username") || "guest";
+
+            if (savedDisplayUser.toLowerCase() !== "xine3d") {
+                return showStatusModal(false, "ERROR", "Quyền hạn của ông không đủ để đăng bài!");
+            }
+
+            if (!title || !content) {
+                return showStatusModal(false, "ERROR", "Vui lòng nhập đầy đủ tiêu đề và nội dung thông báo!");
+            }
+
+            const newNoticeRef = db.ref("announcements").push();
+            const now = new Date();
+            const dateString = now.toLocaleDateString('vi-VN') + " - " + now.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+
+            newNoticeRef.set({
+                id: newNoticeRef.key,
+                title: title,
+                content: content,
+                author: savedDisplayUser,
+                date: dateString
+            }).then(() => {
+                document.getElementById("notice-title").value = "";
+                document.getElementById("notice-content").value = "";
+                nextActionFlow = "go_to_announcements";
+                showStatusModal(true, "SUCCESS", "Thông báo đã được phát hành toàn server!");
+            });
         }
 
         function showStatusModal(isSuccess, title, msg) {
@@ -763,6 +620,8 @@
             if (nextActionFlow === "login_success_clear") {
                 closeAuthModal();
                 document.getElementById("welcome-modal").classList.remove("active");
+            } else if (nextActionFlow === "go_to_announcements") {
+                switchTab('tab-announcements');
             }
             nextActionFlow = "just_close";
         }
@@ -771,11 +630,11 @@
             if (action === 'register') {
                 const user = document.getElementById("reg-user").value.trim();
                 const pass = document.getElementById("reg-pass").value.trim();
-                if(!user || !pass) return alert("Vui lòng nhập tài khoản mật khẩu đăng ký!");
-                
-                localStorage.setItem("local_user_" + user.toLowerCase(), pass);
+                if (user.length > 10 || pass.length > 20) return showStatusModal(false, "ERROR", "Tài khoản tối đa 10 kí tự, mật khẩu tối đa 20 kí tự!");
+
+                db.ref("users/" + user.toLowerCase()).set({ username: user, password: pass });
                 nextActionFlow = "just_close"; 
-                showStatusModal(true, "SUCCESS", "Đăng ký giả lập thành công! Hãy chuyển qua đăng nhập.");
+                showStatusModal(true, "SUCCESS", "Đăng ký thành công! Hãy chuyển qua đăng nhập.");
                 toggleAuthForm('login');
             } 
             else {
@@ -785,6 +644,7 @@
 
                 let userLower = userInput.toLowerCase();
 
+                // KHÓA TOKEN LOGIN ADMIN MẶC ĐỊNH
                 if (userLower === "xine3d" && passInput === "Thinh_2012") {
                     currentUser = "admin";
                     localStorage.setItem("netking_current_user", "admin"); 
@@ -793,23 +653,25 @@
                     
                     nextActionFlow = "login_success_clear"; 
                     updateHeaderAuthButtonUI();
-                    showStatusModal(true, "ADMIN SYSTEM", "Chào mừng Admin xine3d quay trở lại hệ thống tĩnh!");
+                    showStatusModal(true, "ADMIN SYSTEM", "Chào mừng Admin xine3d quay trở lại hệ thống!");
                     return;
                 }
 
-                let localPass = localStorage.getItem("local_user_" + userLower);
-                if (localPass && localPass === passInput) {
-                    currentUser = "member";
-                    localStorage.setItem("netking_current_user", "member"); 
-                    localStorage.setItem("netking_session_username", userInput);
-                    localStorage.setItem("netking_session_password", passInput);
+                db.ref("users/" + userLower).once("value", (snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData && userData.password === passInput) {
+                        currentUser = "member";
+                        localStorage.setItem("netking_current_user", "member"); 
+                        localStorage.setItem("netking_session_username", userData.username);
+                        localStorage.setItem("netking_session_password", passInput);
 
-                    nextActionFlow = "login_success_clear"; 
-                    updateHeaderAuthButtonUI();
-                    showStatusModal(true, "SUCCESS", "Đăng nhập thành công!");
-                } else {
-                    showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác!");
-                }
+                        nextActionFlow = "login_success_clear"; 
+                        updateHeaderAuthButtonUI();
+                        showStatusModal(true, "SUCCESS", "Đăng nhập thành công!");
+                    } else {
+                        showStatusModal(false, "ERROR", "Tài khoản hoặc mật khẩu không chính xác!");
+                    }
+                });
             }
         }
 
