@@ -529,33 +529,23 @@
         function closeSettingsModal() { document.getElementById("settings-modal").classList.remove("active"); }
 
 
-        // --- HỆ THỐNG BỘ ĐẾM TRUY CẬP TRANG FILES (AUTO-UPDATE REALISTIC) ---
+        // --- HỆ THỐNG BỘ ĐẾM TRUY CẬP TRANG FILES (ĐỒNG BỘ FIREBASE TRUYỀN THỐNG) ---
         function initNetkingCounters() {
-            let storageVisits = localStorage.getItem('netking_files_visits');
-            if (!storageVisits) {
-                storageVisits = Math.floor(Math.random() * 1200) + 6400;
-            } else {
-                storageVisits = parseInt(storageVisits) + 1;
-            }
-            localStorage.setItem('netking_files_visits', storageVisits);
-            document.getElementById('totalVisits').innerText = parseInt(storageVisits).toLocaleString();
+            // Tự động tăng số lượt truy cập trên Firebase mỗi khi load trang
+            const visitsRef = db.ref('total_visits');
+            
+            visitsRef.transaction((currentValue) => {
+                return (currentValue || 0) + 1;
+            });
 
-            function autoIncrementVisits() {
-                let randomTime = Math.floor(Math.random() * 5001) + 3000; 
+            // Lắng nghe thay đổi để render số ra view thực tế
+            visitsRef.on('value', (snapshot) => {
+                const totalVisits = snapshot.val() || 0;
+                // Nếu DB trống hoặc ít, cộng gốc nền 6,825 view cho đẹp giao diện
+                const displayVisits = totalVisits < 6000 ? (totalVisits + 6825) : totalVisits;
+                document.getElementById('totalVisits').innerText = displayVisits.toLocaleString();
+            });
 
-                setTimeout(() => {
-                    let currentVisits = parseInt(localStorage.getItem('netking_files_visits')) || 6400;
-                    let randomPlus = Math.floor(Math.random() * 4) + 1; 
-                    let newVisits = currentVisits + randomPlus;
-                    
-                    localStorage.setItem('netking_files_visits', newVisits);
-                    document.getElementById('totalVisits').innerText = newVisits.toLocaleString();
-
-                    autoIncrementVisits();
-                }, randomTime);
-            }
-
-            autoIncrementVisits();
             updateLiveUsers();
             setInterval(updateLiveUsers, 4000);
         }
@@ -661,11 +651,9 @@
             loader.classList.add("active");
 
             setTimeout(() => {
-                // Xóa trạng thái active cũ
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 
-                // Active tab được chọn và kích hoạt hiệu ứng mờ + fade
                 const targetContent = document.getElementById(tabId);
                 targetContent.classList.add('active');
                 
@@ -674,7 +662,6 @@
                 if(tabId === 'tab-announcements') document.querySelectorAll('.tab-btn')[2].classList.add('active');
                 if(tabId === 'tab-admin-panel') document.getElementById('tab-btn-admin-panel').classList.add('active');
                 
-                // Đồng bộ bảng tin từ Firebase nếu chuyển sang Tab thông báo
                 if(tabId === 'tab-announcements' && databaseNotices.length === 0) {
                     db.ref("announcements").on("value", (snapshot) => {
                         const data = snapshot.val();
