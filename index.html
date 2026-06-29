@@ -179,18 +179,24 @@
         .badge-verified { background: rgba(3,129,254,0.1); color: #0381fe; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-risk { background: rgba(255,152,0,0.1); color: #ff9800; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-admin { background: rgba(233,30,99,0.1); color: #e91e63; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
+        .badge-hot { background: rgba(244,67,54,0.1); color: #f44336; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; animation: blink 1.2s infinite; }
         
+        @keyframes blink { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
         .file-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; }
         .file-meta { font-size: 0.75rem; color: #9aa0a6; font-weight: 500; }
 
+        .file-actions-row { display: flex; gap: 8px; margin-top: 4px; }
         .btn-view {
-            width: 100%; text-align: center; padding: 10px; border-radius: 14px; font-weight: 600; 
+            flex: 1; text-align: center; padding: 10px; border-radius: 14px; font-weight: 600; 
             cursor: pointer; text-decoration: none; font-size: 0.85rem; display: block;
-            background: #e8f0fe; color: #1a73e8; border: none; margin-top: 4px;
+            background: #e8f0fe; color: #1a73e8; border: none;
         }
         .btn-view:hover { background: #1a73e8; color: #fff; }
         .btn-view.risk-btn { background: #fff3e0; color: #e65100; }
         .btn-view.risk-btn:hover { background: #e65100; color: #fff; }
+        .btn-key { background: var(--tab-container-bg); color: var(--text-muted); }
+        .btn-key:hover { background: var(--input-bg); color: var(--text-color); }
 
         /* ONE UI DIALOG MODAL SQUARES WITH BLUR & FADE ANIMATION */
         .modal-overlay {
@@ -397,35 +403,53 @@
 
         <div id="tab-files" class="tab-content active">
             <div class="oneui-card">
-                <p class="section-title">Danh sách hoạt động (4 Tệp)</p>
+                <p class="section-title">Danh sách hoạt động (5 Tệp)</p>
                 <div id="files-container">
                     
+                    <div class="file-item">
+                        <h4>NetPlus <span style="display: flex; gap: 4px;"><span class="badge-hot">HOT 🔥</span><span class="badge-verified">An toàn</span></span></h4>
+                        <p class="file-desc">2 option antiband 88% - 90%:<br>1. Freeze<br>2. Ghost<br><span style="color: #0381fe; font-weight: 500;">✓ This app got verified by shin mod, davisk tech and netking team</span></p>
+                        <div class="file-meta">Phiên bản: V18</div>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/c5rjolz3ezd8yun/NetPlusV18.apk/file?dkey=hl9pz305lxt&r=1774', false)" class="btn-view">Tải tập tin</button>
+                            <button onclick="window.open('https://link4m.net/go/eb8Na3', '_blank')" class="btn-view btn-key">Lấy Key</button>
+                        </div>
+                    </div>
+
                     <div class="file-item">
                         <h4>Netking Fake Lag <span class="badge-verified">An toàn</span></h4>
                         <p class="file-desc">Fake Lag Modern, 3 Options:<br>1. Freeze Infinity<br>2. Invisible<br>3. Teleporter</p>
                         <div class="file-meta">Phiên bản: v1.0.1</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
                     </div>
 
                     <div class="file-item">
                         <h4>Netking Fake Lag OG Version <span class="badge-verified">An toàn</span></h4>
                         <p class="file-desc">Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:<br>Freeze The Game For 2s Have About 1.5s To Shoot</p>
                         <div class="file-meta">Phiên bản: v1.0.2</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
                     </div>
 
                     <div class="file-item">
                         <h4>Netking Modern <span class="badge-risk">Chưa xác minh</span></h4>
                         <p class="file-desc" style="color: #e65100;">This app got cracked by Netking team, not made by Netking team. Can be risk!</p>
                         <div class="file-meta">Phiên bản: V2.0.0</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/e72t7fqxcis9hp0/Netking+Modern.apk/file', true)" class="btn-view risk-btn">Tải tập tin rủi ro</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/e72t7fqxcis9hp0/Netking+Modern.apk/file', true)" class="btn-view risk-btn">Tải tập tin rủi ro</button>
+                        </div>
                     </div>
 
                     <div class="file-item">
                         <h4>Sky Ping <span class="badge-verified">An toàn</span></h4>
                         <p class="file-desc">Safe App, made by tunmod the frames and UIs look very cool and all free<br>The key for the app is... join our server discord for key &lt;3</p>
                         <div class="file-meta">Phiên bản: V4</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
                     </div>
 
                 </div>
@@ -438,24 +462,40 @@
                 <div id="verified-container">
                     
                     <div class="file-item">
+                        <h4>NetPlus <span style="display: flex; gap: 4px;"><span class="badge-hot">HOT 🔥</span><span class="badge-verified">An toàn</span></span></h4>
+                        <p class="file-desc">2 option antiband 88% - 90%:<br>1. Freeze<br>2. Ghost<br><span style="color: #0381fe; font-weight: 500;">✓ This app got verified by shin mod, davisk tech and netking team</span></p>
+                        <div class="file-meta">Phiên bản: V18</div>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/c5rjolz3ezd8yun/NetPlusV18.apk/file?dkey=hl9pz305lxt&r=1774', false)" class="btn-view">Tải tập tin</button>
+                            <button onclick="window.open('https://link4m.net/go/eb8Na3', '_blank')" class="btn-view btn-key">Lấy Key</button>
+                        </div>
+                    </div>
+
+                    <div class="file-item">
                         <h4>Netking Fake Lag <span class="badge-verified">An toàn</span></h4>
                         <p class="file-desc">Fake Lag Modern, 3 Options:<br>1. Freeze Infinity<br>2. Invisible<br>3. Teleporter</p>
                         <div class="file-meta">Phiên bản: v1.0.1</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
                     </div>
 
                     <div class="file-item">
                         <h4>Netking Fake Lag OG Version <span class="badge-verified">An toàn</span></h4>
                         <p class="file-desc">Using OG VPN Service, Never getting BlackListed But Just Own 1 Options:<br>Freeze The Game For 2s Have About 1.5s To Shoot</p>
                         <div class="file-meta">Phiên bản: v1.0.2</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
                     </div>
 
                     <div class="file-item">
                         <h4>Sky Ping <span class="badge-verified">An toàn</span></h4>
                         <p class="file-desc">Safe App, made by tunmod the frames and UIs look very cool and all free<br>The key for the app is... join our server discord for key &lt;3</p>
                         <div class="file-meta">Phiên bản: V4</div>
-                        <button onclick="downloadFileProtect('https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
                     </div>
 
                 </div>
@@ -529,21 +569,17 @@
         function closeSettingsModal() { document.getElementById("settings-modal").classList.remove("active"); }
 
 
-        // --- HỆ THỐNG BỘ ĐẾM TRUY CẬP TRANG FILES (ĐỒNG BỘ FIREBASE TRUYỀN THỐNG) ---
+        // --- HỆ THỐNG BỘ ĐẾM TRUY CẬP TRANG FILES (ĐỒNG BỘ FIREBASE REALTIME CHUẨN) ---
         function initNetkingCounters() {
-            // Tự động tăng số lượt truy cập trên Firebase mỗi khi load trang
             const visitsRef = db.ref('total_visits');
             
             visitsRef.transaction((currentValue) => {
                 return (currentValue || 0) + 1;
             });
 
-            // Lắng nghe thay đổi để render số ra view thực tế
             visitsRef.on('value', (snapshot) => {
                 const totalVisits = snapshot.val() || 0;
-                // Nếu DB trống hoặc ít, cộng gốc nền 6,825 view cho đẹp giao diện
-                const displayVisits = totalVisits < 6000 ? (totalVisits + 6825) : totalVisits;
-                document.getElementById('totalVisits').innerText = displayVisits.toLocaleString();
+                document.getElementById('totalVisits').innerText = totalVisits.toLocaleString();
             });
 
             updateLiveUsers();
