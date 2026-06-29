@@ -30,6 +30,7 @@
             --glow-1: #8ca5ff;
             --glow-2: #ffb6c1;
             --glow-3: #c3a6ff;
+            --insanity-gradient: linear-gradient(135deg, #8ca5ff, #c3a6ff, #ffb6c1);
         }
 
         [data-theme="dark"] {
@@ -49,6 +50,7 @@
             --glow-1: #3b5998;
             --glow-2: #5c3a41;
             --glow-3: #4a3475;
+            --insanity-gradient: linear-gradient(135deg, #3b5998, #4a3475, #5c3a41);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -174,12 +176,13 @@
 
         /* CARD ITEMS LIST (FILES & NOTICES) */
         .file-item, .notice-item { background: var(--item-bg); border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(0,0,0,0.01); }
-        .file-item h4, .notice-item h4 { font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; align-items: center; justify-content: space-between; }
+        .file-item h4, .notice-item h4 { font-size: 1rem; font-weight: 600; color: var(--text-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
         
         .badge-verified { background: rgba(3,129,254,0.1); color: #0381fe; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-risk { background: rgba(255,152,0,0.1); color: #ff9800; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-admin { background: rgba(233,30,99,0.1); color: #e91e63; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
         .badge-hot { background: rgba(244,67,54,0.1); color: #f44336; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; animation: blink 1.2s infinite; }
+        .badge-insanity { background: var(--insanity-gradient); color: #fff; padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: blink 1.2s infinite; }
         
         @keyframes blink { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
@@ -403,8 +406,17 @@
 
         <div id="tab-files" class="tab-content active">
             <div class="oneui-card">
-                <p class="section-title">Danh sách hoạt động (5 Tệp)</p>
+                <p class="section-title">Danh sách hoạt động (6 Tệp)</p>
                 <div id="files-container">
+                    
+                    <div class="file-item">
+                        <h4>Netking Launcher <span style="display: flex; gap: 4px;"><span class="badge-insanity">INSANITY!!</span><span class="badge-hot">HOT 🔥</span><span class="badge-verified">An toàn</span></span></h4>
+                        <p class="file-desc">Finding good launcher apk? NL will give you best enjoy. Hide your apps from others people to find it, NL can help you!<br><span style="color: #0381fe; font-weight: 500;">✓ Verified by netking team and fishisred</span></p>
+                        <div class="file-meta">Phiên bản: V1</div>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/zmd786crhxyv6no/NLauncher_1.0.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
+                    </div>
                     
                     <div class="file-item">
                         <h4>NetPlus <span style="display: flex; gap: 4px;"><span class="badge-hot">HOT 🔥</span><span class="badge-verified">An toàn</span></span></h4>
@@ -460,6 +472,15 @@
             <div class="oneui-card">
                 <p class="section-title">✓ Chỉ hiện tệp tin an toàn</p>
                 <div id="verified-container">
+                    
+                    <div class="file-item">
+                        <h4>Netking Launcher <span style="display: flex; gap: 4px;"><span class="badge-insanity">INSANITY!!</span><span class="badge-hot">HOT 🔥</span><span class="badge-verified">An toàn</span></span></h4>
+                        <p class="file-desc">Finding good launcher apk? NL will give you best enjoy. Hide your apps from others people to find it, NL can help you!<br><span style="color: #0381fe; font-weight: 500;">✓ Verified by netking team and fishisred</span></p>
+                        <div class="file-meta">Phiên bản: V1</div>
+                        <div class="file-actions-row">
+                            <button onclick="downloadFileProtect('https://www.mediafire.com/file/zmd786crhxyv6no/NLauncher_1.0.apk/file', false)" class="btn-view">Tải tập tin</button>
+                        </div>
+                    </div>
                     
                     <div class="file-item">
                         <h4>NetPlus <span style="display: flex; gap: 4px;"><span class="badge-hot">HOT 🔥</span><span class="badge-verified">An toàn</span></span></h4>
