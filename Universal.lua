@@ -4,20 +4,22 @@ local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
--- 1. ADVANCED ANTI-KICK BYPASS (Metatable Hook Method)
-local mt = getrawmetatable(game)
-local oldNamecall = mt.__namecall
-setreadonly(mt, false)
+-- 1. ADVANCED ANTI-KICK BYPASS (Wrapped in pcall to prevent UI loading crashes)
+pcall(function()
+    local mt = getrawmetatable(game)
+    local oldNamecall = mt.__namecall
+    setreadonly(mt, false)
 
-mt.__namecall = newcclosure(function(self, ...)
-    local method = getnamecallmethod()
-    if not checkcaller() and (method == "Kick" or method == "kick") then
-        -- Suppress local termination request; return fallback state safely
-        return nil
-    end
-    return oldNamecall(self, ...)
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if not checkcaller() and (method == "Kick" or method == "kick") then
+            -- Suppress local termination request; return fallback state safely
+            return nil
+        end
+        return oldNamecall(self, ...)
+    end)
+    setreadonly(mt, true)
 end)
-setreadonly(mt, true)
 
 -- 2. AUTOMATIC ANTI-TELEBACK SPEED BYPASS (Stable at Speed >= 55)
 local maxAllowedSpeed = 65
@@ -40,19 +42,36 @@ task.spawn(function()
 end)
 
 -- 3. SERVER-VIEW PHASE ARENA TELEPORT INTERFACE
-local UtilityGui = Instance.new("ScreenGui", CoreGui)
-UtilityGui.Name = "ArenaPhaseUtility"
+-- Safely handle UI parenting using gethui() fallback for modern executors
+local targetGuiContainer = (gethui and gethui()) or CoreGui
 
-local PhaseToggle = Instance.new("TextButton", UtilityGui)
-PhaseToggle.Size = UDim2.new(0, 150, 0, 45)
-PhaseToggle.Position = UDim2.new(0.02, 0, 0.85, 0)
+local UtilityGui = Instance.new("ScreenGui")
+UtilityGui.Name = "ArenaPhaseUtility"
+UtilityGui.ResetOnSpawn = false
+UtilityGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+UtilityGui.Parent = targetGuiContainer
+
+local PhaseToggle = Instance.new("TextButton")
+PhaseToggle.Name = "PhaseToggleBtn"
+PhaseToggle.Size = UDim2.new(0, 160, 0, 45)
+PhaseToggle.Position = UDim2.new(0.02, 0, 0.75, 0) -- Slightly raised so it doesn't clip below chat/mobile layouts
 PhaseToggle.BackgroundColor3 = Color3.fromRGB(20, 20, 35)
 PhaseToggle.Text = "PHASE TELEPORT: OFF"
 PhaseToggle.TextColor3 = Color3.fromRGB(255, 60, 60)
 PhaseToggle.Font = Enum.Font.GothamBold
 PhaseToggle.TextSize = 11
-Instance.new("UICorner", PhaseToggle).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", PhaseToggle).Thickness = 1.5
+PhaseToggle.Active = true
+PhaseToggle.Draggable = true -- Allows you to reposition it anywhere if it blocks other game buttons
+PhaseToggle.Parent = UtilityGui
+
+local RoundCorner = Instance.new("UICorner")
+RoundCorner.CornerRadius = UDim.new(0, 6)
+RoundCorner.Parent = PhaseToggle
+
+local StrokeNeon = Instance.new("UIStroke")
+StrokeNeon.Thickness = 1.5
+StrokeNeon.Color = Color3.fromRGB(255, 60, 60)
+StrokeNeon.Parent = PhaseToggle
 
 -- State variables
 local phaseActive = false
@@ -70,6 +89,7 @@ PhaseToggle.MouseButton1Click:Connect(function()
     if phaseActive then
         PhaseToggle.Text = "PHASE TELEPORT: ACTIVE"
         PhaseToggle.TextColor3 = Color3.fromRGB(60, 255, 60)
+        StrokeNeon.Color = Color3.fromRGB(60, 255, 60)
         
         -- Lock original position anchor mapping
         originalCFrame = root.CFrame
@@ -88,6 +108,7 @@ PhaseToggle.MouseButton1Click:Connect(function()
     else
         PhaseToggle.Text = "PHASE TELEPORT: OFF"
         PhaseToggle.TextColor3 = Color3.fromRGB(255, 60, 60)
+        StrokeNeon.Color = Color3.fromRGB(255, 60, 60)
         
         if serverGhost then
             serverGhost:Destroy()
