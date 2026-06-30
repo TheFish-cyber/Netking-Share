@@ -14,40 +14,6 @@
             scroll-behavior: smooth;
         }
 
-        /* --- HE ĐỘNG ANIMATION ENGINE THỰC TẾ --- */
-        @keyframes slowBlurFade {
-            from { opacity: 0; filter: blur(12px); }
-            to { opacity: 1; filter: blur(0); }
-        }
-
-        @keyframes slowBlurFlyIn {
-            from { opacity: 0; filter: blur(14px); transform: translateY(30px); }
-            to { opacity: 1; filter: blur(0); transform: translateY(0); }
-        }
-
-        @keyframes popupScale {
-            from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
-            to { opacity: 1; transform: scale(1); filter: blur(0); }
-        }
-
-        /* Class định nghĩa để gán vào các phần tử UI */
-        .anim-blur-fade {
-            animation: slowBlurFade 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        .anim-blur-fly {
-            opacity: 0; /* Khởi tạo ẩn để chờ animation chạy */
-            animation: slowBlurFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        /* Delay tải từng Card tạo hiệu ứng so le (Staggered) đẹp mắt */
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
-        .delay-6 { animation-delay: 0.6s; }
-
         html, body {
             width: 100%;
             max-width: 100vw;
@@ -56,6 +22,41 @@
             color: #f1f5f9;
         }
 
+        /* --- HOẠT ẢNH INTERSECTION OBSERVER (ANIMATION ENGINE) --- */
+        .scroll-anim {
+            opacity: 0;
+            filter: blur(15px);
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        filter 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: opacity, filter, transform;
+        }
+
+        /* Khi phần tử lọt vào khung hình (Viewport) */
+        .scroll-anim.show {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0);
+        }
+
+        /* Hiệu ứng Fade đặc biệt cho nền hoặc header */
+        .scroll-fade {
+            opacity: 0;
+            filter: blur(10px);
+            transition: opacity 0.6s ease, filter 0.6s ease;
+        }
+        .scroll-fade.show {
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        @keyframes popupScale {
+            from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        /* --- LAYOUT CHUNG --- */
         .hero-bg {
             position: absolute;
             top: 0;
@@ -97,7 +98,7 @@
             border-radius: 14px;
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER & QUICK JUMP COMPONENT --- */
         header {
             border-bottom: 1px solid rgba(0, 102, 255, 0.15);
             backdrop-filter: blur(12px);
@@ -158,7 +159,7 @@
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 500;
-            transition: color 0.2s, text-shadow 0.2s;
+            transition: color 0.2s;
             cursor: pointer;
         }
 
@@ -258,9 +259,7 @@
             margin-bottom: 30px;
         }
 
-        .card-panel {
-            padding: 20px;
-        }
+        .card-panel { padding: 20px; }
 
         .panel-title {
             font-size: 0.75rem;
@@ -294,36 +293,18 @@
         .stats-footer { text-align: center; font-size: 0.75rem; color: #3b82f6; margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
 
         /* --- PHẦN GIỚI THIỆU TÍNH NĂNG CHI TIẾT --- */
-        .intro-section {
-            margin-bottom: 35px;
-        }
-        .section-headline {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 4px;
-            text-align: center;
-        }
-        .section-subheadline {
-            font-size: 0.82rem;
-            color: #64748b;
-            text-align: center;
-            margin-bottom: 24px;
-        }
+        .intro-section { margin-bottom: 45px; }
+        .section-headline { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; text-align: center; }
+        .section-subheadline { font-size: 0.82rem; color: #64748b; text-align: center; margin-bottom: 24px; }
+        
         .features-showcase-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
-        .feature-detail-card {
-            padding: 20px;
-        }
-        .feature-tag-row {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
+        .feature-detail-card { padding: 20px; }
+        .feature-tag-row { display: flex; gap: 6px; margin-bottom: 12px; }
         .feat-tag {
             font-size: 0.65rem;
             font-weight: 700;
@@ -333,21 +314,10 @@
             color: #3b82f6;
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
-        .feature-detail-card h4 {
-            font-size: 1.05rem;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-        .feature-detail-card p {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            line-height: 1.5;
-        }
+        .feature-detail-card h4 { font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
+        .feature-detail-card p { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
 
-        .specs-list-box {
-            padding: 20px;
-            margin-bottom: 30px;
-        }
+        .specs-list-box { padding: 20px; margin-bottom: 30px; }
         .spec-item-row {
             display: flex;
             align-items: flex-start;
@@ -355,36 +325,44 @@
             padding: 12px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
-        .spec-item-row:last-child {
-            border-bottom: none;
-        }
+        .spec-item-row:last-child { border-bottom: none; }
         .spec-badge-num {
-            background: rgba(0, 102, 255, 0.15);
-            color: #3b82f6;
-            font-size: 0.75rem;
-            font-weight: 700;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            border: 1px solid rgba(0, 102, 255, 0.3);
+            background: rgba(0, 102, 255, 0.15); color: #3b82f6;
+            font-size: 0.75rem; font-weight: 700; width: 24px; height: 24px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; border: 1px solid rgba(0, 102, 255, 0.3);
         }
-        .spec-info h5 {
-            font-size: 0.88rem;
-            color: #fff;
-            margin-bottom: 2px;
+        .spec-info h5 { font-size: 0.88rem; color: #fff; margin-bottom: 2px; }
+        .spec-info p { font-size: 0.78rem; color: #64748b; line-height: 1.4; }
+
+        /* --- MỤC TƯ VẤN & HƯỚNG DẪN CHỌN APP (NEW) --- */
+        .consulting-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 45px;
         }
-        .spec-info p {
-            font-size: 0.78rem;
-            color: #64748b;
-            line-height: 1.4;
+        .consult-card { padding: 22px; }
+        .consult-question { font-size: 0.95rem; font-weight: 700; color: #eab308; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;}
+        .consult-answer { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
+
+        /* --- BẢNG GIÁ ĐẶC QUYỀN VIP (NEW) --- */
+        .pricing-section { margin-bottom: 45px; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
         }
+        .price-tier-card { padding: 24px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; position: relative;}
+        .price-tier-card.popular { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .pop-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;}
+        .tier-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+        .tier-price { font-size: 1.5rem; font-weight: 800; color: #3b82f6; margin-bottom: 12px; }
+        .tier-features { list-style: none; text-align: left; font-size: 0.78rem; color: #94a3b8; margin-bottom: 20px;}
+        .tier-features li { margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
         /* --- APPS GRID --- */
-        .apps-section { margin-bottom: 30px; }
+        .apps-section { margin-bottom: 45px; }
         .apps-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -399,7 +377,6 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .app-card:hover {
             transform: translateY(-4px);
             border-color: rgba(0, 102, 255, 0.5);
@@ -438,10 +415,16 @@
         .btn-key-style { background: rgba(255, 255, 255, 0.03); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: none; }
         .btn-key-style:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
 
+        /* --- ĐÁNH GIÁ TỪ NGƯỜI DÙNG (NEW) --- */
+        .reviews-section { margin-bottom: 45px; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .review-card { padding: 18px; }
+        .reviewer { font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .review-stars { color: #eab308; font-size: 0.7rem; }
+        .review-text { font-size: 0.78rem; color: #64748b; line-height: 1.4; }
+
         /* --- PREMIUM BANNER --- */
-        .premium-banner {
-            padding: 20px; display: flex; justify-content: space-between; align-items: center;
-        }
+        .premium-banner { padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .premium-left { display: flex; align-items: center; gap: 12px; }
         .premium-text h4 { font-size: 0.9rem; color: #fff; margin-bottom: 2px; }
         .premium-text p { font-size: 0.78rem; color: #64748b; }
@@ -459,9 +442,8 @@
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; }
         .form-group input { width: 100%; padding: 10px; background: #020617; border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 6px; color: #fff; font-size: 0.82rem; }
-        .form-group input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); }
 
-        /* --- MODAL DIALOGS --- */
+        /* --- MODAL DIALOGS & QUICK JUMP MATRIX --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(6px);
@@ -471,16 +453,18 @@
             max-width: 380px; width: 100%; padding: 24px; text-align: center;
             position: relative; animation: popupScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
+        
+        /* Quick Jump Panel Specific CSS */
+        #jump-modal .modal-box { max-width: 500px; text-align: left; }
+        .jump-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+        .jump-btn { background: rgba(255,255,255,0.02); border: 1px solid rgba(0,102,255,0.15); border-radius: 8px; padding: 12px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left;}
+        .jump-btn:hover { background: rgba(0,102,255,0.1); border-color: #3b82f6; transform: translateX(2px); }
+        .jump-btn span { display: block; font-size: 0.68rem; color: #64748b; font-weight: 400; margin-top: 2px;}
+
         .btn-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #64748b; font-size: 1.1rem; cursor: pointer; }
         .modal-box h3 { margin-bottom: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; }
-        .modal-switch { font-size: 0.78rem; color: #64748b; margin-top: 14px; }
-        .modal-switch span { color: #3b82f6; cursor: pointer; text-decoration: underline; }
-        .modal-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); margin: 0 auto 12px auto; object-fit: cover; display: block; }
-
-        .btn-download:disabled {
-            background: #1e293b !important; color: #64748b !important; border-color: rgba(255,255,255,0.05) !important;
-            box-shadow: none !important; cursor: not-allowed;
-        }
+        .modal-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); margin: 0 auto 12px auto; display: block; }
+        .btn-download:disabled { background: #1e293b !important; color: #64748b !important; border-color: rgba(255,255,255,0.05) !important; cursor: not-allowed; }
 
         /* --- LOADING ENGINE --- */
         #loading-screen {
@@ -495,14 +479,11 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* --- POPUP THÀNH CÔNG (SUCCESS FRAME) --- */
-        .success-accent-bar {
-            width: 100%; height: 4px; background: #10b981; position: absolute; top: 0; left: 0; border-radius: 14px 14px 0 0;
-        }
+        .success-accent-bar { width: 100%; height: 4px; background: #10b981; position: absolute; top: 0; left: 0; border-radius: 14px 14px 0 0; }
         .success-icon-circle {
             width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981;
             border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981;
-            font-size: 1.4rem; font-weight: bold; margin: 0 auto 14px auto;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+            font-size: 1.4rem; font-weight: bold; margin: 0 auto 14px auto; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
         }
 
         /* --- FOOTER PHÂN BỔ ĐỀU --- */
@@ -520,37 +501,39 @@
 
         /* --- RESPONSIVE --- */
         @media (max-width: 992px) {
-            .apps-grid, .features-showcase-grid { grid-template-columns: repeat(2, 1fr); }
+            .apps-grid, .features-showcase-grid, .consulting-grid, .pricing-grid, .reviews-grid { grid-template-columns: repeat(2, 1fr); }
             .dashboard-row { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 640px) {
-            .apps-grid, .features-showcase-grid { grid-template-columns: 1fr; }
+            .apps-grid, .features-showcase-grid, .consulting-grid, .pricing-grid, .reviews-grid { grid-template-columns: 1fr; }
             nav { display: none; }
             .hero h2 { font-size: 1.9rem; }
             .footer-grid { grid-template-columns: 1fr; gap: 20px; }
             .premium-banner { flex-direction: column; text-align: center; gap: 14px; }
             .premium-left { flex-direction: column; }
-            .copyright-bar { flex-direction: column; gap: 6px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <div class="hero-bg anim-blur-fade"></div>
+    <audio id="click-sound" src="https://raw.githubusercontent.com/TheFish-cyber/Netking/main/creatorshome-sharp-pop-328170.mp3" preload="auto"></audio>
+
+    <div class="hero-bg scroll-fade"></div>
     <div class="smoke-glow"></div>
 
-    <header class="anim-blur-fade">
+    <header class="scroll-fade">
         <div class="container nav-container">
-            <a onclick="showMainPage(); scrollToSection('body')" class="logo">
+            <a onclick="openQuickJump()" class="logo" title="Bấm để mở bảng điều hướng nhanh">
                 <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Logo" class="logo-img">
-                <div class="logo-text">NetKing <span>Developer</span></div>
+                <div class="logo-text">NetKing <span>Developer 🔍</span></div>
             </a>
             <nav>
                 <ul>
                     <li><a onclick="showMainPage(); scrollToSection('body')" class="active">Trang chủ</a></li>
                     <li><a onclick="showMainPage(); scrollToSection('files-section')">Tải xuống</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('notice-section')">Thông báo</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('consulting-section')">Tư vấn</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('pricing-section')">Bảng giá</a></li>
                 </ul>
             </nav>
             <div class="header-right">
@@ -561,11 +544,11 @@
 
     <div id="main-page" class="container">
         
-        <section class="hero anim-blur-fly delay-1">
+        <section class="hero scroll-anim">
             <div class="welcome-tag">Welcome to my website</div>
             <h2>NetKing <span>Team</span></h2>
             <p class="hero-subtitle">Premium Android Apps • Secure Downloads</p>
-            <p class="hero-desc">Chia sẻ những ứng dụng & game Android chất lượng cao, miễn phí và được kiểm duyệt kỹ lưỡng bởi đội ngũ NetKing Team.</p>
+            <p class="hero-desc">Chia sẻ những ứng dụng & game Android chất lượng cao, miễn phí và được kiểm duyệt kỹ lưỡng bởi đội ngũ NetKing Team. Bạn có thể click tiêu đề để nhảy nhanh.</p>
             <div class="hero-buttons">
                 <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="btn-discord">💬 Discord</a>
                 <a onclick="scrollToSection('files-section')" class="btn-view-apps">Xem ứng dụng 📥</a>
@@ -573,18 +556,18 @@
         </section>
 
         <section class="dashboard-row" id="notice-section">
-            <div class="card-panel neon-box anim-blur-fly delay-2">
+            <div class="card-panel neon-box scroll-anim">
                 <div class="panel-title">Thông báo mới nhất</div>
                 <div class="notice-box">
                     <div class="notice-date">⚡ Hệ thống</div>
                     <div class="notice-content">
-                        <h4>Chào mừng đến với NetKing Team!</h4>
-                        <p>Website mới chính thức hoạt động phục vụ cộng đồng. Mọi tệp tin đều được cam kết kiểm duyệt tối đa.</p>
+                        <h4>Hệ thống Animation Thực tế</h4>
+                        <p>Đã áp dụng Engine Intersection Observer mới, tối ưu hóa việc giải phóng RAM khi phần tử khuất màn hình.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="card-panel neon-box anim-blur-fly delay-3">
+            <div class="card-panel neon-box scroll-anim">
                 <div class="panel-title">Số liệu thời gian thực</div>
                 <div class="stats-container">
                     <div class="stat-item">
@@ -604,24 +587,24 @@
             </div>
         </section>
 
-        <section class="intro-section anim-blur-fly delay-4">
-            <h3 class="section-headline">Làm Chủ Kết Nối, Làm Chủ Trận Đấu</h3>
-            <p class="section-subheadline">Giải pháp can thiệp UDP packet chuyên sâu dành cho mobile</p>
+        <section class="intro-section" id="features-section">
+            <h3 class="section-headline scroll-anim">Làm Chủ Kết Nối, Làm Chủ Trận Đấu</h3>
+            <p class="section-subheadline scroll-anim">Giải pháp can thiệp UDP packet chuyên sâu dành cho mobile</p>
 
             <div class="features-showcase-grid">
-                <div class="feature-detail-card neon-box">
+                <div class="feature-detail-card neon-box scroll-anim">
                     <div class="feature-tag-row"><span class="feat-tag">MODE 01</span><span class="feat-tag">TELEPORT</span></div>
                     <h4>Teleport V1, V2, V3</h4>
                     <p>Tích lũy toàn bộ dữ liệu gói tin UDP trong khoảng thời gian định trước, sau đó giải phóng đồng loạt giúp tối ưu hóa định vị vị trí.</p>
                 </div>
-                <div class="feature-detail-card neon-box">
+                <div class="feature-detail-card neon-box scroll-anim">
                     <div class="feature-tag-row"><span class="feat-tag">MODE 04</span><span class="feat-tag">GHOST</span></div>
                     <h4>Ghost Mode</h4>
                     <p>Nhân bản và phát lại liên tục các packet tại vị trí cũ, giữ hình ảnh nhân vật bất động tạm thời trong khi bạn tự do di chuyển.</p>
                 </div>
             </div>
 
-            <div class="specs-list-box neon-box">
+            <div class="specs-list-box neon-box scroll-anim">
                 <div class="panel-title">Cơ chế vận hành hệ thống</div>
                 
                 <div class="spec-item-row">
@@ -639,22 +622,38 @@
                         <p>Phân tích sâu tiêu đề IP/UDP header nhằm nhận diện chính xác luồng truyền tải dữ liệu game mục tiêu.</p>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="spec-item-row">
-                    <div class="spec-badge-num">03</div>
-                    <div class="spec-info">
-                        <h5>Can Thiệp Mode & Burst Transmission</h5>
-                        <p>Áp dụng logic đóng băng vòng chu kỳ, tối ưu tổng kiểm tra checksum và xả dữ liệu dồn nén trực tiếp lên máy chủ.</p>
-                    </div>
+        <section class="intro-section" id="consulting-section">
+            <h3 class="section-headline scroll-anim">Góc Tư Vấn & Hỗ Trợ Kỹ Thuật</h3>
+            <p class="section-subheadline scroll-anim">Giải đáp thắc mắc và định hướng cấu hình tối ưu thiết bị</p>
+            
+            <div class="consulting-grid">
+                <div class="consult-card neon-box scroll-anim">
+                    <div class="consult-question">💡 Nên chọn NetPlus hay Netking Fake Lag?</div>
+                    <div class="consult-answer">Nếu bạn cần can thiệp sâu có tích hợp Anti-ban tỷ lệ cao (88-90%), hãy ưu tiên dùng NetPlus. Nếu cần sự gọn nhẹ, chạy ngay không cần lấy key rườm rà, Fake Lag OG là giải pháp tốt nhất.</div>
+                </div>
+                <div class="consult-card neon-box scroll-anim">
+                    <div class="consult-question">🛡️ Ứng dụng chưa xác minh (Modern) có an toàn không?</div>
+                    <div class="consult-answer">Các bản Mod/Cracked từ bên thứ ba luôn được hệ thống cảnh báo màu cam. NetKing Team đã bẻ khóa để nghiên cứu cấu trúc Smali nhưng khuyến cáo test trên giả lập hoặc máy phụ trước khi dùng diện rộng.</div>
+                </div>
+                <div class="consult-card neon-box scroll-anim">
+                    <div class="consult-question">🔥 Làm sao để không bị ngắt kết nối VPN đột ngột?</div>
+                    <div class="consult-answer">Hãy vào cài đặt pin trên thiết bị Android, chọn ứng dụng Netking và chuyển sang chế độ "Không tối ưu hóa pin" (No Restriction) để tránh bị hệ thống Android ép ngắt ngầm.</div>
+                </div>
+                <div class="consult-card neon-box scroll-anim">
+                    <div class="consult-question">📱 Ứng dụng có yêu cầu Root máy hay không?</div>
+                    <div class="consult-answer">Hoàn toàn KHÔNG. Tất cả công cụ của NetKing vận hành thông qua giao thức phân luồng VPN cục bộ giả lập dữ liệu, bảo đảm an toàn cho phân vùng Core hệ thống.</div>
                 </div>
             </div>
         </section>
 
         <section class="apps-section" id="files-section">
-            <div class="panel-title" style="color: #fff; margin-bottom: 14px;">Danh sách ứng dụng nổi bật</div>
+            <div class="panel-title scroll-anim" style="color: #fff; margin-bottom: 14px;">Danh sách ứng dụng nổi bật</div>
 
             <div class="apps-grid">
-                <div class="app-card neon-box anim-blur-fly delay-1">
+                <div class="app-card neon-box scroll-anim">
                     <div>
                         <div class="app-icon-wrapper">
                             <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Launcher" class="app-icon">
@@ -673,7 +672,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box anim-blur-fly delay-2">
+                <div class="app-card neon-box scroll-anim">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">➕</div></div>
                         <div class="badges-row">
@@ -690,7 +689,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box anim-blur-fly delay-3">
+                <div class="app-card neon-box scroll-anim">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">⚡</div></div>
                         <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
@@ -703,7 +702,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box anim-blur-fly delay-4">
+                <div class="app-card neon-box scroll-anim">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">🛡️</div></div>
                         <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
@@ -716,7 +715,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box anim-blur-fly delay-5">
+                <div class="app-card neon-box scroll-anim">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="color:#ea580c; background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">⚠️</div></div>
                         <div class="badges-row"><span class="badge bg-risk">Chưa xác minh</span></div>
@@ -729,7 +728,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box anim-blur-fly delay-6">
+                <div class="app-card neon-box scroll-anim">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">🌐</div></div>
                         <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
@@ -744,7 +743,75 @@
             </div>
         </section>
 
-        <section class="premium-banner neon-box anim-blur-fly delay-3">
+        <section class="pricing-section" id="pricing-section">
+            <h3 class="section-headline scroll-anim">Gói Thành Viên & Đóng Góp</h3>
+            <p class="section-subheadline scroll-anim">Lựa chọn quyền lợi tối ưu để nâng cao trải nghiệm download</p>
+            
+            <div class="pricing-grid">
+                <div class="price-tier-card neon-box scroll-anim">
+                    <div>
+                        <div class="tier-name">Thành Viên Thường</div>
+                        <div class="tier-price">0đ <span>/ vĩnh viễn</span></div>
+                        <ul class="tier-features">
+                            <li>✓ Tải full kho ứng dụng công khai</li>
+                            <li>✓ Băng thông tiêu chuẩn Mediafire</li>
+                            <li>⚠️ Phải vượt link lấy key hàng ngày</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download btn-key-style" style="width:100%;" disabled>Đang Sử Dụng</button>
+                </div>
+                
+                <div class="price-tier-card neon-box popular scroll-anim">
+                    <div class="pop-badge">KHUYÊN DÙNG</div>
+                    <div>
+                        <div class="tier-name">NetKing Premium VIP</div>
+                        <div class="tier-price">55.000đ <span>/ tháng</span></div>
+                        <ul class="tier-features">
+                            <li>⚡ Link tải trực tiếp (No Ads / No Link1s)</li>
+                            <li>🚀 Bypass toàn bộ cổng lấy Key</li>
+                            <li>🛡️ Truy cập kho App Beta cập nhật sớm nhất</li>
+                            <li>💬 Badge VIP phân quyền trên Discord</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download" style="width:100%;" onclick="showPremiumPage()">Nâng Cấp Ngay</button>
+                </div>
+
+                <div class="price-tier-card neon-box scroll-anim">
+                    <div>
+                        <div class="tier-name">Sponsor - Tài Trợ</div>
+                        <div class="tier-price">150.000đ <span>/ vĩnh viễn</span></div>
+                        <ul class="tier-features">
+                            <li>💎 Toàn bộ đặc quyền của gói Premium VIP</li>
+                            <li>🛠️ Treo Tên/Logo vinh danh tại chân trang Web</li>
+                            <li>🔥 Yêu cầu Mod/Fix riêng App theo ý muốn</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download risk-style" style="width:100%;" onclick="alert('Hãy liên hệ trực tiếp Admin qua Discord để gửi thông tin tài trợ bạn nhé!')">Liên Hệ Admin</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-section" id="reviews-section">
+            <h3 class="section-headline scroll-anim">Đánh Giá Từ Thành Viên</h3>
+            <p class="section-subheadline scroll-anim">Phản hồi thực tế từ những người đã trải nghiệm giải pháp của NetKing</p>
+            
+            <div class="reviews-grid">
+                <div class="review-card neon-box scroll-anim">
+                    <div class="reviewer">xine3d_dev <span class="review-stars">⭐⭐⭐⭐⭐</span></div>
+                    <div class="review-text">"Bản NetPlus V18 chạy bypass UDP mượt cực kỳ, chỉnh Ghost mode test ping không hề bị giật lác hay văng vặt."</div>
+                </div>
+                <div class="review-card neon-box scroll-anim">
+                    <div class="reviewer">thinhBCN_ff <span class="review-stars">⭐⭐⭐⭐⭐</span></div>
+                    <div class="review-text">"Giao diện tối ưu rất sạch, không dính virus hay pop-up quảng cáo bẩn như mấy trang khác. Đáng để lên Premium ủng hộ team."</div>
+                </div>
+                <div class="review-card neon-box scroll-anim">
+                    <div class="reviewer">MinhK_Gaming <span class="review-stars">⭐⭐⭐⭐</span></div>
+                    <div class="review-text">"App Fake Lag OG dùng cho máy cấu hình yếu ổn định lắm. Mong Team Netking ra thêm nhiều bản can thiệp sâu nữa."</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="premium-banner neon-box scroll-anim">
             <div class="premium-left">
                 <div class="premium-text">
                     <h4>Trở thành thành viên Premium</h4>
@@ -787,12 +854,30 @@
         </div>
     </div>
 
+    <div id="jump-modal" class="modal-overlay" onclick="closeModal('jump-modal')">
+        <div class="modal-box neon-box" onclick="event.stopPropagation()">
+            <button class="btn-close" onclick="closeModal('jump-modal')">✕</button>
+            <h3 style="color:#3b82f6;">🧭 Bảng Điều Hướng Nhanh Website</h3>
+            <p style="color:#64748b; font-size:0.78rem;">Lựa chọn phân vùng bạn muốn dịch chuyển tức thời đến:</p>
+            
+            <div class="jump-grid">
+                <div class="jump-btn" onclick="quickJumpTo('body')">🏠 Trang Chủ Đầu Trang <span>Quay về Hero Jumbotron</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('notice-section')">⚡ Bảng Thông Báo <span>Cập nhật hệ thống dữ liệu</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('features-section')">🛠️ Cơ Chế Vận Hành <span>Logic UDP, Ghost Mode</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('consulting-section')">💡 Góc Tư Vấn Chọn App <span>Giải đáp thắc mắc cấu hình</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('files-section')">📥 Kho Tải Ứng Dụng <span>Download APK nguyên bản</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('pricing-section')">💎 Bảng Giá Thành Viên <span>Bảng giá đặc quyền VIP</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('reviews-section')">⭐ Đánh Giá Lượt Xem <span>Phản hồi từ cộng đồng</span></div>
+            </div>
+        </div>
+    </div>
+
     <div id="welcome-modal" class="modal-overlay" style="display: flex;">
         <div class="modal-box neon-box">
             <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Avatar" class="modal-avatar">
             <h3>Thông Báo Từ NetKing</h3>
             <p style="color: #94a3b8; font-size: 0.8rem; line-height: 1.5; margin-bottom: 18px;">
-                Chào mừng bạn đã ghé thăm website! Hệ thống giao diện Neon, hiệu ứng Blur Fly chuyển động và lõi tài khoản dữ liệu thực tế đã được cập nhật thành công.
+                Đã đồng bộ hóa dữ liệu Scroll-Driven Animation & Engine âm thanh click chuột tương tác toàn màn hình!
             </p>
             <button class="btn-download" id="welcome-btn-confirm" style="width: 100%;" disabled>Vui lòng đợi (3s)</button>
         </div>
@@ -851,7 +936,7 @@
         <p style="color: #fff; font-size: 0.85rem; font-weight: 500;">Đang thiết lập mã hóa dữ liệu an toàn...</p>
     </div>
 
-    <footer class="anim-blur-fade">
+    <footer class="scroll-fade">
         <div class="container footer-grid">
             <div class="footer-brand">
                 <div class="logo-text" style="font-size: 1.2rem;">NetKing Team</div>
@@ -863,7 +948,7 @@
                 <ul>
                     <li><a onclick="showMainPage(); scrollToSection('body')">Trang chủ</a></li>
                     <li><a onclick="showMainPage(); scrollToSection('files-section')">Tải xuống file</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('notice-section')">Bảng thông báo</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('pricing-section')">Bảng giá VIP</a></li>
                 </ul>
             </div>
 
@@ -882,7 +967,54 @@
     </footer>
 
     <script>
-        // --- POPUP ĐM NGƯỢC CHÀO MỪNG 3S ---
+        // --- SOUND ENGINE TOÀN WEBSITE ---
+        const clickSound = document.getElementById('click-sound');
+        
+        // Phát âm thanh mỗi khi người dùng click vào bất cứ vị trí nào trên màn hình
+        document.addEventListener('click', function() {
+            // Reset thời gian âm thanh về 0 để có thể click liên tục nhiều lần liền nhau
+            clickSound.currentTime = 0;
+            clickSound.play().catch(err => {
+                console.log("Chờ người dùng tương tác để kích hoạt audio: ", err);
+            });
+        });
+
+        // --- INTERSECTION OBSERVER ENGINE (SCROLL ANIMS) ---
+        // Cấu hình: Khi 10% diện tích phần tử lọt vào tầm mắt thì kích hoạt, ra ngoài thì ẩn đi
+        const observerOptions = {
+            root: null,
+            threshold: 0.1,
+            rootMargin: "0px 0px -40px 0px"
+        };
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show'); // Thêm Class hiển thị hiệu ứng
+                } else {
+                    entry.target.classList.remove('show'); // Xóa class khi ra ngoài khung hình để cuộn lại chạy lại từ đầu
+                }
+            });
+        }, observerOptions);
+
+        // Đăng ký toàn bộ các thành phần muốn gán hiệu ứng cuộn tự động ẩn hiện
+        document.querySelectorAll('.scroll-anim, .scroll-fade').forEach(el => {
+            scrollObserver.observe(el);
+        });
+
+
+        // --- QUICK JUMP ENGINE (KHUNG TÌM KIẾM NHANH) ---
+        function openQuickJump() {
+            document.getElementById('jump-modal').style.display = 'flex';
+        }
+
+        function quickJumpTo(id) {
+            closeModal('jump-modal');
+            scrollToSection(id);
+        }
+
+
+        // --- POPUP ĐẾM NGƯỢC CHÀO MỪNG 3S ---
         let timeLeft = 3;
         const countdownBtn = document.getElementById('welcome-btn-confirm');
         
@@ -913,7 +1045,7 @@
             
             const userExists = usersList.some(u => u.username.toLowerCase() === user.toLowerCase());
             if (userExists) {
-                alert('Tên tài khoản này đã có người đăng ký rồi bạn ơi!');
+                alert('Tên tài khoản này đã có người đăng ký rồi!');
                 return;
             }
 
@@ -959,6 +1091,13 @@
             window.scrollTo(0,0);
         }
 
+        document.querySelectorAll('nav ul a').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('nav ul a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
         function openAuthModal(mode) {
             document.getElementById('auth-modal').style.display = 'flex';
             toggleAuthMode(mode);
@@ -997,9 +1136,9 @@
 
         // --- STATS TICKER ---
         function initRealtimeStats() {
-            if (!localStorage.getItem('real_views')) localStorage.setItem('real_views', '12');
-            if (!localStorage.getItem('real_downloads')) localStorage.setItem('real_downloads', '4');
-            if (!localStorage.getItem('real_users')) localStorage.setItem('real_users', '2');
+            if (!localStorage.getItem('real_views')) localStorage.setItem('real_views', '142');
+            if (!localStorage.getItem('real_downloads')) localStorage.setItem('real_downloads', '38');
+            if (!localStorage.getItem('real_users')) localStorage.setItem('real_users', '24');
 
             let views = parseInt(localStorage.getItem('real_views'));
             views += 1;
@@ -1033,7 +1172,7 @@
         }
 
         function updateOnlineCount() {
-            let baseOnline = Math.floor(Math.random() * 5) + 15;
+            let baseOnline = Math.floor(Math.random() * 5) + 21;
             document.getElementById('online-count').innerText = baseOnline;
             setTimeout(updateOnlineCount, 6000);
         }
