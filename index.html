@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NetKing Team - Premium Android Apps</title>
+    <style>
+        /* --- RESET & MODERN FONTS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            background-color: #020617;
+            color: #f1f5f9;
+        }
+
+        /* --- BACKGROUND FIREWORKS CANVAS --- */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999; /* Nằm dưới modal nhưng trên nội dung chính */
+        }
+
+        /* --- GLOBAL BROADCAST NOTIFICATION FRAME --- */
+        #global-broadcast-banner {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            border: 2px solid #a855f7;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.6), inset 0 0 15px rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            z-index: 2500;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+        #global-broadcast-banner.show {
+            top: 20px;
+        }
+        .broadcast-icon {
+            font-size: 2rem;
+            animation: bounce 1s infinite alternate;
+        }
+        .broadcast-info h4 {
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .broadcast-info p {
+            font-size: 0.8rem;
+            color: #c084fc;
+        }
+
+        /* --- HOẠT ẢNH INTERSECTION OBSERVER --- */
+        .scroll-anim {
+            opacity: 0;
+            filter: blur(15px);
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        filter 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: opacity, filter, transform;
+        }
+
+        .scroll-anim.show {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0);
+        }
+
+        .scroll-fade {
+            opacity: 0;
+            filter: blur(10px);
+            transition: opacity 0.6s ease, filter 0.6s ease;
+        }
+        .scroll-fade.show {
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        @keyframes popupScale {
+            from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+        @keyframes bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        /* --- LAYOUT CHUNG --- */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 580px;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), #020617), 
+                        url('https://images.alphacoders.com/134/1347648.png') no-repeat center top;
+            background-size: cover;
+            z-index: -2;
+            opacity: 0.6;
+        }
+
+        .smoke-glow {
+            position: absolute;
+            top: -100px;
+            right: -50px;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .neon-box {
+            background: rgba(7, 13, 31, 0.75);
+            border: 1px solid rgba(0, 102, 255, 0.25);
+            box-shadow: 0 0 20px rgba(0, 82, 204, 0.12), inset 0 0 12px rgba(0, 102, 255, 0.05);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 14px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            border-bottom: 1px solid rgba(0, 102, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(2, 6, 23, 0.8);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 65px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .logo-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text span {
+            color: #3b82f6;
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: -1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav ul a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        nav ul a:hover, nav ul a.active {
+            color: #3b82f6;
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+        }
+
+        .btn-login {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 18px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        /* --- FRAME LIVE SHOW MEMBERS --- */
+        .live-ticker-bar {
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            color: #94a3b8;
+            font-size: 0.78rem;
+            padding: 8px 0;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            min-height: 36px;
+        }
+
+        .live-badge {
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+        }
+
+        #ticker-content {
+            display: inline-block;
+            transition: all 0.3s ease-in-out;
+            color: #fff;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* --- HERO --- */
+        .hero { padding: 50px 0 30px 0; }
+        .welcome-tag {
+            background: rgba(0, 102, 255, 0.1);
+            color: #3b82f6;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            margin-bottom: 12px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            font-weight: 850;
+            color: #fff;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .hero h2 span {
+            color: #3b82f6;
+            text-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .hero-subtitle { font-size: 0.9rem; color: #94a3b8; margin-bottom: 14px; font-weight: 500; }
+        .hero-desc { max-width: 450px; color: #64748b; font-size: 0.82rem; line-height: 1.5; margin-bottom: 24px; }
+        .hero-buttons { display: flex; gap: 10px; }
+        .btn-discord, .btn-view-apps { padding: 10px 20px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+        .btn-discord { background: #5865f2; color: white; }
+        .btn-view-apps { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: white; }
+
+        /* --- DASHBOARD & NOTICES SYSTEM --- */
+        .dashboard-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 30px; }
+        .card-panel { padding: 20px; position: relative;}
+        .panel-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #3b82f6; letter-spacing: 0.5px; margin-bottom: 14px; }
+        .notice-box { background: rgba(255, 255, 255, 0.02); border-left: 3px solid #eab308; padding: 12px; border-radius: 0 8px 8px 0; margin-bottom: 10px; }
+        .notice-date { font-size: 0.7rem; color: #eab308; margin-bottom: 4px; font-weight: 600; }
+        .notice-content h4 { font-size: 0.85rem; color: #fff; margin-bottom: 2px;}
+        .notice-content p { font-size: 0.78rem; color: #94a3b8; line-height: 1.4; }
+        
+        .btn-view-all-notices {
+            background: transparent;
+            border: 1px dashed rgba(59, 130, 246, 0.4);
+            color: #3b82f6;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .btn-view-all-notices:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-style: solid;
+        }
+
+        /* LIST THÔNG BÁO MODAL DÀI */
+        .notices-list-container {
+            max-height: 350px;
+            overflow-y: auto;
+            text-align: left;
+            padding-right: 6px;
+        }
+        .notices-list-container::-webkit-scrollbar { width: 4px; }
+        .notices-list-container::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+        .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+        .stat-number { font-size: 1.2rem; font-weight: 700; color: #fff; }
+        .stat-label { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
+        .stats-footer { text-align: center; font-size: 0.75rem; color: #3b82f6; margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+
+        /* --- SECTION HEADLINES --- */
+        .intro-section { margin-bottom: 45px; }
+        .section-headline { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; text-align: center; }
+        .section-subheadline { font-size: 0.82rem; color: #64748b; text-align: center; margin-bottom: 24px; }
+        
+        /* --- FEATURES --- */
+        .features-showcase-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .feature-detail-card { padding: 20px; }
+        .feature-tag-row { display: flex; gap: 6px; margin-bottom: 12px; }
+        .feat-tag { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .feature-detail-card h4 { font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
+        .feature-detail-card p { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
+
+        /* --- TƯ VẤN --- */
+        .consulting-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 45px; }
+        .consult-card { padding: 22px; }
+        .consult-question { font-size: 0.95rem; font-weight: 700; color: #eab308; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;}
+        .consult-answer { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
+
+        /* --- BẢNG GIÁ + GÓI SUPPORTER --- */
+        .pricing-section { margin-bottom: 45px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .price-tier-card { padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; position: relative;}
+        .price-tier-card.popular { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+        .price-tier-card.supporter-tier { border-color: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
+        .pop-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;}
+        .supp-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #a855f7; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;}
+        .tier-name { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+        .tier-price { font-size: 1.3rem; font-weight: 800; color: #3b82f6; margin-bottom: 12px; }
+        .tier-price span { font-size: 0.7rem; color: #64748b; font-weight: 400; }
+        .tier-features { list-style: none; text-align: left; font-size: 0.75rem; color: #94a3b8; margin-bottom: 20px;}
+        .tier-features li { margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+
+        /* --- APPS GRID --- */
+        .apps-section { margin-bottom: 45px; }
+        .apps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .app-card { padding: 20px; text-align: center; transition: all 0.25s ease; display: flex; flex-direction: column; justify-content: space-between; }
+        .app-card:hover { transform: translateY(-4px); border-color: rgba(0, 102, 255, 0.5); box-shadow: 0 0 25px rgba(0, 102, 255, 0.25); }
+        .app-icon-wrapper { width: 56px; height: 56px; margin: 0 auto 12px auto; }
+        .app-icon { width: 100%; height: 100%; border-radius: 12px; border: 1px solid rgba(0, 102, 255, 0.35); display: flex; align-items: center; justify-content: center; object-fit: cover; }
+        .badges-row { display: flex; justify-content: center; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; }
+        .badge { font-size: 0.6rem; font-weight: 700; padding: 2px 5px; border-radius: 4px; }
+        .bg-verified { background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .bg-hot { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .bg-insanity { background: linear-gradient(135deg, #3b82f6, #a855f7, #ec4899); color: #fff; }
+        .app-card h3 { font-size: 0.95rem; color: #fff; margin-bottom: 4px; font-weight: 700; }
+        .app-version { font-size: 0.68rem; color: #94a3b8; background: rgba(255, 255, 255, 0.04); padding: 1px 6px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+        .app-desc { font-size: 0.78rem; color: #94a3b8; line-height: 1.4; margin-bottom: 16px; text-align: left; }
+        .app-card-footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+
+        .btn-download { background: #0052cc; color: #fff; text-decoration: none; padding: 9px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; text-align: center; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(0, 102, 255, 0.3); box-shadow: 0 0 10px rgba(0, 82, 204, 0.2); }
+        .btn-download:hover { background: #0066ff; box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); }
+        .btn-download.risk-style { background: rgba(234, 88, 12, 0.08); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.25); box-shadow: none; }
+        .btn-download.risk-style:hover { background: #ea580c; color: #fff; }
+        .btn-key-style { background: rgba(255, 255, 255, 0.03); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: none; }
+        .btn-key-style:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+
+        /* --- TUTORIALS HUB --- */
+        .tutorials-section { margin-bottom: 45px; }
+        .tutorial-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .step-card { padding: 20px; position: relative;}
+        .step-num-badge { position: absolute; top: 12px; right: 16px; font-size: 1.5rem; font-weight: 900; color: rgba(59, 130, 246, 0.15); }
+        .step-card h4 { font-size: 0.95rem; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .step-card p { font-size: 0.78rem; color: #94a3b8; line-height: 1.4; }
+
+        /* --- REVIEWS --- */
+        .reviews-section { margin-bottom: 45px; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .review-card { padding: 18px; }
+        .reviewer { font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .review-stars { color: #eab308; font-size: 0.7rem; }
+        .review-text { font-size: 0.78rem; color: #64748b; line-height: 1.4; }
+
+        /* --- SUBSCRIPTION SUB PAGE --- */
+        #premium-page { display: none; padding: 30px 0; }
+        .premium-form-card { max-width: 520px; margin: 0 auto; padding: 24px; text-align: center; }
+        .flash-sale-badge { background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+        .price-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0; }
+        .new-price { color: #ef4444; font-size: 1.6rem; font-weight: 800; }
+        .qr-placeholder { background: #fff; color: #0f172a; padding: 14px; border-radius: 10px; margin: 16px 0; font-weight: bold; }
+        .form-group { margin-bottom: 12px; text-align: left; }
+        .form-group label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; }
+        .form-group input { width: 100%; padding: 10px; background: #020617; border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 6px; color: #fff; font-size: 0.82rem; }
+        .form-group select { width: 100%; padding: 10px; background: #020617; border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 6px; color: #fff; font-size: 0.82rem; }
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal-box { max-width: 380px; width: 100%; padding: 24px; text-align: center; position: relative; animation: popupScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        #jump-modal .modal-box { max-width: 500px; text-align: left; }
+        #notices-modal .modal-box { max-width: 550px; text-align: left; }
+        .jump-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+        .jump-btn { background: rgba(255,255,255,0.02); border: 1px solid rgba(0,102,255,0.15); border-radius: 8px; padding: 12px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left;}
+        .jump-btn:hover { background: rgba(0,102,255,0.1); border-color: #3b82f6; transform: translateX(2px); }
+        .jump-btn span { display: block; font-size: 0.68rem; color: #64748b; font-weight: 400; margin-top: 2px;}
+        .btn-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #64748b; font-size: 1.1rem; cursor: pointer; }
+        .modal-box h3 { margin-bottom: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; }
+        .modal-switch { font-size: 0.78rem; color: #64748b; margin-top: 14px; }
+        .modal-switch span { color: #3b82f6; cursor: pointer; text-decoration: underline; }
+        .btn-download:disabled { background: #1e293b !important; color: #64748b !important; border-color: rgba(255,255,255,0.05) !important; cursor: not-allowed; }
+
+        /* --- LOADING ENGINE --- */
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.94); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 44px; height: 44px; border: 3px solid rgba(0, 102, 255, 0.1); border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 14px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- SUCCESS FRAME --- */
+        .success-accent-bar { width: 100%; height: 4px; background: #10b981; position: absolute; top: 0; left: 0; border-radius: 14px 14px 0 0; }
+        .success-icon-circle { width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 1.4rem; font-weight: bold; margin: 0 auto 14px auto; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+
+        /* --- FOOTER --- */
+        footer { margin-top: 50px; background: #010409; border-top: 1px solid rgba(0, 102, 255, 0.15); padding: 35px 0 20px 0; }
+        .footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer-brand p { font-size: 0.78rem; color: #64748b; line-height: 1.5; margin-top: 10px; }
+        .footer-links h5, .footer-stats h5 { font-size: 0.8rem; text-transform: uppercase; color: #fff; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .footer-links ul a { color: #64748b; text-decoration: none; font-size: 0.78rem; cursor: pointer; transition: color 0.2s; }
+        .footer-links ul a:hover { color: #3b82f6; }
+        .footer-stat-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.02); font-size: 0.78rem; color: #64748b; }
+        .footer-stat-row strong { color: #fff; }
+        .dot-online { width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #10b981; }
+        .copyright-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; font-size: 0.72rem; color: #475569; }
+
+        /* --- RESPONSIVE MATRIX --- */
+        @media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) {
+            .apps-grid, .features-showcase-grid, .consulting-grid, .reviews-grid, .tutorial-steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-row { grid-template-columns: 1fr; }
+            nav { display: none; }
+        }
+        @media (max-width: 520px) {
+            .apps-grid, .features-showcase-grid, .consulting-grid, .pricing-grid, .reviews-grid, .tutorial-steps-grid { grid-template-columns: 1fr; }
+            .hero h2 { font-size: 1.9rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworks-canvas"></canvas>
+
+    <div id="global-broadcast-banner">
+        <div class="broadcast-icon">🎉</div>
+        <div class="broadcast-info">
+            <h4 id="broadcast-title">Hệ thống kích hoạt</h4>
+            <p id="broadcast-body">Chào mừng thành viên VIP mới gia nhập.</p>
+        </div>
+    </div>
+
+    <audio id="click-sound" src="https://raw.githubusercontent.com/TheFish-cyber/Netking/main/creatorshome-sharp-pop-328170.mp3" preload="auto"></audio>
+
+    <div class="hero-bg scroll-fade"></div>
+    <div class="smoke-glow"></div>
+
+    <header class="scroll-fade">
+        <div class="container nav-container">
+            <a onclick="openQuickJump()" class="logo" title="Bấm để mở bảng điều hướng nhanh">
+                <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Logo" class="logo-img">
+                <div class="logo-text">NetKing <span>Developer 🔍</span></div>
+            </a>
+            <nav>
+                <ul>
+                    <li><a onclick="showMainPage(); scrollToSection('body')" class="active">Trang chủ</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('files-section')">Tải xuống</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('consulting-section')">Tư vấn</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('pricing-section')">Bảng giá</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('tutorials-section')">Hướng dẫn</a></li>
+                </ul>
+            </nav>
+            <div class="header-right">
+                <button class="btn-login" id="header-auth-btn" onclick="openAuthModal('login')">👤 Đăng nhập</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="live-ticker-bar">
+        <span class="live-badge">Live Actived</span>
+        <div id="ticker-content">Đang khởi tạo danh sách vinh danh toàn cầu...</div>
+    </div>
+
+    <div id="main-page" class="container">
+        
+        <section class="hero scroll-anim">
+            <div class="welcome-tag">Welcome to my website</div>
+            <h2>NetKing <span>Team</span></h2>
+            <p class="hero-subtitle">Premium Android Apps • Secure Downloads</p>
+            <p class="hero-desc">Chia sẻ những ứng dụng & game Android chất lượng cao, miễn phí và được kiểm duyệt kỹ lưỡng bởi đội ngũ NetKing Team. Bạn có thể click tiêu đề để nhảy nhanh.</p>
+            <div class="hero-buttons">
+                <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="btn-discord">💬 Discord</a>
+                <a onclick="scrollToSection('files-section')" class="btn-view-apps">Xem ứng dụng 📥</a>
+            </div>
+        </section>
+
+        <section class="dashboard-row" id="notice-section">
+            <div class="card-panel neon-box scroll-anim">
+                <div class="panel-title">Thông báo mới nhất từ Admin</div>
+                <div id="latest-notice-slot">
+                    </div>
+                <button class="btn-view-all-notices" onclick="openNoticesModal()">📂 Xem tất cả thông báo cũ hơn</button>
+            </div>
+
+            <div class="card-panel neon-box scroll-anim">
+                <div class="panel-title">Số liệu thời gian thực</div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-number" id="view-count">0</div>
+                        <div class="stat-label">Lượt xem trang</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="dl-count">0</div>
+                        <div class="stat-label">Lượt tải thật</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="user-count">0</div>
+                        <div class="stat-label">Thành viên đăng ký</div>
+                    </div>
+                </div>
+                <div class="stats-footer">Dữ liệu chuẩn hóa 2026</div>
+            </div>
+        </section>
+
+        <section class="intro-section" id="features-section">
+            <h3 class="section-headline scroll-anim">Làm Chủ Kết Nối, Làm Chủ Trận Đấu</h3>
+            <p class="section-subheadline scroll-anim">Giải pháp can thiệp UDP packet chuyên sâu dành cho mobile</p>
+
+            <div class="features-showcase-grid">
+                <div class="feature-detail-card neon-box scroll-anim">
+                    <div class="feature-tag-row"><span class="feat-tag">MODE 01</span><span class="feat-tag">TELEPORT</span></div>
+                    <h4>Teleport V1, V2, V3</h4>
+                    <p>Tích lũy toàn bộ dữ liệu gói tin UDP trong khoảng thời gian định trước, sau đó giải phóng đồng loạt giúp tối ưu hóa định vị vị trí.</p>
+                </div>
+                <div class="feature-detail-card neon-box scroll-anim">
+                    <div class="feature-tag-row"><span class="feat-tag">MODE 04</span><span class="feat-tag">GHOST</span></div>
+                    <h4>Ghost Mode</h4>
+                    <p>Nhân bản và phát lại liên tục các packet tại vị trí cũ, giữ hình ảnh nhân vật bất động tạm thời trong khi bạn tự do di chuyển.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="intro-section" id="consulting-section">
+            <h3 class="section-headline scroll-anim">Góc Tư Vấn & Hỗ Trợ Kỹ Thuật</h3>
+            <p class="section-subheadline scroll-anim">Giải đáp thắc mắc và định hướng cấu hình tối ưu thiết bị</p>
+            
+            <div class="consulting-grid">
+                <div class="consult-card neon-box scroll-anim">
+                    <div class="consult-question">💡 Nên chọn NetPlus hay Netking Fake Lag?</div>
+                    <div class="consult-answer">Nếu bạn cần can thiệp sâu có tích hợp Anti-ban tỷ lệ cao (88-90%), hãy ưu tiên dùng NetPlus. Nếu cần sự gọn nhẹ, chạy ngay không cần lấy key rườm rà, Fake Lag OG là giải pháp tốt nhất.</div>
+                </div>
+                <div class="consult-card neon-box scroll-anim">
+                    <div class="consult-question">🛡️ Ứng dụng chưa xác minh (Modern) có an toàn không?</div>
+                    <div class="consult-answer">Các bản Mod/Cracked từ bên thứ ba luôn được hệ thống cảnh báo màu cam. NetKing Team đã bẻ khóa để nghiên cứu cấu trúc Smali nhưng khuyến cáo test trên giả lập hoặc máy phụ trước khi dùng diện rộng.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="apps-section" id="files-section">
+            <div class="panel-title scroll-anim" style="color: #fff; margin-bottom: 14px;">Danh sách ứng dụng nổi bật (Tải công khai miễn phí)</div>
+            <div class="apps-grid">
+                <div class="app-card neon-box scroll-anim">
+                    <div>
+                        <div class="app-icon-wrapper"><img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Launcher" class="app-icon"></div>
+                        <div class="badges-row">
+                            <span class="badge bg-insanity">INSANITY!!</span>
+                            <span class="badge bg-hot">HOT 🔥</span>
+                            <span class="badge bg-verified">An toàn</span>
+                        </div>
+                        <h3>Netking Launcher</h3>
+                        <span class="app-version">Phiên bản: V1</span>
+                        <p class="app-desc">Finding good launcher apk? NL will give you best enjoy. Hide your apps from others people to find it.<br><span style="color:#3b82f6;">✓ Verified by netking team</span></p>
+                    </div>
+                    <div class="app-card-footer"><div onclick="triggerDownload('https://www.mediafire.com/file/zmd786crhxyv6no/NLauncher_1.0.apk/file')" class="btn-download">Tải tập tin</div></div>
+                </div>
+
+                <div class="app-card neon-box scroll-anim">
+                    <div>
+                        <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem;">➕</div></div>
+                        <div class="badges-row"><span class="badge bg-hot">HOT 🔥</span><span class="badge bg-verified">An toàn</span></div>
+                        <h3>NetPlus</h3>
+                        <span class="app-version">Phiên bản: V18</span>
+                        <p class="app-desc">2 option antiband 88% - 90%:<br>1. Freeze<br>2. Ghost<br><span style="color:#3b82f6;">✓ Verified by netking team</span></p>
+                    </div>
+                    <div class="app-card-footer">
+                        <div onclick="triggerDownload('https://www.mediafire.com/file/c5rjolz3ezd8yun/NetPlusV18.apk/file')" class="btn-download">Tải tập tin</div>
+                        <a href="https://link4m.net/go/eb8Na3" target="_blank" class="btn-download btn-key-style">Lấy Key</a>
+                    </div>
+                </div>
+
+                <div class="app-card neon-box scroll-anim">
+                    <div>
+                        <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem;">⚡</div></div>
+                        <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
+                        <h3>Netking Fake Lag</h3>
+                        <span class="app-version">Phiên bản: v1.0.1</span>
+                        <p class="app-desc">Fake Lag Modern, 3 Options:<br>1. Freeze Infinity<br>2. Invisible<br>3. Teleporter</p>
+                    </div>
+                    <div class="app-card-footer"><div onclick="triggerDownload('https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file')" class="btn-download">Tải tập tin</div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pricing-section" id="pricing-section">
+            <h3 class="section-headline scroll-anim">Gói Thành Viên VIP & Tài Trợ</h3>
+            <p class="section-subheadline scroll-anim">Yêu cầu Đăng nhập hệ thống trước khi thực hiện giao dịch nâng cấp</p>
+            
+            <div class="pricing-grid">
+                <div class="price-tier-card neon-box scroll-anim">
+                    <div>
+                        <div class="tier-name">Thành Viên Thường</div>
+                        <div class="tier-price">0đ <span>/ vĩnh viễn</span></div>
+                        <ul class="tier-features">
+                            <li>✓ Tải full kho công khai</li>
+                            <li>⚠️ Tốc độ giới hạn chuẩn</li>
+                            <li>⚠️ Vượt link lấy key hàng ngày</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download btn-key-style" style="width:100%;" disabled>Mặc Định công khai</button>
+                </div>
+                
+                <div class="price-tier-card neon-box popular scroll-anim">
+                    <div class="pop-badge">KHUYÊN DÙNG</div>
+                    <div>
+                        <div class="tier-name">Premium VIP</div>
+                        <div class="tier-price">55.000đ <span>/ tháng</span></div>
+                        <ul class="tier-features">
+                            <li>⚡ Link trực tiếp (No Ads)</li>
+                            <li>🚀 Không cần vượt cổng lấy Key</li>
+                            <li>🛡️ Cập nhật file sớm Beta</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download" style="width:100%;" onclick="attemptPurchase('Premium VIP', 55000)">Nâng Cấp</button>
+                </div>
+
+                <div class="price-tier-card neon-box supporter-tier scroll-anim">
+                    <div class="supp-badge">💥 SUPPORTER SALE</div>
+                    <div>
+                        <div class="tier-name">Supporter VIP Pack</div>
+                        <div class="tier-price"><span style="text-decoration:line-through; color:#64748b; font-size:0.8rem; font-weight:400;">300k</span> 200.000đ <span>/ vĩnh viễn</span></div>
+                        <ul class="tier-features">
+                            <li>💎 Trọn đời Premium Đặc quyền</li>
+                            <li>🎖️ Vinh danh Tên lên Live Show thanh cuộn</li>
+                            <li>🔥 Ưu tiên Support riêng 1-1</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download" style="width:100%; background:#a855f7; border-color:rgba(168,85,247,0.4);" onclick="attemptPurchase('Supporter VIP Pack', 200000)">Mua Gói Gốc</button>
+                </div>
+
+                <div class="price-tier-card neon-box scroll-anim">
+                    <div>
+                        <div class="tier-name">Sponsor - Đối Tác</div>
+                        <div class="tier-price">150.000đ <span>/ vĩnh viễn</span></div>
+                        <ul class="tier-features">
+                            <li>🔥 Treo logo vinh danh chân trang</li>
+                            <li>🛠️ Yêu cầu bẻ khóa/Mod app riêng</li>
+                        </ul>
+                    </div>
+                    <button class="btn-download risk-style" style="width:100%;" onclick="attemptPurchase('Sponsor - Đối Tác', 150000)">Tài Trợ</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="tutorials-section" id="tutorials-section">
+            <h3 class="section-headline scroll-anim">📚 Hướng Dẫn Sử Dụng Cho Thành Viên Mới</h3>
+            <div class="tutorial-steps-grid">
+                <div class="step-card neon-box scroll-anim">
+                    <div class="step-num-badge">01</div>
+                    <h4>🔑 Bước 1: Lấy Key Xác Thực</h4>
+                    <p>Đối với các bản App miễn phí (như NetPlus), hãy bấm nút "Lấy Key" để vượt liên kết an toàn bảo mật.</p>
+                </div>
+                <div class="step-card neon-box scroll-anim">
+                    <div class="step-num-badge">02</div>
+                    <h4>🛡️ Bước 2: Bật Cấu Hình VPN cục bộ</h4>
+                    <p>Khi mở ứng dụng Fake Lag, hệ thống sẽ yêu cầu cấp quyền cấu hình VPN cục bộ. Hãy chọn "Đồng ý".</p>
+                </div>
+                <div class="step-card neon-box scroll-anim">
+                    <div class="step-num-badge">03</div>
+                    <h4>🔋 Bước 3: Tắt Tối Ưu Hóa Pin</h4>
+                    <p>Vào Cài đặt Android -> Ứng dụng -> Chọn NetKing -> Pin -> Chuyển sang "Không giới hạn".</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-section" id="reviews-section">
+            <div class="reviews-grid">
+                <div class="review-card neon-box scroll-anim">
+                    <div class="reviewer">xine3d_dev <span class="review-stars">⭐⭐⭐⭐⭐</span></div>
+                    <div class="review-text">"Bản NetPlus V18 chạy bypass UDP mượt cực kỳ, chỉnh Ghost mode tốt."</div>
+                </div>
+                <div class="review-card neon-box scroll-anim">
+                    <div class="reviewer">thinhBCN_ff <span class="review-stars">⭐⭐⭐⭐⭐</span></div>
+                    <div class="review-text">"Giao diện tối ưu rất sạch, không dính virus hay pop-up quảng cáo bẩn."</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="premium-page" class="container">
+        <div class="premium-form-card neon-box">
+            <div class="flash-sale-badge">⚡ CHƯƠNG TRÌNH TRỢ GIÁ FLASH SALE ĐANG BẬT</div>
+            <h2 style="color: #fff; margin-bottom: 6px;">Cổng Thanh Toán Hóa Đơn VIP</h2>
+            <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 14px;">Tài khoản đang thực hiện: <span id="purchase-active-user" style="color:#3b82f6; font-weight:700;">Chưa xác định</span></p>
+            
+            <div class="form-group">
+                <label>Gói dịch vụ đã chọn</label>
+                <select id="pricing-select-form" onchange="updateFormPriceDisplay()">
+                    <option value="55000">Gói Premium VIP — 55.000đ / Tháng</option>
+                    <option value="200000" selected>Gói Supporter VIP Pack — 200.000đ / Trọn Đời</option>
+                    <option value="150000">Gói Sponsor - Đối Tác — 150.000đ / Vĩnh Viễn</option>
+                </select>
+            </div>
+
+            <div class="price-row"><span class="new-price" id="form-price-render">200.000đ</span></div>
+
+            <div class="qr-placeholder">
+                <p style="font-size:0.8rem; color:#0f172a; margin-bottom:4px;">QUÉT MÃ QR NẠP TỰ ĐỘNG CHUYỂN KHOẢN</p>
+                <div style="width:130px; height:130px; background:#475569; margin: 8px auto; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.75rem;">[QR MOMO/BANK]</div>
+                <p style="font-size:0.75rem; color:#ef4444;" id="qr-bank-memo">Nội dung: NETKING VIP</p>
+            </div>
+
+            <form onsubmit="handleConfirmPurchase(event)">
+                <div class="form-group">
+                    <label>Mã giao dịch ngân hàng / Ví điện tử</label>
+                    <input type="text" placeholder="Nhập mã TransID hoặc mã tham chiếu bưu điện" required>
+                </div>
+                <button type="submit" class="btn-download" style="width:100%; border:none; margin-top:10px;">Xác nhận hoàn tất giao dịch</button>
+                <div onclick="showMainPage()" style="text-align:center; margin-top:14px; font-size:0.8rem; color:#3b82f6; cursor:pointer;">➔ Hủy bỏ, quay lại Trang Chủ</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notices-modal" class="modal-overlay" onclick="closeModal('notices-modal')">
+        <div class="modal-box neon-box" onclick="event.stopPropagation()">
+            <button class="btn-close" onclick="closeModal('notices-modal')">✕</button>
+            <h3 style="color:#eab308; margin-bottom:16px;">📂 Nhật Ký Thông Báo Từ Ban Quản Trị</h3>
+            <div class="notices-list-container" id="all-notices-modal-list">
+                </div>
+        </div>
+    </div>
+
+    <div id="jump-modal" class="modal-overlay" onclick="closeModal('jump-modal')">
+        <div class="modal-box neon-box" onclick="event.stopPropagation()">
+            <button class="btn-close" onclick="closeModal('jump-modal')">✕</button>
+            <h3>🧭 Bảng Điều Hướng Nhanh Website</h3>
+            <div class="jump-grid">
+                <div class="jump-btn" onclick="quickJumpTo('body')">🏠 Trang Chủ <span>Đầu trang</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('notice-section')">⚡ Bảng Thông Báo <span>Số liệu thực</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('files-section')">📥 Kho Tải Ứng Dụng <span>Download APK</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('pricing-section')">💎 Bảng Giá Thành Viên <span>Gói Supporter</span></div>
+                <div class="jump-btn" onclick="quickJumpTo('tutorials-section')">📚 Hướng Dẫn Sử Dụng <span>Dành cho Newbie</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-box neon-box" id="login-form-box">
+            <button class="btn-close" onclick="closeModal('auth-modal')">✕</button>
+            <h3>Đăng Nhập Hệ Thống</h3>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group"><label>Tài khoản</label><input type="text" id="login-user" required></div>
+                <div class="form-group"><label>Mật khẩu</label><input type="password" id="login-pass" required></div>
+                <button type="submit" class="btn-download" style="width:100%;">Vào Hệ Thống</button>
+            </form>
+            <div class="modal-switch">Chưa có tài khoản? <span onclick="toggleAuthMode('register')">Đăng ký ngay</span></div>
+        </div>
+
+        <div class="modal-box neon-box" id="register-form-box" style="display:none;">
+            <button class="btn-close" onclick="closeModal('auth-modal')">✕</button>
+            <h3>Đăng Ký Thành Viên</h3>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group"><label>Tài khoản mới</label><input type="text" id="reg-user" required></div>
+                <div class="form-group"><label>Mật khẩu</label><input type="password" id="reg-pass" required></div>
+                <button type="submit" class="btn-download" style="width:100%; background:#10b981;">Xác Nhận Đăng Ký</button>
+            </form>
+            <div class="modal-switch">Đã có tài khoản? <span onclick="toggleAuthMode('login')">Quay lại Đăng nhập</span></div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-box neon-box" style="max-width: 340px;">
+            <div class="success-accent-bar"></div>
+            <div class="success-icon-circle">✓</div>
+            <h3>Tải Xuống Thành Công</h3>
+            <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 16px;">Đường dẫn tải tệp tin an toàn đã được khởi tạo qua Mediafire.</p>
+            <button class="btn-download" onclick="closeModal('success-modal')" style="width: 100%; background: #10b981;">Hoàn tất</button>
+        </div>
+    </div>
+
+    <div id="loading-screen"><div class="spinner"></div><p style="color: #fff; font-size: 0.85rem;">Đang xử lý gói tin an toàn...</p></div>
+
+    <footer class="scroll-fade">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo-text" style="font-size: 1.2rem;">NetKing Team</div>
+                <p>Chia sẻ ứng dụng Android chất lượng cao và hoàn toàn miễn phí cho cộng đồng.</p>
+            </div>
+            <div class="footer-links">
+                <h5>Liên kết nhanh</h5>
+                <ul>
+                    <li><a onclick="showMainPage(); scrollToSection('body')">Trang chủ</a></li>
+                    <li><a onclick="showMainPage(); scrollToSection('files-section')">Tải xuống file</a></li>
+                </ul>
+            </div>
+            <div class="footer-stats">
+                <h5>Thống kê chuẩn (Realtime)</h5>
+                <div class="footer-stat-row"><span>👁️ Lượt xem trang</span><strong id="footer-view">0</strong></div>
+                <div class="footer-stat-row"><span>📥 Tổng lượt tải</span><strong id="footer-dl">0</strong></div>
+                <div class="footer-stat-row"><span>👥 Thành viên hệ thống</span><strong id="footer-user">0</strong></div>
+                <div class="footer-stat-row" style="border:none;"><span><span class="dot-online"></span>Đang trực tuyến</span><strong id="online-count">0</strong></div>
+            </div>
+        </div>
+        <div class="container copyright-bar">
+            <div>© 2026 NetKing Team. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // --- CƠ SỞ DỮ LIỆU THÔNG BÁO TỪ ADMIN (2024 - 2026) ---
+        const adminNoticesDatabase = [
+            { id: 1, date: "28/02/2024", tag: "📌 Thành lập", title: "Khởi tạo hạ tầng NetKing Project", content: "Chính thức thiết lập cụm server đầu tiên phục vụ bẻ khóa cấu trúc APK, tối ưu hóa smali reverse engineering và hỗ trợ bypass bypass an toàn." },
+            { id: 2, date: "15/07/2024", tag: "🛠️ Cập nhật", title: "Ra mắt engine can thiệp UDP Fake Lag V1", content: "Thử nghiệm thành công bộ script đóng gói gói tin luồng mạng giúp tối ưu độ trễ nhân vật trên nền tảng di động." },
+            { id: 3, date: "03/01/2025", tag: "🛡️ Bảo mật", title: "Nâng cấp cơ chế mã hóa ProGuard & Tencent Legu", content: "Toàn bộ các tệp tin xuất xưởng từ NetKing Team sẽ được cấu trúc lại chuỗi bảo vệ nâng cao, tránh lỗi nhận diện sai từ Google Play Protect." },
+            { id: 4, date: "12/10/2025", tag: "🤝 Từ thiện", title: "Chiến dịch quyên góp hỗ trợ đồng bào vùng bão lũ", content: "Toàn thể thành viên NetKing cùng ban quản trị đã đồng hành tổng hợp quỹ lưu động, đóng góp 85 triệu VND tới Ủy ban Mặt trận Tổ quốc khắc phục thiên tai." },
+            { id: 5, date: "20/05/2026", tag: "🚀 Flash Sale", title: "Triển khai chương trình đồng bộ máy chủ Supporter VIP", content: "Hạ giá kịch sàn gói Supporter Pack vĩnh viễn từ 300k xuống còn 200k. Tích hợp thanh vinh danh Live Show đa ngôn ngữ thời gian thực trên giao diện." }
+        ];
+
+        // --- DATA KHỞI TẠO CHO LIVE SHOW MIXED ---
+        const liveMembersPool = [
+            { name: "xine3d_dev", tier: "Sponsor", lang: "vi", msg: "vừa gia hạn gói Tài Trợ phát triển hệ thống!" },
+            { name: "thinhBCN_ff", tier: "Supporter VIP", lang: "vi", msg: "đã mua gói Supporter Pack Flash Sale thành công." },
+            { name: "Alex_NetRunner", tier: "Premium VIP", lang: "en", msg: "just upgraded to Premium VIP membership!" },
+            { name: "Kaito_Smali", tier: "Supporter VIP", lang: "jp", msg: "がサポーターVIPパックを購入しました！" },
+            { name: "XiaoThinh_99", tier: "Sponsor", lang: "zh", msg: "刚刚赞助了 NetKing Team 开发者！" },
+            { name: "Dmitry_Reverse", tier: "Premium VIP", lang: "ru", msg: "оформил подписку Premium VIP!" },
+            { name: "Kim_Hyun_Ji", tier: "Supporter VIP", lang: "ko", msg: "님이 서포터 VIP 팩을 구매하셨습니다!" },
+            { name: "Gamer_Hanoi2026", tier: "Supporter VIP", lang: "vi", msg: "đã tham gia hàng ngũ Supporter trọn đời." }
+        ];
+
+        let lastTickerIndex = -1;
+        let currentUserSession = null;
+
+        // --- RENDER THÔNG BÁO ---
+        function initAdminNotices() {
+            // Lấy thông báo mới nhất (cuối mảng) để hiển thị ngoài trang chủ
+            const latest = adminNoticesDatabase[adminNoticesDatabase.length - 1];
+            const slot = document.getElementById('latest-notice-slot');
+            slot.innerHTML = `
+                <div class="notice-box">
+                    <div class="notice-date">${latest.tag} — Ngày đăng: ${latest.date}</div>
+                    <div class="notice-content">
+                        <h4>${latest.title}</h4>
+                        <p>${latest.content}</p>
+                    </div>
+                </div>
+            `;
+
+            // Nạp toàn bộ lịch sử thông báo vào trong Modal ẩn
+            const modalList = document.getElementById('all-notices-modal-list');
+            modalList.innerHTML = adminNoticesDatabase.map(n => `
+                <div class="notice-box" style="margin-bottom: 12px;">
+                    <div class="notice-date" style="color: #6366f1;">${n.tag} — Đăng ngày: ${n.date}</div>
+                    <div class="notice-content">
+                        <h4 style="color: #fff; font-size: 0.9rem; margin-bottom:4px;">${n.title}</h4>
+                        <p style="font-size: 0.78rem; color: #94a3b8;">${n.content}</p>
+                    </div>
+                </div>
+            `).reverse().join(''); // Hiện thông báo mới nhất lên hàng đầu trong modal
+        }
+
+        function openNoticesModal() { document.getElementById('notices-modal').style.display = 'flex'; }
+
+        // --- CANVASES FIREWORKS ENGINE (HIỆN KHI CÓ ĐĂNG KÝ HỘI VIÊN) ---
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 3 + 1;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.velocity.y += 0.04; // Trọng lực rơi xuống nhẹ
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= this.decay;
+            }
+        }
+
+        function createFireworkExplosion(x, y) {
+            const colors = ['#3b82f6', '#a855f7', '#ec4899', '#10b981', '#eab308', '#ef4444'];
+            const chosenColor = colors[Math.floor(Math.random() * colors.length)];
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle(x, y, chosenColor));
+            }
+        }
+
+        function animateFireworks() {
+            requestAnimationFrame(animateFireworks);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((particle, index) => {
+                if (particle.alpha <= 0) {
+                    particles.splice(index, 1);
+                } else {
+                    particle.update();
+                    particle.draw();
+                }
+            });
+        }
+        animateFireworks();
+
+        // --- GLOBAL BROADCAST SYSTEM (HIỆN TRÊN TOÀN KHUNG HÌNH) ---
+        function triggerGlobalScreenBroadcast(username, packageName) {
+            // Kích nổ pháo hoa ngẫu nhiên 3 phát liên tiếp ở các vị trí trên màn hình
+            setTimeout(() => createFireworkExplosion(canvas.width * 0.25, canvas.height * 0.4), 0);
+            setTimeout(() => createFireworkExplosion(canvas.width * 0.5, canvas.height * 0.3), 300);
+            setTimeout(() => createFireworkExplosion(canvas.width * 0.75, canvas.height * 0.4), 600);
+
+            // Cập nhật cấu trúc text banner trượt
+            const banner = document.getElementById('global-broadcast-banner');
+            document.getElementById('broadcast-title').innerHTML = `⚡ Giao dịch VIP Thành Công!`;
+            document.getElementById('broadcast-body').innerHTML = `Thành viên <strong style="color:#fff;">${username}</strong> vừa kích hoạt thành công gói <strong style="color:#fcd34d;">[${packageName}]</strong>.`;
+            
+            banner.classList.add('show');
+            
+            // Tự động thu hồi banner sau 4 giây
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 400);
+        }
+
+        // --- ENGINE LIVE SHOW RUNTIME SYSTEM (3 GIÂY ĐỔI NGƯỜI) ---
+        function runLiveTickerEngine() {
+            const tickerContent = document.getElementById('ticker-content');
+            
+            setInterval(() => {
+                let nextIndex;
+                do {
+                    nextIndex = Math.floor(Math.random() * liveMembersPool.length);
+                } while (nextIndex === lastTickerIndex);
+
+                lastTickerIndex = nextIndex;
+                const member = liveMembersPool[nextIndex];
+                
+                tickerContent.style.opacity = 0;
+                tickerContent.style.transform = "translateY(-5px)";
+
+                setTimeout(() => {
+                    let colorAccent = "#3b82f6";
+                    if (member.tier === "Sponsor") colorAccent = "#eab308";
+                    if (member.tier === "Supporter VIP") colorAccent = "#a855f7";
+
+                    tickerContent.innerHTML = `👑 <strong style="color: ${colorAccent};">[${member.tier}]</strong> <span style="color: #fff; font-weight:700;">${member.name}</span> ${member.msg}`;
+                    tickerContent.style.opacity = 1;
+                    tickerContent.style.transform = "translateY(0)";
+                }, 300);
+
+                // Ngẫu nhiên 15% tỷ lệ đồng bộ phát nổ pháo hoa kèm broadcast cho sôi động hệ thống ảo
+                if(Math.random() < 0.15) {
+                    triggerGlobalScreenBroadcast(member.name, member.tier);
+                }
+
+            }, 3000);
+        }
+
+        // --- XỬ LÝ KHI NGƯỜI DÙNG HIỆN TẠI MUA VIP THÀNH CÔNG ---
+        function handleConfirmPurchase(e) {
+            e.preventDefault();
+            const selectEl = document.getElementById('pricing-select-form');
+            const packageName = selectEl.options[selectEl.selectedIndex].text.split('—')[0].trim();
+            
+            alert('Giao dịch của bạn đã được gửi lên hệ thống kiểm duyệt TransID!');
+            showMainPage();
+
+            // Kích hoạt ngay pháo hoa và phát broadcast vinh danh tên người dùng lên screen toàn hệ thống
+            triggerGlobalScreenBroadcast(currentUserSession || "Ẩn danh", packageName);
+        }
+
+        // --- CHỐNG LƯỚT WEB QUÁ NHANH (SMOOTH SCROLL ENGINE) ---
+        window.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            let customDelta = e.deltaY * 0.35; 
+            window.scrollBy({ top: customDelta, behavior: 'auto' });
+        }, { passive: false });
+
+        // --- ENGINE SOUND CLICK ---
+        const clickSound = document.getElementById('click-sound');
+        document.addEventListener('click', function() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(() => {});
+        });
+
+        // --- INTERSECTION OBSERVER ENGINES ---
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('show');
+                else entry.target.classList.remove('show');
+            });
+        }, { root: null, threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
+
+        document.querySelectorAll('.scroll-anim, .scroll-fade').forEach(el => {
+            scrollObserver.observe(el);
+        });
+
+        // --- CHẶN MUA KHI CHƯA ĐĂNG NHẬP ---
+        function attemptPurchase(tierName, defaultPrice) {
+            if (!currentUserSession) {
+                alert(`⚠️ Hệ thống chặn: Bạn cần Đăng nhập tài khoản trước khi thực hiện mua gói [${tierName}].\n(Khách vãng lai vẫn được quyền tải file công khai miễn phí).`);
+                openAuthModal('login');
+                return;
+            }
+            showPremiumPage();
+            const selectEl = document.getElementById('pricing-select-form');
+            selectEl.value = defaultPrice;
+            updateFormPriceDisplay();
+        }
+
+        function updateFormPriceDisplay() {
+            const selectEl = document.getElementById('pricing-select-form');
+            const price = parseInt(selectEl.value);
+            document.getElementById('form-price-render').innerText = price.toLocaleString('vi-VN') + "đ";
+            document.getElementById('qr-bank-memo').innerText = `Nội dung: NETKING VIP ${currentUserSession.toUpperCase()}`;
+        }
+
+        // --- NAVIGATION PANELS ---
+        function openQuickJump() { document.getElementById('jump-modal').style.display = 'flex'; }
+        function quickJumpTo(id) { closeModal('jump-modal'); scrollToSection(id); }
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        function showPremiumPage() {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('premium-page').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+        function showMainPage() {
+            document.getElementById('premium-page').style.display = 'none';
+            document.getElementById('main-page').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+        function openAuthModal(mode) {
+            document.getElementById('auth-modal').style.display = 'flex';
+            toggleAuthMode(mode);
+        }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function toggleAuthMode(mode) {
+            if(mode === 'login') {
+                document.getElementById('login-form-box').style.display = 'block';
+                document.getElementById('register-form-box').style.display = 'none';
+            } else {
+                document.getElementById('login-form-box').style.display = 'none';
+                document.getElementById('register-form-box').style.display = 'block';
+            }
+        }
+
+        // --- AUTH LOGIC SYSTEM ---
+        if (!localStorage.getItem('netking_users')) localStorage.setItem('netking_users', JSON.stringify([]));
+        function handleRegister(e) {
+            e.preventDefault();
+            const user = document.getElementById('reg-user').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            let usersList = JSON.parse(localStorage.getItem('netking_users'));
+            if (usersList.some(u => u.username.toLowerCase() === user.toLowerCase())) { alert('Tên tài khoản đã tồn tại!'); return; }
+            usersList.push({ username: user, password: pass });
+            localStorage.setItem('netking_users', JSON.stringify(usersList));
+            alert('Đăng ký thành công!');
+            toggleAuthMode('login');
+        }
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value;
+            let usersList = JSON.parse(localStorage.getItem('netking_users'));
+            const matchedUser = usersList.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
+            if (matchedUser) {
+                currentUserSession = matchedUser.username;
+                alert(`Đăng nhập thành công! Chào mừng, ${currentUserSession}.`);
+                closeModal('auth-modal');
+                document.getElementById('header-auth-btn').innerText = `👋 ${currentUserSession}`;
+                document.getElementById('purchase-active-user').innerText = currentUserSession;
+                let totalU = parseInt(localStorage.getItem('real_users') || 0);
+                localStorage.setItem('real_users', totalU + 1);
+                updateStatsDOM();
+            } else {
+                alert('Sai thông tin đăng nhập!');
+            }
+        }
+
+        // --- DOWNLOAD SYSTEM ---
+        function triggerDownload(url) {
+            const loader = document.getElementById('loading-screen');
+            loader.style.display = 'flex';
+            let currentDl = parseInt(localStorage.getItem('real_downloads') || 0);
+            localStorage.setItem('real_downloads', currentDl + 1);
+            updateStatsDOM();
+            setTimeout(() => {
+                loader.style.display = 'none';
+                document.getElementById('success-modal').style.display = 'flex';
+                window.open(url, '_blank');
+            }, 1800);
+        }
+
+        // --- STATS LOGIC ---
+        function initRealtimeStats() {
+            if (!localStorage.getItem('real_views')) localStorage.setItem('real_views', '412');
+            if (!localStorage.getItem('real_downloads')) localStorage.setItem('real_downloads', '156');
+            if (!localStorage.getItem('real_users')) localStorage.setItem('real_users', '48');
+
+            let views = parseInt(localStorage.getItem('real_views')) + Math.floor(Math.random() * 3) + 1;
+            localStorage.setItem('real_views', views);
+
+            updateStatsDOM();
+            updateOnlineCount();
+            runLiveTickerEngine();
+            initAdminNotices();
+        }
+        function updateStatsDOM() {
+            const v = localStorage.getItem('real_views');
+            const d = localStorage.getItem('real_downloads');
+            const u = localStorage.getItem('real_users');
+            document.getElementById('view-count').innerText = v;
+            document.getElementById('footer-view').innerText = v;
+            document.getElementById('dl-count').innerText = d;
+            document.getElementById('footer-dl').innerText = d;
+            document.getElementById('user-count').innerText = u;
+            document.getElementById('footer-user').innerText = u;
+        }
+        function updateOnlineCount() {
+            document.getElementById('online-count').innerText = Math.floor(Math.random() * 6) + 14;
+            setTimeout(updateOnlineCount, 7000);
+        }
+
+        window.onload = function() { initRealtimeStats(); };
+    </script>
+</body>
+</html>
