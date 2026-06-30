@@ -14,15 +14,39 @@
             scroll-behavior: smooth;
         }
 
+        /* --- HE ĐỘNG ANIMATION ENGINE THỰC TẾ --- */
         @keyframes slowBlurFade {
-            from { opacity: 0; filter: blur(12px); transform: translateY(15px); }
+            from { opacity: 0; filter: blur(12px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        @keyframes slowBlurFlyIn {
+            from { opacity: 0; filter: blur(14px); transform: translateY(30px); }
             to { opacity: 1; filter: blur(0); transform: translateY(0); }
         }
 
         @keyframes popupScale {
-            from { opacity: 0; transform: scale(0.96); filter: blur(8px); }
+            from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
             to { opacity: 1; transform: scale(1); filter: blur(0); }
         }
+
+        /* Class định nghĩa để gán vào các phần tử UI */
+        .anim-blur-fade {
+            animation: slowBlurFade 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .anim-blur-fly {
+            opacity: 0; /* Khởi tạo ẩn để chờ animation chạy */
+            animation: slowBlurFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Delay tải từng Card tạo hiệu ứng so le (Staggered) đẹp mắt */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
 
         html, body {
             width: 100%;
@@ -30,10 +54,6 @@
             overflow-x: hidden;
             background-color: #020617;
             color: #f1f5f9;
-        }
-
-        .animate-view {
-            animation: slowBlurFade 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
         }
 
         .hero-bg {
@@ -273,7 +293,7 @@
         .stat-label { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
         .stats-footer { text-align: center; font-size: 0.75rem; color: #3b82f6; margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
 
-        /* --- PHẦN GIỚI THIỆU TÍNH NĂNG CHI TIẾT (LAYOUT VIDEO) --- */
+        /* --- PHẦN GIỚI THIỆU TÍNH NĂNG CHI TIẾT --- */
         .intro-section {
             margin-bottom: 35px;
         }
@@ -324,7 +344,6 @@
             line-height: 1.5;
         }
 
-        /* Hộp danh sách thông số dọc */
         .specs-list-box {
             padding: 20px;
             margin-bottom: 30px;
@@ -499,7 +518,7 @@
         .dot-online { width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #10b981; }
         .copyright-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; font-size: 0.72rem; color: #475569; }
 
-        /* --- RESPONSIVE CHUẨN --- */
+        /* --- RESPONSIVE --- */
         @media (max-width: 992px) {
             .apps-grid, .features-showcase-grid { grid-template-columns: repeat(2, 1fr); }
             .dashboard-row { grid-template-columns: 1fr; }
@@ -518,10 +537,10 @@
 </head>
 <body>
 
-    <div class="hero-bg"></div>
+    <div class="hero-bg anim-blur-fade"></div>
     <div class="smoke-glow"></div>
 
-    <header>
+    <header class="anim-blur-fade">
         <div class="container nav-container">
             <a onclick="showMainPage(); scrollToSection('body')" class="logo">
                 <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Logo" class="logo-img">
@@ -540,9 +559,9 @@
         </div>
     </header>
 
-    <div id="main-page" class="container animate-view">
+    <div id="main-page" class="container">
         
-        <section class="hero">
+        <section class="hero anim-blur-fly delay-1">
             <div class="welcome-tag">Welcome to my website</div>
             <h2>NetKing <span>Team</span></h2>
             <p class="hero-subtitle">Premium Android Apps • Secure Downloads</p>
@@ -554,7 +573,7 @@
         </section>
 
         <section class="dashboard-row" id="notice-section">
-            <div class="card-panel neon-box">
+            <div class="card-panel neon-box anim-blur-fly delay-2">
                 <div class="panel-title">Thông báo mới nhất</div>
                 <div class="notice-box">
                     <div class="notice-date">⚡ Hệ thống</div>
@@ -565,7 +584,7 @@
                 </div>
             </div>
 
-            <div class="card-panel neon-box">
+            <div class="card-panel neon-box anim-blur-fly delay-3">
                 <div class="panel-title">Số liệu thời gian thực</div>
                 <div class="stats-container">
                     <div class="stat-item">
@@ -585,7 +604,7 @@
             </div>
         </section>
 
-        <section class="intro-section">
+        <section class="intro-section anim-blur-fly delay-4">
             <h3 class="section-headline">Làm Chủ Kết Nối, Làm Chủ Trận Đấu</h3>
             <p class="section-subheadline">Giải pháp can thiệp UDP packet chuyên sâu dành cho mobile</p>
 
@@ -635,7 +654,7 @@
             <div class="panel-title" style="color: #fff; margin-bottom: 14px;">Danh sách ứng dụng nổi bật</div>
 
             <div class="apps-grid">
-                <div class="app-card neon-box">
+                <div class="app-card neon-box anim-blur-fly delay-1">
                     <div>
                         <div class="app-icon-wrapper">
                             <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Launcher" class="app-icon">
@@ -654,7 +673,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box">
+                <div class="app-card neon-box anim-blur-fly delay-2">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">➕</div></div>
                         <div class="badges-row">
@@ -671,7 +690,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box">
+                <div class="app-card neon-box anim-blur-fly delay-3">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">⚡</div></div>
                         <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
@@ -684,7 +703,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box">
+                <div class="app-card neon-box anim-blur-fly delay-4">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">🛡️</div></div>
                         <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
@@ -697,7 +716,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box">
+                <div class="app-card neon-box anim-blur-fly delay-5">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="color:#ea580c; background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">⚠️</div></div>
                         <div class="badges-row"><span class="badge bg-risk">Chưa xác minh</span></div>
@@ -710,7 +729,7 @@
                     </div>
                 </div>
 
-                <div class="app-card neon-box">
+                <div class="app-card neon-box anim-blur-fly delay-6">
                     <div>
                         <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">🌐</div></div>
                         <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
@@ -725,7 +744,7 @@
             </div>
         </section>
 
-        <section class="premium-banner neon-box">
+        <section class="premium-banner neon-box anim-blur-fly delay-3">
             <div class="premium-left">
                 <div class="premium-text">
                     <h4>Trở thành thành viên Premium</h4>
@@ -737,7 +756,7 @@
     </div>
 
     <div id="premium-page" class="container">
-        <div class="premium-form-card neon-box animate-view">
+        <div class="premium-form-card neon-box">
             <div class="flash-sale-badge">FLASH SALE ĐANG DIỄN RA</div>
             <h2 style="color: #fff; margin-bottom: 6px;">Đăng ký NetKing Premium</h2>
             <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 14px;">Mở khóa quyền lợi VIP, loại bỏ link rút gọn lấy key tốn thời gian.</p>
@@ -773,7 +792,7 @@
             <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Avatar" class="modal-avatar">
             <h3>Thông Báo Từ NetKing</h3>
             <p style="color: #94a3b8; font-size: 0.8rem; line-height: 1.5; margin-bottom: 18px;">
-                Chào mừng bạn đã ghé thăm website! Hệ thống giao diện Neon và lõi đồng bộ tài khoản dữ liệu thực tế đã được cập nhật thành công.
+                Chào mừng bạn đã ghé thăm website! Hệ thống giao diện Neon, hiệu ứng Blur Fly chuyển động và lõi tài khoản dữ liệu thực tế đã được cập nhật thành công.
             </p>
             <button class="btn-download" id="welcome-btn-confirm" style="width: 100%;" disabled>Vui lòng đợi (3s)</button>
         </div>
@@ -832,7 +851,7 @@
         <p style="color: #fff; font-size: 0.85rem; font-weight: 500;">Đang thiết lập mã hóa dữ liệu an toàn...</p>
     </div>
 
-    <footer>
+    <footer class="anim-blur-fade">
         <div class="container footer-grid">
             <div class="footer-brand">
                 <div class="logo-text" style="font-size: 1.2rem;">NetKing Team</div>
@@ -863,7 +882,7 @@
     </footer>
 
     <script>
-        // --- POPUP ĐẾM NGƯỢC CHÀO MỪNG 3S ---
+        // --- POPUP ĐM NGƯỢC CHÀO MỪNG 3S ---
         let timeLeft = 3;
         const countdownBtn = document.getElementById('welcome-btn-confirm');
         
@@ -881,7 +900,7 @@
             }
         }, 1000);
 
-        // --- AUTH LOCALSTORAGE REAL DATA ---
+        // --- AUTH SYSTEM ---
         if (!localStorage.getItem('netking_users')) {
             localStorage.setItem('netking_users', JSON.stringify([]));
         }
@@ -920,7 +939,7 @@
             }
         }
 
-        // --- SCREEN ROUTING ---
+        // --- INTERACTION NAVIGATION ---
         function scrollToSection(id) {
             const element = document.getElementById(id);
             if (element) {
@@ -959,7 +978,7 @@
             }
         }
 
-        // --- LOADING AND SUCCESS FRAME ENGINE ---
+        // --- DOWNLOAD TIME ENGINE ---
         function triggerDownload(url) {
             const loader = document.getElementById('loading-screen');
             loader.style.display = 'flex';
@@ -971,14 +990,12 @@
 
             setTimeout(() => {
                 loader.style.display = 'none';
-                // Hiện Frame Success sau khi tải xong
                 document.getElementById('success-modal').style.display = 'flex';
-                // Mở link tải ứng dụng
                 window.open(url, '_blank');
             }, 2000);
         }
 
-        // --- REALTIME COUNTER ENGINE ---
+        // --- STATS TICKER ---
         function initRealtimeStats() {
             if (!localStorage.getItem('real_views')) localStorage.setItem('real_views', '12');
             if (!localStorage.getItem('real_downloads')) localStorage.setItem('real_downloads', '4');
