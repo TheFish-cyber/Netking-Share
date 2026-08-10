@@ -196,6 +196,98 @@
             50% { opacity: 0.4; }
             100% { opacity: 1; }
         }
+
+        /* ===== GLITCH CHO TỪNG KÝ TỰ TRONG "Netking" ===== */
+        .char {
+            display: inline-block;
+            min-width: 0.7em;
+            text-align: center;
+            transition: none;
+            color: #fff;
+        }
+
+        /* ===== CÁC DÒNG CHỮ NHỎ Ở GÓC ===== */
+        .corner-text {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            z-index: 10;
+            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: right;
+            opacity: 0.7;
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+            mix-blend-mode: screen;
+        }
+
+        .corner-text .glitch-word {
+            display: inline-block;
+            transition: all 0.05s ease;
+            position: relative;
+        }
+
+        .corner-text .glitch-word.glitch-active {
+            animation: glitchEffect 0.4s steps(1) 1;
+        }
+
+        @keyframes glitchEffect {
+            0% { transform: translate(0, 0); text-shadow: 2px 0 red, -2px 0 blue; clip-path: inset(0 0 0 0); }
+            10% { transform: translate(-2px, 1px); text-shadow: -3px 0 cyan, 3px 0 magenta; clip-path: inset(10% 0 20% 0); }
+            20% { transform: translate(3px, -1px); text-shadow: 4px 0 lime, -4px 0 red; clip-path: inset(40% 0 10% 0); }
+            30% { transform: translate(-1px, 2px); text-shadow: -2px 0 yellow, 2px 0 blue; clip-path: inset(70% 0 5% 0); }
+            40% { transform: translate(0, 0); text-shadow: 0 0 8px rgba(255,255,255,0.8); clip-path: inset(0 0 0 0); }
+            50% { transform: translate(1px, -2px); text-shadow: 3px 0 red, -3px 0 blue; clip-path: inset(20% 0 30% 0); }
+            60% { transform: translate(-2px, 0); text-shadow: -4px 0 cyan, 4px 0 magenta; clip-path: inset(50% 0 20% 0); }
+            70% { transform: translate(2px, 1px); text-shadow: 2px 0 lime, -2px 0 red; clip-path: inset(10% 0 60% 0); }
+            80% { transform: translate(-1px, -1px); text-shadow: -3px 0 yellow, 3px 0 blue; clip-path: inset(80% 0 5% 0); }
+            90% { transform: translate(0, 0); text-shadow: 0 0 12px rgba(255,215,0,0.8); clip-path: inset(0 0 0 0); }
+            100% { transform: translate(0, 0); text-shadow: none; clip-path: inset(0 0 0 0); }
+        }
+
+        .corner-text-left {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 10;
+            font-size: clamp(0.6rem, 1vw, 0.9rem);
+            font-weight: 300;
+            color: #888;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 5px rgba(0,180,255,0.2);
+            mix-blend-mode: screen;
+        }
+
+        .corner-text-left .glitch-word-small {
+            display: inline-block;
+            transition: all 0.1s ease;
+        }
+
+        .corner-text-left .glitch-word-small.glitch-active {
+            animation: glitchEffectSmall 0.5s steps(1) 1;
+        }
+
+        @keyframes glitchEffectSmall {
+            0% { transform: translate(0, 0); text-shadow: 1px 0 red, -1px 0 blue; }
+            20% { transform: translate(-1px, 1px); text-shadow: -2px 0 cyan, 2px 0 magenta; }
+            40% { transform: translate(2px, -1px); text-shadow: 2px 0 lime, -2px 0 red; }
+            60% { transform: translate(-1px, -1px); text-shadow: -2px 0 yellow, 2px 0 blue; }
+            80% { transform: translate(1px, 0); text-shadow: 1px 0 red, -1px 0 blue; }
+            100% { transform: translate(0, 0); text-shadow: none; }
+        }
+
+        @media (max-width: 600px) {
+            .corner-text { bottom: 20px; right: 20px; font-size: 0.7rem; }
+            .corner-text-left { top: 15px; left: 15px; font-size: 0.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -211,17 +303,36 @@
 
         <!-- Nội dung chính -->
         <div class="main-content flicker">
-            <div class="main-text">Editor Netking!</div>
+            <div class="main-text">
+                Editor 
+                <span id="glitch-wrapper">
+                    <span class="char" data-original="N">N</span>
+                    <span class="char" data-original="e">e</span>
+                    <span class="char" data-original="t">t</span>
+                    <span class="char" data-original="k">k</span>
+                    <span class="char" data-original="i">i</span>
+                    <span class="char" data-original="n">n</span>
+                    <span class="char" data-original="g">g</span>
+                </span>
+                !
+            </div>
             <div class="sub-line">⚡ COME MY WAY ⚡</div>
+        </div>
+
+        <!-- Các góc chữ nhỏ -->
+        <div class="corner-text" id="cornerRight">
+            <span class="glitch-word" id="glitchRight">● SƠN TÙNG MTP</span>
+        </div>
+        <div class="corner-text-left" id="cornerLeft">
+            <span class="glitch-word-small" id="glitchLeft">#MTP</span>
         </div>
     </div>
 
     <script>
         (function() {
-            // Tạo hiệu ứng hạt (film grain) trên canvas
+            // ===== GRAIN CANVAS =====
             const canvas = document.getElementById('grainCanvas');
             const ctx = canvas.getContext('2d');
-
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -234,33 +345,139 @@
                 const h = canvas.height;
                 const imageData = ctx.createImageData(w, h);
                 const data = imageData.data;
-                // Tạo nhiễu trắng đen
                 for (let i = 0; i < data.length; i += 4) {
                     const noise = Math.random() * 255;
-                    data[i] = noise;        // R
-                    data[i+1] = noise;      // G
-                    data[i+2] = noise;      // B
-                    data[i+3] = 255;        // A
+                    data[i] = noise;
+                    data[i+1] = noise;
+                    data[i+2] = noise;
+                    data[i+3] = 255;
                 }
                 ctx.putImageData(imageData, 0, 0);
                 requestAnimationFrame(drawGrain);
             }
-
             drawGrain();
 
-            // Thêm hiệu ứng rung nhẹ cho chữ bằng CSS động (tùy chọn)
+            // ===== RUNG NHẸ CHO CHỮ CHÍNH =====
             const mainText = document.querySelector('.main-text');
             let time = 0;
             setInterval(() => {
                 time += 0.02;
-                // Rung siêu nhẹ theo sin
                 const x = Math.sin(time * 3) * 0.3;
                 const y = Math.cos(time * 2.5) * 0.3;
                 mainText.style.transform = `translate(${x}px, ${y}px)`;
             }, 50);
 
+            // ===== GLITCH CORNER TEXT (giữ nguyên) =====
+            const phrasesRight = ['● SƠN TÙNG MTP', '✦ COME MY WAY', '► EDITOR NETKING', '★ M-TP', '◆ SKY CƠN MƯA', '⬡ CHẠY NGAY ĐI'];
+            const phrasesLeft = ['#MTP', '#SKY', '#SONTUNG', '#MTPFAN', '#VIP'];
+            const elRight = document.getElementById('glitchRight');
+            const elLeft = document.getElementById('glitchLeft');
+            let indexRight = 0, indexLeft = 0;
+
+            function changeRight() {
+                elRight.classList.remove('glitch-active');
+                void elRight.offsetWidth;
+                indexRight = (indexRight + 1) % phrasesRight.length;
+                elRight.textContent = phrasesRight[indexRight];
+                elRight.classList.add('glitch-active');
+                setTimeout(() => elRight.classList.remove('glitch-active'), 500);
+            }
+            function changeLeft() {
+                elLeft.classList.remove('glitch-active');
+                void elLeft.offsetWidth;
+                indexLeft = (indexLeft + 1) % phrasesLeft.length;
+                elLeft.textContent = phrasesLeft[indexLeft];
+                elLeft.classList.add('glitch-active');
+                setTimeout(() => elLeft.classList.remove('glitch-active'), 550);
+            }
+            setInterval(changeRight, 2200);
+            setInterval(changeLeft, 2800);
+            setTimeout(() => {
+                elRight.classList.add('glitch-active');
+                elLeft.classList.add('glitch-active');
+                setTimeout(() => {
+                    elRight.classList.remove('glitch-active');
+                    elLeft.classList.remove('glitch-active');
+                }, 500);
+            }, 500);
+
+            function randomFlicker() {
+                const corners = [elRight, elLeft];
+                corners.forEach(el => {
+                    if (Math.random() > 0.7) {
+                        el.style.opacity = '0.2';
+                        setTimeout(() => el.style.opacity = '1', 80 + Math.random() * 100);
+                    }
+                });
+            }
+            setInterval(randomFlicker, 400);
+
+            // ===== HIỆU ỨNG GLITCH TUẦN TỰ CHO "Netking" =====
+            const charElements = document.querySelectorAll('.char');
+            const glitchCharset = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$'];
+            const originalChars = Array.from(charElements).map(el => el.textContent);
+
+            let isGlitching = false;
+
+            function animateChar(index) {
+                if (index >= charElements.length) {
+                    // Sau khi hoàn thành, đợi 2.5s rồi chạy lại
+                    setTimeout(() => {
+                        // Reset tất cả về đúng
+                        charElements.forEach((el, i) => {
+                            el.textContent = originalChars[i];
+                        });
+                        isGlitching = false;
+                        // Tự động chạy lại vòng lặp
+                        setTimeout(() => startGlitchLoop(), 500);
+                    }, 2500);
+                    return;
+                }
+
+                const el = charElements[index];
+                const targetChar = originalChars[index];
+                let count = 0;
+                const maxCount = 14; // số lần nháy cho mỗi ký tự
+
+                const interval = setInterval(() => {
+                    if (count >= maxCount) {
+                        clearInterval(interval);
+                        el.textContent = targetChar;
+                        // Đợi một chút rồi chuyển sang ký tự tiếp theo
+                        setTimeout(() => {
+                            animateChar(index + 1);
+                        }, 180);
+                        return;
+                    }
+                    // Lấy ký tự ngẫu nhiên từ bảng glitch
+                    const randomGlitch = glitchCharset[Math.floor(Math.random() * glitchCharset.length)];
+                    el.textContent = randomGlitch;
+                    count++;
+                }, 70); // 70ms * 14 = ~1s cho mỗi ký tự
+            }
+
+            function startGlitchLoop() {
+                if (isGlitching) return;
+                isGlitching = true;
+                // Đảm bảo reset về đúng trước khi bắt đầu
+                charElements.forEach((el, i) => {
+                    el.textContent = originalChars[i];
+                });
+                // Bắt đầu từ ký tự đầu tiên
+                animateChar(0);
+            }
+
+            // Khởi động lần đầu sau khi trang load và fadeIn kết thúc
+            setTimeout(startGlitchLoop, 2000);
+
+            // Nếu muốn click để chạy lại (tùy chỉnh)
+            document.querySelector('.main-text').addEventListener('click', function() {
+                if (!isGlitching) {
+                    startGlitchLoop();
+                }
+            });
+
         })();
     </script>
-
 </body>
 </html>
