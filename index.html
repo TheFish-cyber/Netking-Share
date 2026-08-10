@@ -1,1001 +1,266 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P̷̪̂ẖ̸͝o̶̩͒n̷͎̉g̷̲͗d̸̛͜ż̷̻</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Playfair+Display:ital,wght@0,700;1,700&family=UnifrakturMaguntia&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outro Editor Netking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-:root {
-  --void:#010002; --blood:#8b0000; --blood-bright:#c41e1e;
-  --blood-dark:#3a0000; --crimson-glow:#ff1a1a;
-}
+        body {
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial Black', 'Impact', sans-serif;
+            overflow: hidden;
+        }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+        .outro-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-body{
-  background:var(--void);
-  display:flex;align-items:center;justify-content:center;
-  height:100vh;overflow:hidden;
-  font-family:'Orbitron',sans-serif;
-  cursor:crosshair;user-select:none;-webkit-user-select:none;
-  /* CONSTANT MICRO-JITTER — như Annihilation shimmer */
-  animation: bodyJitter 0.08s infinite;
-}
-@keyframes bodyJitter{
-  0%{transform:translate(0,0)}
-  15%{transform:translate(-1px,0.5px)}
-  30%{transform:translate(0.5px,-1px)}
-  45%{transform:translate(-0.5px,-0.5px)}
-  60%{transform:translate(1px,0)}
-  75%{transform:translate(-0.5px,0.5px)}
-  90%{transform:translate(0.5px,0)}
-  100%{transform:translate(0,0)}
-}
+        /* Hiệu ứng hạt (film grain) bằng canvas phủ */
+        #grainCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.08;
+            z-index: 2;
+            mix-blend-mode: overlay;
+        }
 
-/* ── CONSTANT VIGNETTE PULSE ── */
-.blood-vignette{
-  position:fixed;inset:0;pointer-events:none;z-index:1;
-  background:radial-gradient(ellipse at center,transparent 30%,rgba(1,0,2,0.9) 68%,rgba(58,0,0,0.4) 100%);
-  animation:vignettePulse 0.6s infinite alternate;
-}
-@keyframes vignettePulse{
-  0%{opacity:0.85;transform:scale(1)}
-  50%{opacity:0.95;transform:scale(1.02)}
-  100%{opacity:0.8;transform:scale(0.98)}
-}
+        /* Ánh sáng xoay nền */
+        .light-ring {
+            position: absolute;
+            width: 80vmin;
+            height: 80vmin;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+            animation: spinRing 20s linear infinite;
+            z-index: 0;
+            filter: blur(40px);
+        }
 
-/* ── SCANLINES NHANH HƠN ── */
-.scanlines{
-  position:fixed;inset:0;pointer-events:none;z-index:10;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.25) 2px,rgba(0,0,0,0.25) 4px);
-}
-.scanlines::after{
-  content:'';position:fixed;inset:0;
-  background:linear-gradient(transparent 20%,rgba(180,0,0,0.06) 50%,transparent 80%);
-  animation:scanMove 2s linear infinite;pointer-events:none;
-}
-@keyframes scanMove{
-  0%{transform:translateY(-100%)}
-  100%{transform:translateY(100%)}
-}
+        .light-ring:nth-child(2) {
+            width: 60vmin;
+            height: 60vmin;
+            background: radial-gradient(circle, rgba(0, 180, 255, 0.12) 0%, transparent 70%);
+            animation-duration: 15s;
+            animation-direction: reverse;
+            filter: blur(50px);
+        }
 
-/* ── NOISE LỚP DÀY ── */
-.noise{
-  position:fixed;inset:0;opacity:0.08;z-index:8;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:noiseShift 0.3s infinite;
-}
-@keyframes noiseShift{
-  0%{transform:translate(0,0)}
-  33%{transform:translate(-2px,1px)}
-  66%{transform:translate(1px,-2px)}
-  100%{transform:translate(0,0)}
-}
+        @keyframes spinRing {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(360deg) scale(1.2); }
+        }
 
-.water-overlay{
-  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.06;
-  background:radial-gradient(ellipse at 25% 75%,rgba(120,0,0,0.5) 0%,transparent 50%),
-             radial-gradient(ellipse at 75% 25%,rgba(0,0,0,0.6) 0%,transparent 50%);
-  animation:waterDrift 6s ease-in-out infinite;
-}
-@keyframes waterDrift{
-  0%,100%{transform:translate(0,0) scale(1)}
-  25%{transform:translate(-15px,10px) scale(1.05)}
-  50%{transform:translate(5px,-8px) scale(0.96)}
-  75%{transform:translate(12px,4px) scale(1.03)}
-}
+        /* Nội dung chính */
+        .main-content {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            animation: fadeInUp 1.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
 
-/* ── ALL CANVASES ── */
-#bgCanvas,#smileCanvas,#bloodCanvas,#glitchCanvas,#distortCanvas{
-  position:fixed;inset:0;pointer-events:none;
-}
-#bgCanvas{z-index:0}#smileCanvas{z-index:3}#bloodCanvas{z-index:4}
-#glitchCanvas{z-index:25}#distortCanvas{z-index:6}
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
-/* ── VERITY SMILE POPUP ── */
-.verity-smile{
-  position:fixed;pointer-events:none;z-index:20;
-  font-family:'Playfair Display',serif;font-style:italic;font-weight:700;
-  color:var(--blood-bright);
-  text-shadow:0 0 30px var(--crimson-glow),0 0 60px var(--blood-dark),0 0 100px black;
-  animation:verityAppear 0.8s ease-out forwards;letter-spacing:0.3em;
-}
-@keyframes verityAppear{
-  0%{transform:scale(0.1) rotate(-25deg);opacity:0;filter:blur(10px) brightness(5)}
-  12%{transform:scale(2.8) rotate(10deg);opacity:1;filter:blur(0) brightness(2)}
-  30%{transform:scale(0.8) rotate(-4deg);opacity:0.85;filter:blur(0)}
-  55%{transform:scale(1.8) rotate(3deg);opacity:0.6;filter:blur(3px)}
-  100%{transform:scale(4.5) rotate(-15deg);opacity:0;filter:blur(16px) brightness(0.1)}
-}
+        .main-text {
+            font-size: clamp(3rem, 12vw, 8rem);
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.8),
+                0 0 20px rgba(255, 215, 0, 0.6),
+                0 0 40px rgba(255, 215, 0, 0.4),
+                0 0 80px rgba(255, 215, 0, 0.2);
+            position: relative;
+            display: inline-block;
+            animation: glowPulse 2.5s ease-in-out infinite alternate;
+        }
 
-/* ── CRYPTIC POPUP ── */
-.cryptic-pop{
-  position:fixed;pointer-events:none;z-index:22;
-  font-family:'UnifrakturMaguntia','Playfair Display',serif;
-  color:var(--blood-bright);
-  text-shadow:0 0 35px var(--crimson-glow),0 0 70px black;
-  animation:crypticBurst 0.7s ease-out forwards;
-}
-@keyframes crypticBurst{
-  0%{transform:scale(0.05) rotate(0deg);opacity:0;filter:blur(0) brightness(6)}
-  20%{transform:scale(4) rotate(30deg);opacity:1;filter:blur(0) brightness(1.8)}
-  45%{transform:scale(1.5) rotate(-18deg);opacity:0.65;filter:blur(2px)}
-  100%{transform:scale(7) rotate(55deg);opacity:0;filter:blur(15px) brightness(0)}
-}
+        /* Hiệu ứng shimmer chạy ngang trên chữ */
+        .main-text::before {
+            content: '';
+            position: absolute;
+            top: -5%;
+            left: -10%;
+            width: 120%;
+            height: 110%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.3) 30%,
+                rgba(255, 255, 255, 0.8) 50%,
+                rgba(255, 255, 255, 0.3) 70%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+            border-radius: 4px;
+        }
 
-/* ── MAIN CONTAINER — CONSTANT JITTER ── */
-.main{
-  position:relative;z-index:5;text-align:center;
-  animation:mainJitter 0.12s infinite, mainPulse 2s ease-in-out infinite;
-}
-@keyframes mainJitter{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(0.5px,-0.5px)}
-  50%{transform:translate(-0.5px,0.5px)}
-  75%{transform:translate(0.3px,0.3px)}
-  100%{transform:translate(0,0)}
-}
-@keyframes mainPulse{
-  0%,100%{filter:brightness(1)}
-  40%{filter:brightness(1.1) contrast(1.05)}
-  80%{filter:brightness(0.95) contrast(1.02)}
-}
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
 
-.glitch-wrapper{
-  position:relative;display:inline-block;
-  /* CONSTANT MICRO-WOBBLE */
-  animation:wrapperWobble 0.15s infinite;
-}
-@keyframes wrapperWobble{
-  0%{transform:translate(0,0) scale(1)}
-  20%{transform:translate(1px,0) scale(1.005)}
-  40%{transform:translate(-1px,1px) scale(0.995)}
-  60%{transform:translate(0.5px,-0.5px) scale(1.003)}
-  80%{transform:translate(-0.5px,0) scale(0.997)}
-  100%{transform:translate(0,0) scale(1)}
-}
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4); }
+            100% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 215, 0, 0.5), 0 0 120px rgba(255, 215, 0, 0.3); }
+        }
 
-/* ── MAIN TEXT — NEVER STABLE ── */
-.glitch-text{
-  font-size:clamp(4rem,12vw,10rem);
-  font-weight:900;letter-spacing:0.2em;
-  color:#d0c8c0;
-  text-shadow:
-    0 0 8px rgba(180,0,0,0.7),
-    0 0 25px rgba(139,0,0,0.6),
-    0 0 60px rgba(100,0,0,0.4),
-    0 0 120px rgba(58,0,0,0.3);
-  position:relative;
-  display:inline-block;
-  /* CONSTANT SHAKE — không bao giờ đứng yên */
-  animation:textShake 0.06s infinite, textPulse 0.8s infinite alternate;
-}
-@keyframes textShake{
-  0%{transform:translate(0,0)}
-  12%{transform:translate(2px,-1px)}
-  25%{transform:translate(-1px,2px)}
-  37%{transform:translate(-2px,-1px)}
-  50%{transform:translate(1px,1px)}
-  62%{transform:translate(-1px,-2px)}
-  75%{transform:translate(2px,1px)}
-  87%{transform:translate(-1px,0)}
-  100%{transform:translate(0,0)}
-}
-@keyframes textPulse{
-  0%{opacity:0.7;filter:brightness(0.8)}
-  30%{opacity:1;filter:brightness(1.3)}
-  60%{opacity:0.6;filter:brightness(0.7)}
-  100%{opacity:0.9;filter:brightness(1.1)}
-}
+        .sub-line {
+            margin-top: 20px;
+            font-size: clamp(1rem, 2.5vw, 2rem);
+            font-weight: 300;
+            color: #aaa;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInSub 2s 0.6s forwards;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            padding-top: 20px;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(0, 180, 255, 0.3);
+        }
 
-/* ── GLITCH CLONES — LUÔN HIỆN DIỆN ── */
-.glitch-clone{
-  position:absolute;top:0;left:0;width:100%;height:100%;
-  font-size:clamp(4rem,12vw,10rem);
-  font-weight:900;letter-spacing:0.2em;
-  pointer-events:none;
-  animation:cloneDrift 0.2s infinite;
-}
-.glitch-clone.blood{color:var(--blood-bright);opacity:0.15;}
-.glitch-clone.shadow{color:#ff0000;opacity:0.1;}
-.glitch-clone.void{color:#fff;opacity:0.08;}
-.glitch-clone.abyss{color:#000;text-shadow:0 0 20px #8b0000;opacity:0.12;}
-@keyframes cloneDrift{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(-3px,1px)}
-  50%{transform:translate(2px,-2px)}
-  75%{transform:translate(-1px,-1px)}
-  100%{transform:translate(0,0)}
-}
+        @keyframes fadeInSub {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
 
-.glitch-burst{
-  position:absolute;top:0;left:0;width:100%;height:100%;
-  font-size:clamp(4rem,12vw,10rem);
-  font-weight:900;letter-spacing:0.2em;
-  color:var(--blood-bright);
-  pointer-events:none;
-  /* CONSTANT FLASH */
-  animation:burstFlash 0.25s infinite;
-}
-@keyframes burstFlash{
-  0%{opacity:0;transform:translate(0,0) skew(0)}
-  40%{opacity:0.6;transform:translate(8px,-4px) skew(3deg)}
-  60%{opacity:0.8;transform:translate(-6px,3px) skew(-2deg)}
-  80%{opacity:0.3;transform:translate(0,0) skew(1deg)}
-  100%{opacity:0;transform:translate(0,0) skew(0)}
-}
+        /* Scanline hiệu ứng */
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(0, 0, 0, 0.03) 3px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 3;
+        }
 
-.scramble-overlay{
-  position:absolute;top:0;left:0;width:100%;height:100%;
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(4rem,12vw,10rem);
-  font-weight:400;letter-spacing:0.2em;
-  color:var(--crimson-glow);
-  pointer-events:none;
-  /* CONSTANT SCRAMBLE FLASH */
-  animation:scrambleFlash 0.15s infinite;
-}
-@keyframes scrambleFlash{
-  0%{opacity:0;transform:translate(0,0)}
-  35%{opacity:0.5;transform:translate(-2px,1px)}
-  65%{opacity:0.7;transform:translate(3px,-2px)}
-  100%{opacity:0;transform:translate(0,0)}
-}
+        /* Vignette */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-.cryptic-overlay{
-  position:absolute;top:0;left:0;width:100%;height:100%;
-  font-size:clamp(4rem,12vw,10rem);
-  font-weight:900;letter-spacing:0.2em;
-  pointer-events:none;
-  color:var(--blood-bright);
-  text-shadow:0 0 25px var(--crimson-glow),0 0 60px black;
-  animation:crypticFlash 0.3s infinite;
-}
-@keyframes crypticFlash{
-  0%{opacity:0;transform:scale(0.9) rotate(-2deg)}
-  30%{opacity:0.6;transform:scale(1.1) rotate(3deg)}
-  70%{opacity:0.8;transform:scale(1.05) rotate(-1deg)}
-  100%{opacity:0;transform:scale(0.95) rotate(2deg)}
-}
+        /* Hiệu ứng flicker nhẹ cuối */
+        .flicker {
+            animation: flicker 0.15s ease-in-out 3s 2;
+        }
 
-/* ── SUBTITLE — LUÔN RUNG ── */
-.subtitle{
-  margin-top:1.5rem;
-  font-size:clamp(0.8rem,1.6vw,1.1rem);
-  font-family:'Share Tech Mono',monospace;
-  letter-spacing:0.5em;
-  color:var(--blood-bright);
-  text-shadow:0 0 10px var(--blood-dark),0 0 30px rgba(139,0,0,0.6);
-  animation:subShake 0.1s infinite, subFade 1.5s infinite alternate;
-}
-@keyframes subShake{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(1px,0)}
-  50%{transform:translate(-1px,1px)}
-  75%{transform:translate(0.5px,-0.5px)}
-  100%{transform:translate(0,0)}
-}
-@keyframes subFade{
-  0%{opacity:0.5}
-  100%{opacity:0.9}
-}
-
-/* ── SIGILS ── */
-.sigil{
-  position:fixed;width:100px;height:100px;z-index:5;pointer-events:none;
-  animation:sigilPulse 0.8s infinite alternate;
-}
-.sigil::before,.sigil::after{content:'';position:absolute;background:var(--blood-dark);}
-.sigil.tl{top:20px;left:20px}.sigil.tr{top:20px;right:20px}
-.sigil.bl{bottom:20px;left:20px}.sigil.br{bottom:20px;right:20px}
-.sigil.tl::before{top:0;left:0;width:45px;height:2px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.tl::after{top:0;left:0;width:2px;height:45px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.tr::before{top:0;right:0;width:45px;height:2px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.tr::after{top:0;right:0;width:2px;height:45px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.bl::before{bottom:0;left:0;width:45px;height:2px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.bl::after{bottom:0;left:0;width:2px;height:45px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.br::before{bottom:0;right:0;width:45px;height:2px;box-shadow:0 0 10px var(--crimson-glow)}
-.sigil.br::after{bottom:0;right:0;width:2px;height:45px;box-shadow:0 0 10px var(--crimson-glow)}
-@keyframes sigilPulse{
-  0%{opacity:0.3}
-  100%{opacity:0.7}
-}
-
-/* ── SHAKE CLASSES ── */
-.shake{animation:screenShake 0.4s ease-out}
-@keyframes screenShake{
-  0%{transform:translate(0)}
-  5%{transform:translate(-25px,16px)}
-  10%{transform:translate(20px,-18px)}
-  15%{transform:translate(-16px,-10px)}
-  20%{transform:translate(18px,12px)}
-  28%{transform:translate(-10px,-6px)}
-  36%{transform:translate(7px,4px)}
-  45%{transform:translate(-4px,-2px)}
-  60%{transform:translate(2px,1px)}
-  100%{transform:translate(0)}
-}
-.shake-hard{animation:screenShakeHard 0.3s ease-out}
-@keyframes screenShakeHard{
-  0%{transform:translate(0) scale(1)}
-  6%{transform:translate(-35px,24px) scale(1.04)}
-  12%{transform:translate(30px,-26px) scale(0.97)}
-  18%{transform:translate(-22px,-15px) scale(1.03)}
-  25%{transform:translate(25px,18px) scale(0.96)}
-  35%{transform:translate(-12px,-8px) scale(1.02)}
-  50%{transform:translate(6px,4px)}
-  70%{transform:translate(-3px,-1px)}
-  100%{transform:translate(0) scale(1)}
-}
-
-/* ── CORRUPTION / CHROME ── */
-.corrupt-flash{
-  position:fixed;inset:0;z-index:40;pointer-events:none;
-  mix-blend-mode:difference;background:var(--blood-bright);
-  opacity:0;
-  /* CONSTANT MICRO FLASH */
-  animation:corruptFlicker 0.1s infinite;
-}
-@keyframes corruptFlicker{
-  0%{opacity:0}
-  30%{opacity:0.08}
-  60%{opacity:0.03}
-  100%{opacity:0}
-}
-.chrome-bleed{
-  position:fixed;inset:0;z-index:35;pointer-events:none;
-  background:linear-gradient(90deg,rgba(200,0,0,0.2) 0%,transparent 20%,transparent 80%,rgba(0,0,0,0.35) 100%);
-  animation:chromePulse 0.5s infinite alternate;
-}
-@keyframes chromePulse{
-  0%{opacity:0.2}
-  100%{opacity:0.6}
-}
-
-/* ── GLITCH BAR ── */
-.glitch-bar{
-  position:fixed;left:-8%;right:-8%;height:3px;
-  z-index:50;pointer-events:none;opacity:0;
-  background:var(--blood-bright);
-  box-shadow:0 0 20px var(--crimson-glow),0 0 55px var(--blood-dark);
-}
-
-/* ── TEAR LINE ── */
-.tear-line{
-  position:fixed;left:0;right:0;height:2px;
-  background:var(--blood-bright);
-  z-index:45;pointer-events:none;opacity:0;
-  box-shadow:0 0 25px var(--crimson-glow);
-}
-
-/* ── PERSONA SPLIT ── */
-.persona-split{
-  position:fixed;top:0;bottom:0;width:50vw;z-index:15;pointer-events:none;
-  animation:personaPulse 3s infinite alternate;
-}
-.persona-split.left{left:0;background:linear-gradient(to right,rgba(1,0,2,0.85) 0%,transparent 100%)}
-.persona-split.right{right:0;background:linear-gradient(to left,rgba(180,0,0,0.35) 0%,transparent 100%)}
-@keyframes personaPulse{
-  0%{opacity:0.1}
-  50%{opacity:0.4}
-  100%{opacity:0.15}
-}
-
-/* ── CODE RAIN ── */
-.code-rain{
-  position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0.08;
-  font-family:'Share Tech Mono',monospace;font-size:11px;
-  color:var(--blood-bright);white-space:pre;line-height:1.2;overflow:hidden;
-  animation:codeJitter 0.2s infinite;
-}
-@keyframes codeJitter{
-  0%{transform:translate(0,0)}
-  50%{transform:translate(-1px,-1px)}
-  100%{transform:translate(0,0)}
-}
-</style>
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
+    <div class="outro-container">
+        <!-- Vòng sáng -->
+        <div class="light-ring"></div>
+        <div class="light-ring"></div>
 
-<div class="corrupt-flash" id="corruptFlash"></div>
-<div class="chrome-bleed" id="chromeBleed"></div>
+        <!-- Lớp phủ -->
+        <div class="vignette"></div>
+        <div class="scanline"></div>
+        <canvas id="grainCanvas"></canvas>
 
-<div class="water-overlay"></div>
-<div class="scanlines"></div>
-<div class="blood-vignette"></div>
-<div class="noise"></div>
-<div class="code-rain" id="codeRain"></div>
-<canvas id="bgCanvas"></canvas>
-<canvas id="distortCanvas"></canvas>
-<canvas id="smileCanvas"></canvas>
-<canvas id="bloodCanvas"></canvas>
-<canvas id="glitchCanvas"></canvas>
+        <!-- Nội dung chính -->
+        <div class="main-content flicker">
+            <div class="main-text">Editor Netking!</div>
+            <div class="sub-line">⚡ COME MY WAY ⚡</div>
+        </div>
+    </div>
 
-<div class="persona-split left"></div>
-<div class="persona-split right"></div>
+    <script>
+        (function() {
+            // Tạo hiệu ứng hạt (film grain) trên canvas
+            const canvas = document.getElementById('grainCanvas');
+            const ctx = canvas.getContext('2d');
 
-<div class="sigil tl"></div>
-<div class="sigil tr"></div>
-<div class="sigil bl"></div>
-<div class="sigil br"></div>
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
 
-<div class="main" id="mainContainer">
-  <div class="glitch-wrapper" id="glitchWrapper">
-    <span class="glitch-text" id="mainText">P̷h̸o̶n̷g̷d̸z̷</span>
-    <span class="glitch-clone blood" id="cloneBlood">P̷h̸o̶n̷g̷d̸z̷</span>
-    <span class="glitch-clone shadow" id="cloneShadow">P̷h̸o̶n̷g̷d̸z̷</span>
-    <span class="glitch-clone void" id="cloneVoid">P̷h̸o̶n̷g̷d̸z̷</span>
-    <span class="glitch-clone abyss" id="cloneAbyss">P̷h̸o̶n̷g̷d̸z̷</span>
-    <span class="glitch-burst" id="burstText">P̷h̸o̶n̷g̷d̸z̷</span>
-    <span class="scramble-overlay" id="scrambleText"></span>
-    <span class="cryptic-overlay" id="crypticText"></span>
-  </div>
-  <div class="subtitle" id="subtitleEl">// A B Y S S _ W A T C H E R</div>
-</div>
+            function drawGrain() {
+                const w = canvas.width;
+                const h = canvas.height;
+                const imageData = ctx.createImageData(w, h);
+                const data = imageData.data;
+                // Tạo nhiễu trắng đen
+                for (let i = 0; i < data.length; i += 4) {
+                    const noise = Math.random() * 255;
+                    data[i] = noise;        // R
+                    data[i+1] = noise;      // G
+                    data[i+2] = noise;      // B
+                    data[i+3] = 255;        // A
+                }
+                ctx.putImageData(imageData, 0, 0);
+                requestAnimationFrame(drawGrain);
+            }
 
-<script>
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  P H O N G D Z   —   E T E R N A L   C H A O S           ║
-// ║  KHÔNG BAO GIỜ YÊN • ANNIHILATION • VERITY • 悪魔        ║
-// ╚══════════════════════════════════════════════════════════════╝
+            drawGrain();
 
-const TARGET='Phongdz';
-const CHARS='!@#$%^&*()_+-=[]{}|;:,.<>?/~`ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            // Thêm hiệu ứng rung nhẹ cho chữ bằng CSS động (tùy chọn)
+            const mainText = document.querySelector('.main-text');
+            let time = 0;
+            setInterval(() => {
+                time += 0.02;
+                // Rung siêu nhẹ theo sin
+                const x = Math.sin(time * 3) * 0.3;
+                const y = Math.cos(time * 2.5) * 0.3;
+                mainText.style.transform = `translate(${x}px, ${y}px)`;
+            }, 50);
 
-const CRYPTIC_NAMES=[
-  'P̷h̸o̶n̷g̷d̸z̷','PĦØŊǤĐŽ','ṔḧøṆḠḎẔ','₱ⱧØ₦₲ĐⱫ',
-  'P̴̢h̴̢o̴̢n̴̢g̴̢d̴̢z̴̢','ρཧơŋɠɖʑ','ÞĦØŊǤĐŽ','P̶͝h̶͝o̶͝n̶͝g̶͝d̶͝z̶͝',
-  '🅿🅷🅾🅽🅶🅳🆉','PΉӨПGDZ','PHØ₦₲DⱫ','Ṕ廾Ø₦₲Ď乙',
-  'P卄回句回刀乙','PH🜲NGD🜲','P̲h̲o̲n̲g̲d̲z̲','P҉h҉o҉n҉g҉d҉z҉',
-  'P҈h҈o҈n҈g҈d҈z҈','ρんの刀gの乙','PんØ₦GD乙','ＰＨＯＮＧＤＺ',
-  'ᴘʜᴏɴɢᴅᴢ','ℙℍⓄℕ𝔾𝔻ℤ','P̸̧̛ḩ̸̛ơ̸̧ņ̸̛ģ̸̛ḑ̸̛z̸̧̛','P̷̨h̷̨ǫ̷n̷̨g̷̨d̷̨z̷̨',
-  'Ph̷o̷n̷g̷d̷z̷','PHØ₦₲Đ乙','ρhθπξδζ','ṗḧṏṅġḋż',
-  'p̶̢h̶̢o̶̢n̶̢g̶̢d̶̢z̶̢','P͒ͯh͒ͯo͒ͯn͒ͯg͒ͯd͒ͯz͒ͯ','P̷̛̮ḫ̷̛ơ̷̮n̷̛̮g̷̛̮d̷̛̮z̷̛̮',
-  'PHOИGDZ','P|-|0|\\|6|)Z','Ph0n9dz','PH0NGDZ',
-  'p\'H\'o\'N\'G\'D\'Z','P*H*O*N*G*D*Z','<Phongdz/>','P:H:O:N:G:D:Z',
-  'P|H|O|N|G|D|Z','ρнση∂z','ⓅⒽⓄⓃⒼⒹⓏ',
-  'P͜͡h͜͡o͜͡n͜͡g͜͡d͜͡z͜͡','P͓̽h͓̽o͓̽n͓̽g͓̽d͓̽z͓̽',
-];
+        })();
+    </script>
 
-const DEMON_WORDS=[
-  'S M I L E','SMILE.','SM1LE','5M1L3','$M!L3','SMILE...','G R I N',
-  'W I D E R','S M I L E  W I D E R','SMILE ;)','ALWAYS SMILING',
-  'KEEP SMILING','SMILE FOREVER','S̷ M̷ I̷ L̷ E̷','S̸M̸I̸L̸E̸',
-  'S҉M҉I҉L҉E҉','GRIN','S M I L E |','SMILE//','SMILE::',
-  '😈','👿','💀','🩸','🜲','⛧','⛤','⛥',
-  'W̷I̷D̷E̷R̷','A̸L̸W̸A̸Y̸S̸','F̶O̶R̶E̶V̶E̶R̶',
-];
-
-const CREEPY_PHRASES=[
-  '// A B Y S S _ W A T C H E R','// D E M O N _ M I N D',
-  '// B L O O D _ C O D E','// V O I D _ W A L K E R',
-  '// S O L I T A R Y _ K I N G','// D U A L _ P E R S O N A',
-  '// M A C E _ B E A R E R','// D A R K _ W A T E R',
-  '// S Y S T E M _ C O R R U P T','// M E M O R Y _ L E A K',
-  '// S E G F A U L T','// K E R N E L _ P A N I C',
-  '// N U L L _ P T R','// S T A C K _ O V E R F L O W',
-  '// D E A D L O C K','// R A C E _ C O N D I T I O N',
-  '// S M I L E _ I N J E C T','// B L O O D _ S Y S',
-  '// A N N I H I L A T I O N','// S H I M M E R',
-];
-
-// ── CANVASES ──
-const bgCanvas=document.getElementById('bgCanvas');
-const bgCtx=bgCanvas.getContext('2d');
-const distortCanvas=document.getElementById('distortCanvas');
-const distortCtx=distortCanvas.getContext('2d');
-const smileCanvas=document.getElementById('smileCanvas');
-const smileCtx=smileCanvas.getContext('2d');
-const bloodCanvas=document.getElementById('bloodCanvas');
-const bloodCtx=bloodCanvas.getContext('2d');
-const glitchCanvas=document.getElementById('glitchCanvas');
-const glitchCtx=glitchCanvas.getContext('2d');
-let W,H;
-
-function resize(){
-  W=bgCanvas.width=distortCanvas.width=smileCanvas.width=bloodCanvas.width=glitchCanvas.width=window.innerWidth;
-  H=bgCanvas.height=distortCanvas.height=smileCanvas.height=bloodCanvas.height=glitchCanvas.height=window.innerHeight;
-}
-window.addEventListener('resize',resize);resize();
-
-// ═══════════════════════════════════════
-//  DARK WATER DROPS — CONSTANT RAIN
-// ═══════════════════════════════════════
-class DarkDrop{
-  constructor(){this.reset(true)}
-  reset(init){
-    this.x=Math.random()*W;
-    this.y=init?Math.random()*H:-20;
-    this.vy=0.2+Math.random()*0.8;
-    this.size=Math.random()*2.5+0.3;
-    this.opacity=Math.random()*0.4+0.04;
-    this.wobble=Math.random()*Math.PI*2;
-    this.wobbleSpeed=0.01+Math.random()*0.04;
-  }
-  update(){
-    this.y+=this.vy;this.wobble+=this.wobbleSpeed;
-    this.x+=Math.sin(this.wobble)*0.4;
-    if(this.y>H+30)this.reset(false);
-  }
-  draw(ctx){
-    ctx.fillStyle=`rgba(139,0,0,${this.opacity})`;
-    ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();
-  }
-}
-const drops=[];for(let i=0;i<200;i++)drops.push(new DarkDrop());
-function animateDrops(){
-  bgCtx.clearRect(0,0,W,H);
-  for(const d of drops){d.update();d.draw(bgCtx);}
-  requestAnimationFrame(animateDrops);
-}
-animateDrops();
-
-// ═══════════════════════════════════════
-//  DISTORTION CANVAS — ANNIHILATION SHIMMER
-//  (sóng méo hình như Annihilation)
-// ═══════════════════════════════════════
-const distortionWaves=[];
-for(let i=0;i<15;i++){
-  distortionWaves.push({
-    x:Math.random()*W,y:Math.random()*H,
-    radius:50+Math.random()*200,
-    maxRadius:150+Math.random()*350,
-    speed:0.5+Math.random()*2,
-    opacity:0.03+Math.random()*0.08,
-    phase:Math.random()*Math.PI*2,
-    freq:0.02+Math.random()*0.06
-  });
-}
-function animateDistortion(){
-  distortCtx.clearRect(0,0,W,H);
-  for(const w of distortionWaves){
-    w.radius+=w.speed;
-    if(w.radius>w.maxRadius){w.radius=30+Math.random()*80;w.x=Math.random()*W;w.y=Math.random()*H;}
-    w.phase+=0.05;
-    const alpha=Math.max(0,w.opacity*(1-w.radius/w.maxRadius));
-    const grad=distortCtx.createRadialGradient(w.x,w.y,w.radius*0.3,w.x,w.y,w.radius);
-    grad.addColorStop(0,`rgba(139,0,0,${alpha})`);
-    grad.addColorStop(0.4,`rgba(80,0,0,${alpha*0.6})`);
-    grad.addColorStop(1,'rgba(0,0,0,0)');
-    distortCtx.fillStyle=grad;
-    distortCtx.beginPath();
-    // Wobbly circle — như Annihilation shimmer
-    distortCtx.moveTo(w.x+Math.cos(w.phase)*w.radius*0.1,w.y);
-    for(let a=0;a<Math.PI*2;a+=0.1){
-      const r=w.radius+Math.sin(a*6+w.phase)*w.radius*0.08+Math.cos(a*3+w.phase*2)*w.radius*0.05;
-      distortCtx.lineTo(w.x+Math.cos(a)*r,w.y+Math.sin(a)*r);
-    }
-    distortCtx.closePath();distortCtx.fill();
-  }
-  requestAnimationFrame(animateDistortion);
-}
-animateDistortion();
-
-// ═══════════════════════════════════════
-//  VERITY SMILE — CONSTANT SPAWN
-// ═══════════════════════════════════════
-const drawnSmiles=[];
-function spawnVeritySmile(){
-  drawnSmiles.push({
-    x:Math.random()*W,y:Math.random()*H,
-    size:Math.random()*60+18,life:1,
-    decay:0.004+Math.random()*0.018,
-    rot:(Math.random()-0.5)*0.55,
-    phase:Math.random()*Math.PI*2,
-    flickerSpeed:0.06+Math.random()*0.2
-  });
-  if(drawnSmiles.length>35)drawnSmiles.shift();
-}
-function drawVeritySmile(ctx,x,y,size,alpha,rot,phase){
-  ctx.save();ctx.globalAlpha=alpha;ctx.translate(x,y);ctx.rotate(rot);
-  const flicker=0.5+0.5*Math.sin(phase),ga=alpha*flicker;
-
-  const auraGrad=ctx.createRadialGradient(0,0,size*0.4,0,0,size*1.6);
-  auraGrad.addColorStop(0,'rgba(0,0,0,0)');
-  auraGrad.addColorStop(0.5,`rgba(139,0,0,${ga*0.5})`);
-  auraGrad.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=auraGrad;ctx.beginPath();ctx.arc(0,0,size*1.6,0,Math.PI*2);ctx.fill();
-
-  const fg=ctx.createRadialGradient(0,-size*0.1,size*0.06,0,0,size);
-  fg.addColorStop(0,`rgba(210,200,190,${alpha*0.6})`);
-  fg.addColorStop(0.7,`rgba(160,150,140,${alpha*0.5})`);
-  fg.addColorStop(1,`rgba(60,40,40,${alpha*0.2})`);
-  ctx.fillStyle=fg;ctx.beginPath();ctx.arc(0,0,size,0,Math.PI*2);ctx.fill();
-
-  ctx.strokeStyle=`rgba(139,0,0,${alpha*0.55})`;ctx.lineWidth=1.5;
-  ctx.shadowColor=`rgba(180,0,0,${ga*0.6})`;ctx.shadowBlur=10;ctx.stroke();
-
-  const eyeR=size*0.15,eyeX=size*0.34,eyeY=-size*0.22;
-  ctx.fillStyle=`rgba(0,0,0,${alpha})`;ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=6;
-  ctx.beginPath();ctx.arc(-eyeX,eyeY,eyeR,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(eyeX,eyeY,eyeR,0,Math.PI*2);ctx.fill();
-
-  // Blood tears — CONSTANTLY DRIPPING
-  ctx.shadowColor=`rgba(180,0,0,${ga})`;ctx.shadowBlur=5;
-  ctx.strokeStyle=`rgba(139,0,0,${alpha*0.9})`;ctx.lineWidth=size*0.06;
-  const tl=size*0.45+Math.sin(phase*4)*size*0.15;
-  ctx.beginPath();ctx.moveTo(-eyeX,eyeY+eyeR);ctx.lineTo(-eyeX,eyeY+eyeR+tl);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(eyeX,eyeY+eyeR);ctx.lineTo(eyeX,eyeY+eyeR+tl);ctx.stroke();
-
-  // SMILE — quá rộng, đáng sợ
-  ctx.shadowColor=`rgba(180,0,0,${ga*0.7})`;ctx.shadowBlur=8;
-  ctx.strokeStyle=`rgba(20,0,0,${alpha*0.9})`;ctx.lineWidth=size*0.06;
-  const sY=size*0.15,sW=size*0.6;
-  ctx.beginPath();ctx.arc(0,sY,sW,0.1,Math.PI-0.1);ctx.stroke();
-
-  ctx.lineWidth=size*0.02;ctx.strokeStyle=`rgba(180,170,160,${alpha*0.4})`;ctx.shadowBlur=0;
-  for(let i=0;i<7;i++){
-    const a=0.22+(i/6)*(Math.PI-0.44);
-    const tx=Math.cos(a)*sW,ty=sY+Math.sin(a)*sW;
-    ctx.beginPath();ctx.moveTo(tx,ty-size*0.16);ctx.lineTo(tx,ty);ctx.stroke();
-  }
-  ctx.restore();
-}
-function animateSmiles(){
-  smileCtx.clearRect(0,0,W,H);
-  for(let i=drawnSmiles.length-1;i>=0;i--){
-    const s=drawnSmiles[i];s.phase+=s.flickerSpeed;
-    drawVeritySmile(smileCtx,s.x,s.y,s.size,s.life,s.rot,s.phase);
-    s.life-=s.decay;if(s.life<=0)drawnSmiles.splice(i,1);
-  }
-  requestAnimationFrame(animateSmiles);
-}
-animateSmiles();
-
-// ═══════════════════════════════════════
-//  BLOOD DRIPS
-// ═══════════════════════════════════════
-const bloodDrips=[];
-function spawnBloodDrip(){
-  bloodDrips.push({
-    x:Math.random()*W,y:-10,
-    len:20+Math.random()*120,speed:0.6+Math.random()*3,
-    width:1+Math.random()*5,opacity:0.2+Math.random()*0.6
-  });
-  if(bloodDrips.length>50)bloodDrips.shift();
-}
-function animateBlood(){
-  bloodCtx.clearRect(0,0,W,H);
-  for(let i=bloodDrips.length-1;i>=0;i--){
-    const d=bloodDrips[i];
-    bloodCtx.strokeStyle=`rgba(139,0,0,${d.opacity})`;bloodCtx.lineWidth=d.width;
-    bloodCtx.shadowColor=`rgba(180,0,0,${d.opacity*0.5})`;bloodCtx.shadowBlur=6;
-    bloodCtx.beginPath();bloodCtx.moveTo(d.x,d.y);
-    bloodCtx.lineTo(d.x+Math.sin(d.y*0.03)*4,d.y+d.len);bloodCtx.stroke();
-    d.y+=d.speed;if(d.y>H+100)bloodDrips.splice(i,1);
-  }
-  bloodCtx.shadowBlur=0;
-  requestAnimationFrame(animateBlood);
-}
-animateBlood();
-
-// ═══════════════════════════════════════
-//  GLITCH SLICES — CONSTANT SCREEN TEARING
-// ═══════════════════════════════════════
-const glitchSlices=[];
-function spawnGlitchSlice(){
-  glitchSlices.push({
-    y:Math.random()*H,h:3+Math.random()*50,
-    offset:(Math.random()-0.5)*100,
-    life:1,decay:0.04+Math.random()*0.1,
-    color:['rgba(180,0,0,0.6)','rgba(255,0,0,0.35)','rgba(0,0,0,0.75)','rgba(255,255,255,0.15)'][Math.floor(Math.random()*4)]
-  });
-  if(glitchSlices.length>20)glitchSlices.shift();
-}
-function animateGlitchSlices(){
-  glitchCtx.clearRect(0,0,W,H);
-  for(let i=glitchSlices.length-1;i>=0;i--){
-    const s=glitchSlices[i];
-    glitchCtx.fillStyle=s.color;glitchCtx.fillRect(s.offset,s.y,W,s.h);
-    s.life-=s.decay;if(s.life<=0)glitchSlices.splice(i,1);
-  }
-  requestAnimationFrame(animateGlitchSlices);
-}
-animateGlitchSlices();
-
-// ═══════════════════════════════════════
-//  CODE RAIN
-// ═══════════════════════════════════════
-const codeRain=document.getElementById('codeRain');
-const codeLines=[
-  '0xDEAD 0xBEEF 0xCAFE 0xBABE 0x666','SIGSEGV 0x0000 SEGFAULT // reaper',
-  'malloc()->NULL // no escape','stack overflow // drown',
-  'kernel panic - not syncing: blood.sys','FATAL: smile.sys corrupted',
-  'SMILE_INJECT->0xBADCODE','void*abyss=malloc(∞)',
-  'syscall:KILL // signal 9 // SIGSMILE','segfault at 666 ip b00b1e5',
-  '/dev/darkness:permission denied','PID 1 terminated // god is dead',
-  'rm -rf / --no-preserve-root',':(){ :|:& };: // smilebomb',
-  '0xPH0NGDZ // uid=0(root)','chmod 666 /dev/smile',
-  'echo SMILE > /proc/sys/kernel/demons','ln -s /dev/null /dev/sanity',
-  'ANNIHILATION PROTOCOL // SHIMMER',']: SYNAPSE COLLAPSE','<error code="ABYSS"/>',
-];
-function updateCodeRain(){
-  let h='';for(let i=0;i<50;i++)h+='  '.repeat(Math.floor(Math.random()*14))+codeLines[Math.floor(Math.random()*codeLines.length)]+'\n';
-  codeRain.textContent=h;
-}
-setInterval(updateCodeRain,200);updateCodeRain();
-
-// ═══════════════════════════════════════
-//  DOM REFS
-// ═══════════════════════════════════════
-const scrambleEl=document.getElementById('scrambleText');
-const crypticEl=document.getElementById('crypticText');
-const burstText=document.getElementById('burstText');
-const cloneBlood=document.getElementById('cloneBlood');
-const cloneShadow=document.getElementById('cloneShadow');
-const cloneVoid=document.getElementById('cloneVoid');
-const cloneAbyss=document.getElementById('cloneAbyss');
-const mainText=document.getElementById('mainText');
-const mainContainer=document.getElementById('mainContainer');
-const corruptFlash=document.getElementById('corruptFlash');
-const chromeBleed=document.getElementById('chromeBleed');
-const subtitleEl=document.getElementById('subtitleEl');
-const personaLeft=document.querySelector('.persona-split.left');
-const personaRight=document.querySelector('.persona-split.right');
-const glitchWrapper=document.getElementById('glitchWrapper');
-
-function rndChar(){return CHARS[Math.floor(Math.random()*CHARS.length)];}
-function scramble(){
-  let r='';for(let i=0;i<TARGET.length;i++)r+=Math.random()>0.25?TARGET[i]:rndChar();
-  return r;
-}
-function fullScramble(len){
-  let r='';for(let i=0;i<(len||TARGET.length);i++)r+=rndChar();
-  return r;
-}
-function rndCryptic(){return CRYPTIC_NAMES[Math.floor(Math.random()*CRYPTIC_NAMES.length)];}
-function rndDemon(){return DEMON_WORDS[Math.floor(Math.random()*DEMON_WORDS.length)];}
-function rndPhrase(){return CREEPY_PHRASES[Math.floor(Math.random()*CREEPY_PHRASES.length)];}
-
-// ═══════════════════════════════════════
-//  CONSTANT SCRAMBLE — LUÔN CHẠY
-// ═══════════════════════════════════════
-function constantScramble(){
-  scrambleEl.textContent=scramble();
-  scrambleEl.style.opacity=(Math.random()*0.6+0.2).toString();
-  scrambleEl.style.color=['#8b0000','#c41e1e','#ff0000','#ff1a1a','#fff'][Math.floor(Math.random()*5)];
-
-  crypticEl.textContent=rndCryptic();
-  crypticEl.style.opacity=(Math.random()*0.5+0.1).toString();
-}
-setInterval(constantScramble,50);
-
-// ═══════════════════════════════════════
-//  CONSTANT BURST GLITCH
-// ═══════════════════════════════════════
-function constantBurst(){
-  const ox=(Math.random()-0.5)*30,oy=(Math.random()-0.5)*20;
-  burstText.style.opacity=(Math.random()*0.5+0.2).toString();
-  burstText.style.transform=`translate(${ox}px,${oy}px) skew(${(Math.random()-0.5)*6}deg)`;
-  burstText.style.color=['#8b0000','#c41e1e','#fff','#000'][Math.floor(Math.random()*4)];
-  burstText.style.textShadow=`
-    ${(Math.random()-0.5)*40}px ${(Math.random()-0.5)*40}px 0 rgba(180,0,0,0.8),
-    ${(Math.random()-0.5)*30}px ${(Math.random()-0.5)*30}px 0 rgba(0,0,0,0.7)
-  `;
-
-  // Random clone jump
-  const clones=[cloneBlood,cloneShadow,cloneVoid,cloneAbyss];
-  const c=clones[Math.floor(Math.random()*clones.length)];
-  c.style.opacity=(Math.random()*0.5+0.15).toString();
-  c.style.transform=`translate(${(Math.random()-0.5)*25}px,${(Math.random()-0.5)*20}px)`;
-}
-setInterval(constantBurst,120);
-
-// ═══════════════════════════════════════
-//  CONSTANT CLONE DRIFT UPDATE
-// ═══════════════════════════════════════
-setInterval(()=>{
-  cloneBlood.style.transform=`translate(${(Math.random()-0.5)*6}px,${(Math.random()-0.5)*4}px)`;
-  cloneShadow.style.transform=`translate(${(Math.random()-0.5)*5}px,${(Math.random()-0.5)*5}px)`;
-  cloneVoid.style.transform=`translate(${(Math.random()-0.5)*3}px,${(Math.random()-0.5)*3}px)`;
-  cloneAbyss.style.transform=`translate(${(Math.random()-0.5)*4}px,${(Math.random()-0.5)*4}px)`;
-  // Update clone text to cryptic
-  [cloneBlood,cloneShadow,cloneVoid,cloneAbyss].forEach(c=>{
-    if(Math.random()<0.3)c.textContent=rndCryptic();
-    else c.textContent=mainText.textContent;
-  });
-},200);
-
-// ═══════════════════════════════════════
-//  CONSTANT POPUP SPAWN
-// ═══════════════════════════════════════
-function spawnVerityPopup(){
-  const el=document.createElement('div');el.className='verity-smile';
-  el.textContent=rndDemon();el.style.left=(Math.random()*85)+'%';el.style.top=(Math.random()*85)+'%';
-  el.style.fontSize=(1.2+Math.random()*5)+'rem';el.style.animationDuration=(0.4+Math.random()*1)+'s';
-  document.body.appendChild(el);setTimeout(()=>el.remove(),1500);
-}
-function spawnCrypticPopup(){
-  const el=document.createElement('div');el.className='cryptic-pop';
-  el.textContent=rndCryptic();el.style.left=(Math.random()*85)+'%';el.style.top=(Math.random()*85)+'%';
-  el.style.fontSize=(1.5+Math.random()*6)+'rem';el.style.animationDuration=(0.4+Math.random()*0.9)+'s';
-  document.body.appendChild(el);setTimeout(()=>el.remove(),1200);
-}
-function spawnGlitchBarDom(){
-  const bar=document.createElement('div');bar.className='glitch-bar';
-  bar.style.top=(Math.random()*95)+'%';bar.style.height=(1+Math.random()*14)+'px';
-  bar.style.width=(60+Math.random()*60)+'%';bar.style.left=(Math.random()*40)+'%';
-  document.body.appendChild(bar);bar.style.opacity='0.9';
-  setTimeout(()=>{bar.style.transition='opacity 0.15s';bar.style.opacity='0';setTimeout(()=>bar.remove(),200);},30+Math.random()*180);
-}
-function spawnTearLine(){
-  const line=document.createElement('div');line.className='tear-line';
-  line.style.top=(Math.random()*95)+'%';document.body.appendChild(line);line.style.opacity='0.8';
-  setTimeout(()=>{line.style.transition='opacity 0.12s';line.style.opacity='0';setTimeout(()=>line.remove(),150);},40+Math.random()*100);
-}
-
-// AMBIENT SPAWN — LIÊN TỤC, KHÔNG NGHỈ
-setInterval(()=>{
-  spawnVerityPopup();
-  if(Math.random()<0.6)spawnCrypticPopup();
-  if(Math.random()<0.4)spawnGlitchBarDom();
-  if(Math.random()<0.3)spawnTearLine();
-  spawnVeritySmile();
-  spawnBloodDrip();
-  if(Math.random()<0.5)spawnGlitchSlice();
-},250);
-
-// ═══════════════════════════════════════
-//  MEGA CHAOS — SIÊU ĐIÊN (vẫn gọi thêm)
-// ═══════════════════════════════════════
-function megaChaos(){
-  if(Math.random()>0.5){mainContainer.classList.add('shake-hard');setTimeout(()=>mainContainer.classList.remove('shake-hard'),300);}
-  else{mainContainer.classList.add('shake');setTimeout(()=>mainContainer.classList.remove('shake'),400);}
-
-  corruptFlash.style.opacity=(Math.random()*0.7+0.2).toString();
-  setTimeout(()=>{corruptFlash.style.opacity='0';},40+Math.random()*120);
-  setTimeout(()=>{corruptFlash.style.opacity=(Math.random()*0.5+0.1).toString();setTimeout(()=>{corruptFlash.style.opacity='0';},30+Math.random()*80);},100);
-
-  chromeBleed.style.opacity='0.9';
-  setTimeout(()=>{chromeBleed.style.opacity='';},100+Math.random()*150);
-
-  for(let i=0;i<10;i++)setTimeout(spawnGlitchBarDom,i*15);
-  for(let i=0;i<5;i++)setTimeout(spawnTearLine,i*25);
-  for(let i=0;i<10;i++)setTimeout(spawnVerityPopup,i*40);
-  for(let i=0;i<8;i++)setTimeout(spawnCrypticPopup,i*55);
-  for(let i=0;i<12;i++)spawnVeritySmile();
-  for(let i=0;i<10;i++)spawnGlitchSlice();
-  for(let i=0;i<10;i++)spawnBloodDrip();
-
-  // TOTAL NAME CORRUPTION
-  const orig=mainText.textContent;
-  let c=0;const iv=setInterval(()=>{
-    if(c<10)mainText.textContent=fullScramble(Math.floor(Math.random()*8)+3);
-    else if(c<13)mainText.textContent=rndCryptic();
-    else if(c<17)mainText.textContent=fullScramble(Math.floor(Math.random()*6)+5);
-    else{mainText.textContent=orig;clearInterval(iv);}
-    c++;
-  },25);
-
-  // Clone mutation
-  [cloneBlood,cloneShadow,cloneVoid,cloneAbyss].forEach(cl=>{
-    cl.textContent=rndCryptic();cl.style.opacity='0.6';
-    setTimeout(()=>{cl.textContent=orig;cl.style.opacity='';},350);
-  });
-
-  const origSub=subtitleEl.textContent;
-  subtitleEl.textContent=rndDemon();subtitleEl.style.color='#c41e1e';
-  setTimeout(()=>{subtitleEl.textContent=rndPhrase();subtitleEl.style.color='';},400);
-
-  personaLeft.style.opacity='1';personaRight.style.opacity='0.8';
-  setTimeout(()=>{personaLeft.style.opacity='';personaRight.style.opacity='';},600);
-
-  document.body.style.backgroundColor=['#010002','#0a0000','#000','#020001'][Math.floor(Math.random()*4)];
-  setTimeout(()=>{document.body.style.backgroundColor='';},250);
-}
-
-setInterval(()=>{if(Math.random()<0.3)megaChaos();},1500);
-
-// ═══════════════════════════════════════
-//  NAME MUTATION — TỰ ĐỘNG ĐỔI TÊN LIÊN TỤC
-// ═══════════════════════════════════════
-setInterval(()=>{
-  const orig=mainText.textContent;
-  let steps=0;
-  const mt=setInterval(()=>{
-    if(steps<4)mainText.textContent=fullScramble(Math.floor(Math.random()*7)+5);
-    else if(steps===4)mainText.textContent=rndCryptic();
-    else if(steps===5)mainText.textContent=fullScramble(Math.floor(Math.random()*5)+4);
-    else{mainText.textContent=orig;clearInterval(mt);}
-    steps++;
-  },35);
-},2500+Math.random()*3000);
-
-// ═══════════════════════════════════════
-//  SUBTITLE CONSTANT ROTATION
-// ═══════════════════════════════════════
-setInterval(()=>{
-  const orig=subtitleEl.textContent;
-  if(Math.random()<0.4)subtitleEl.textContent=rndCryptic();
-  else subtitleEl.textContent=rndDemon();
-  subtitleEl.style.color='#c41e1e';
-  setTimeout(()=>{subtitleEl.textContent=rndPhrase();subtitleEl.style.color='';},300);
-},1200);
-
-// ═══════════════════════════════════════
-//  MOUSE — INTENSIFY CHAOS
-// ═══════════════════════════════════════
-document.addEventListener('mousemove',(e)=>{
-  const rect=glitchWrapper.getBoundingClientRect();
-  const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
-  const dx=e.clientX-cx,dy=e.clientY-cy;
-  const dist=Math.sqrt(dx*dx+dy*dy),maxDist=550;
-
-  if(dist<maxDist){
-    const inten=1-dist/maxDist;
-    cloneBlood.style.opacity=(inten*0.5).toString();
-    cloneBlood.style.transform=`translate(${-dx*inten*0.06}px,${dy*inten*0.06}px)`;
-    cloneShadow.style.opacity=(inten*0.45).toString();
-    cloneShadow.style.transform=`translate(${dx*inten*0.05}px,${-dy*inten*0.05}px)`;
-    cloneVoid.style.opacity=(inten*0.35).toString();
-    cloneAbyss.style.opacity=(inten*0.25).toString();
-  }
-});
-
-// ═══════════════════════════════════════
-//  CLICK — ANNIHILATION BURST
-// ═══════════════════════════════════════
-document.addEventListener('click',(e)=>{
-  for(let i=0;i<15;i++)setTimeout(()=>{
-    const el=document.createElement('div');el.className='cryptic-pop';
-    el.textContent=rndCryptic();
-    el.style.left=(e.clientX/W*100+(Math.random()-0.5)*40)+'%';
-    el.style.top=(e.clientY/H*100+(Math.random()-0.5)*40)+'%';
-    el.style.fontSize=(2+Math.random()*7)+'rem';
-    document.body.appendChild(el);setTimeout(()=>el.remove(),1000);
-  },i*15);
-
-  for(let i=0;i<10;i++)setTimeout(()=>{
-    const el=document.createElement('div');el.className='verity-smile';
-    el.textContent=rndDemon();
-    el.style.left=(e.clientX/W*100+(Math.random()-0.5)*35)+'%';
-    el.style.top=(e.clientY/H*100+(Math.random()-0.5)*35)+'%';
-    el.style.fontSize=(1.5+Math.random()*6)+'rem';
-    document.body.appendChild(el);setTimeout(()=>el.remove(),1400);
-  },i*25);
-
-  for(let i=0;i<12;i++)bloodDrips.push({
-    x:e.clientX+(Math.random()-0.5)*300,y:e.clientY+(Math.random()-0.5)*200,
-    len:30+Math.random()*160,speed:1+Math.random()*5,width:1.5+Math.random()*6,
-    opacity:0.4+Math.random()*0.5
-  });
-
-  for(let i=0;i<8;i++)drawnSmiles.push({
-    x:e.clientX+(Math.random()-0.5)*350,y:e.clientY+(Math.random()-0.5)*300,
-    size:20+Math.random()*80,life:1,decay:0.005+Math.random()*0.025,
-    rot:(Math.random()-0.5)*0.7,phase:Math.random()*Math.PI*2,
-    flickerSpeed:0.08+Math.random()*0.25
-  });
-
-  for(let i=0;i<8;i++)spawnGlitchSlice();
-  for(let i=0;i<8;i++)setTimeout(spawnGlitchBarDom,i*12);
-  megaChaos();
-});
-
-// ═══════════════════════════════════════
-//  INITIAL ENTRANCE — CURTAIN OF VOID
-// ═══════════════════════════════════════
-const entranceOverlay=document.createElement('div');
-entranceOverlay.style.cssText='position:fixed;inset:0;background:#000;z-index:100;pointer-events:none;transition:opacity 1s ease-out;';
-document.body.appendChild(entranceOverlay);
-
-setTimeout(()=>{entranceOverlay.style.opacity='0';setTimeout(()=>entranceOverlay.remove(),1100);},150);
-setTimeout(()=>{
-  megaChaos();
-  for(let i=0;i<20;i++)setTimeout(spawnVerityPopup,i*50);
-  for(let i=0;i<12;i++)setTimeout(spawnCrypticPopup,i*65);
-  for(let i=0;i<10;i++)setTimeout(spawnBloodDrip,i*100);
-  for(let i=0;i<10;i++)setTimeout(()=>spawnGlitchBarDom(),i*30);
-},600);
-
-// ═══════════════════════════════════════
-//  CONSOLE
-// ═══════════════════════════════════════
-console.log('%c🩸 %cP̷̪̂ẖ̸͝o̶̩͒n̷͎̉g̷̲͗d̸̛͜ż̷̻ %c🩸','font-size:40px;','font-size:40px;color:#c41e1e;font-family:monospace;text-shadow:0 0 20px red;','font-size:40px;');
-console.log('%cETERNAL CHAOS ENGINE v9.99 %c| %cSMILE WIDER %c| %c悪魔 %c| %cANNIHILATION','font-size:16px;color:#c41e1e;','color:#8b0000;','font-size:20px;color:#ff0000;font-family:serif;','color:#8b0000;','font-size:16px;color:#555;','color:#8b0000;','font-size:14px;color:#666;');
-console.log('%cKHÔNG BAO GIỜ YÊN • MỆNH THỦY • DEMON CODE • ABYSS FOREVER','font-size:13px;color:#440000;');
-</script>
 </body>
 </html>
