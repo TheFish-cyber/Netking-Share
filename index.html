@@ -520,16 +520,17 @@
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
         document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        // 3. PLAYLIST & YOUTUBE PLAYER WITH STATUS CHECKER
+        // 3. DANH SÁCH BÀI HÁT ĐỐI CHIẾU CHÍNH XÁC THEO ẢNH CHỤP ZALO
         const playlist = [
             { title: "Nơi Này Có Anh", id: "FN7ALfpGxiI" },
             { title: "Chúng Ta Của Hiện Tại", id: "psZ1g9fMfeo" },
             { title: "Muộn Rồi Mà Sao Còn", id: "xypzmu5mMPY" },
             { title: "Lạc Trôi", id: "Llw9Q6akRo4" },
-            { title: "Chạy Ngay Đi", id: "6t-MjBazs3o" },
+            { title: "Có Chắc Yêu Là Đây", id: "6t-MjBazs3o" },
             { title: "Hãy Trao Cho Anh", id: "knW7-x7Y7RE" },
-            { title: "Making My Way", id: "32sYGCOYJUM" },
-            { title: "Đừng Làm Trái Tim Anh Đau", id: "niPkap1ozUA" }
+            { title: "Chạy Ngay Đi", id: "32sYGCOYJUM" },
+            { title: "Making My Way", id: "niPkap1ozUA" },
+            { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" }
         ];
 
         let currentTrackIndex = 0;
@@ -545,7 +546,6 @@
         function initYouTubePlayer() {
             showLoadingState();
             
-            // Timeout 10s: Nếu mạng kém không tải được API sẽ báo lỗi
             clearTimeout(loadTimeout);
             loadTimeout = setTimeout(() => {
                 if (!player || typeof player.getPlayerState !== 'function') {
@@ -585,10 +585,9 @@
 
         function onPlayerReady() {
             clearTimeout(loadTimeout);
-            // Kết nối thành công -> Ẩn Overlay và render Playlist
             statusOverlay.style.display = 'none';
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
-            renderPlaylist(playlist);
+            renderPlaylist(getFilteredPlaylist());
         }
 
         function onPlayerError(e) {
@@ -630,7 +629,7 @@
 
         function renderPlaylist(items) {
             playlistContainer.innerHTML = '<div class="active-indicator" id="activeIndicator"></div>';
-            playlistContainer.appendChild(statusOverlay); // Giữ lại Overlay
+            playlistContainer.appendChild(statusOverlay);
 
             const indicator = document.getElementById('activeIndicator');
 
@@ -745,7 +744,6 @@
             }
         }, { once: true });
 
-        // Khởi chạy Player
         initYouTubePlayer();
 
         // 4. ANIMATION GLITCH M-TP
