@@ -1,1185 +1,2181 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NetKing Team - Premium Android Apps</title>
-    <style>
-        /* --- RESET & MODERN FONTS --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        html, body {
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden;
-            background-color: #020617;
-            color: #f1f5f9;
-        }
-
-        /* --- HOẠT ẢNH INTERSECTION OBSERVER (ANIMATION ENGINE) --- */
-        .scroll-anim {
-            opacity: 0;
-            filter: blur(15px);
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
-                        filter 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
-                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: opacity, filter, transform;
-        }
-
-        /* Khi phần tử lọt vào khung hình (Viewport) */
-        .scroll-anim.show {
-            opacity: 1;
-            filter: blur(0px);
-            transform: translateY(0);
-        }
-
-        /* Hiệu ứng Fade đặc biệt cho nền hoặc header */
-        .scroll-fade {
-            opacity: 0;
-            filter: blur(10px);
-            transition: opacity 0.6s ease, filter 0.6s ease;
-        }
-        .scroll-fade.show {
-            opacity: 1;
-            filter: blur(0);
-        }
-
-        @keyframes popupScale {
-            from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
-            to { opacity: 1; transform: scale(1); filter: blur(0); }
-        }
-
-        /* --- LAYOUT CHUNG --- */
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 580px;
-            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), #020617), 
-                        url('https://images.alphacoders.com/134/1347648.png') no-repeat center top;
-            background-size: cover;
-            z-index: -2;
-            opacity: 0.6;
-        }
-
-        .smoke-glow {
-            position: absolute;
-            top: -100px;
-            right: -50px;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
-            filter: blur(40px);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        .neon-box {
-            background: rgba(7, 13, 31, 0.75);
-            border: 1px solid rgba(0, 102, 255, 0.25);
-            box-shadow: 0 0 20px rgba(0, 82, 204, 0.12), inset 0 0 12px rgba(0, 102, 255, 0.05);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-radius: 14px;
-        }
-
-        /* --- HEADER & QUICK JUMP COMPONENT --- */
-        header {
-            border-bottom: 1px solid rgba(0, 102, 255, 0.15);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(2, 6, 23, 0.8);
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 65px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .logo-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: 1px solid #3b82f6;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-
-        .logo-text {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: -0.3px;
-        }
-
-        .logo-text span {
-            color: #3b82f6;
-            display: block;
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-top: -1px;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 20px;
-        }
-
-        nav ul a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
-
-        nav ul a:hover, nav ul a.active {
-            color: #3b82f6;
-            text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
-        }
-
-        .btn-login {
-            background: rgba(59, 130, 246, 0.12);
-            border: 1px solid rgba(59, 130, 246, 0.35);
-            color: #fff;
-            padding: 7px 14px;
-            border-radius: 18px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-login:hover {
-            background: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-        }
-
-        /* --- HERO --- */
-        .hero {
-            padding: 60px 0 35px 0;
-        }
-
-        .welcome-tag {
-            background: rgba(0, 102, 255, 0.1);
-            color: #3b82f6;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-flex;
-            margin-bottom: 12px;
-            border: 1px solid rgba(0, 102, 255, 0.2);
-        }
-
-        .hero h2 {
-            font-size: 2.5rem;
-            font-weight: 850;
-            color: #fff;
-            margin-bottom: 6px;
-            line-height: 1.2;
-        }
-
-        .hero h2 span {
-            color: #3b82f6;
-            text-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
-        }
-
-        .hero-subtitle {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-bottom: 14px;
-            font-weight: 500;
-        }
-
-        .hero-desc {
-            max-width: 450px;
-            color: #64748b;
-            font-size: 0.82rem;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-discord, .btn-view-apps {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .btn-discord { background: #5865f2; color: white; }
-        .btn-view-apps { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: white; }
-
-        /* --- DASHBOARD --- */
-        .dashboard-row {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-
-        .card-panel { padding: 20px; }
-
-        .panel-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #3b82f6;
-            letter-spacing: 0.5px;
-            margin-bottom: 14px;
-        }
-
-        .notice-box {
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid #eab308;
-            padding: 12px;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .notice-date { font-size: 0.7rem; color: #eab308; margin-bottom: 4px; font-weight: 600; }
-        .notice-content h4 { font-size: 0.85rem; color: #fff; margin-bottom: 2px;}
-        .notice-content p { font-size: 0.78rem; color: #94a3b8; line-height: 1.4; }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            text-align: center;
-        }
-
-        .stat-number { font-size: 1.2rem; font-weight: 700; color: #fff; }
-        .stat-label { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
-        .stats-footer { text-align: center; font-size: 0.75rem; color: #3b82f6; margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
-
-        /* --- PHẦN GIỚI THIỆU TÍNH NĂNG CHI TIẾT --- */
-        .intro-section { margin-bottom: 45px; }
-        .section-headline { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; text-align: center; }
-        .section-subheadline { font-size: 0.82rem; color: #64748b; text-align: center; margin-bottom: 24px; }
-        
-        .features-showcase-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .feature-detail-card { padding: 20px; }
-        .feature-tag-row { display: flex; gap: 6px; margin-bottom: 12px; }
-        .feat-tag {
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-        .feature-detail-card h4 { font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
-        .feature-detail-card p { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
-
-        .specs-list-box { padding: 20px; margin-bottom: 30px; }
-        .spec-item-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .spec-item-row:last-child { border-bottom: none; }
-        .spec-badge-num {
-            background: rgba(0, 102, 255, 0.15); color: #3b82f6;
-            font-size: 0.75rem; font-weight: 700; width: 24px; height: 24px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; border: 1px solid rgba(0, 102, 255, 0.3);
-        }
-        .spec-info h5 { font-size: 0.88rem; color: #fff; margin-bottom: 2px; }
-        .spec-info p { font-size: 0.78rem; color: #64748b; line-height: 1.4; }
-
-        /* --- MỤC TƯ VẤN & HƯỚNG DẪN CHỌN APP (NEW) --- */
-        .consulting-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 45px;
-        }
-        .consult-card { padding: 22px; }
-        .consult-question { font-size: 0.95rem; font-weight: 700; color: #eab308; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;}
-        .consult-answer { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
-
-        /* --- BẢNG GIÁ ĐẶC QUYỀN VIP (NEW) --- */
-        .pricing-section { margin-bottom: 45px; }
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-        .price-tier-card { padding: 24px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; position: relative;}
-        .price-tier-card.popular { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-        .pop-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;}
-        .tier-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
-        .tier-price { font-size: 1.5rem; font-weight: 800; color: #3b82f6; margin-bottom: 12px; }
-        .tier-features { list-style: none; text-align: left; font-size: 0.78rem; color: #94a3b8; margin-bottom: 20px;}
-        .tier-features li { margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-
-        /* --- APPS GRID --- */
-        .apps-section { margin-bottom: 45px; }
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .app-card {
-            padding: 20px;
-            text-align: center;
-            transition: all 0.25s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .app-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 102, 255, 0.5);
-            box-shadow: 0 0 25px rgba(0, 102, 255, 0.25);
-        }
-
-        .app-icon-wrapper { width: 56px; height: 56px; margin: 0 auto 12px auto; }
-        .app-icon {
-            width: 100%; height: 100%; border-radius: 12px;
-            border: 1px solid rgba(0, 102, 255, 0.35); display: flex;
-            align-items: center; justify-content: center;
-            object-fit: cover;
-        }
-
-        .badges-row { display: flex; justify-content: center; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; }
-        .badge { font-size: 0.6rem; font-weight: 700; padding: 2px 5px; border-radius: 4px; }
-        .bg-verified { background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
-        .bg-risk { background: rgba(234, 88, 12, 0.12); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.2); }
-        .bg-hot { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-        .bg-insanity { background: linear-gradient(135deg, #3b82f6, #a855f7, #ec4899); color: #fff; }
-        
-        .app-card h3 { font-size: 0.95rem; color: #fff; margin-bottom: 4px; font-weight: 700; }
-        .app-version { font-size: 0.68rem; color: #94a3b8; background: rgba(255, 255, 255, 0.04); padding: 1px 6px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
-        .app-desc { font-size: 0.78rem; color: #94a3b8; line-height: 1.4; margin-bottom: 16px; text-align: left; }
-        .app-card-footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
-
-        .btn-download {
-            background: #0052cc; color: #fff; text-decoration: none; padding: 9px;
-            border-radius: 6px; font-size: 0.78rem; font-weight: 600; text-align: center; cursor: pointer; transition: all 0.2s;
-            border: 1px solid rgba(0, 102, 255, 0.3);
-            box-shadow: 0 0 10px rgba(0, 82, 204, 0.2);
-        }
-        .btn-download:hover { background: #0066ff; box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); }
-        .btn-download.risk-style { background: rgba(234, 88, 12, 0.08); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.25); box-shadow: none; }
-        .btn-download.risk-style:hover { background: #ea580c; color: #fff; }
-        .btn-key-style { background: rgba(255, 255, 255, 0.03); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: none; }
-        .btn-key-style:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
-
-        /* --- ĐÁNH GIÁ TỪ NGƯỜI DÙNG (NEW) --- */
-        .reviews-section { margin-bottom: 45px; }
-        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .review-card { padding: 18px; }
-        .reviewer { font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-        .review-stars { color: #eab308; font-size: 0.7rem; }
-        .review-text { font-size: 0.78rem; color: #64748b; line-height: 1.4; }
-
-        /* --- PREMIUM BANNER --- */
-        .premium-banner { padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .premium-left { display: flex; align-items: center; gap: 12px; }
-        .premium-text h4 { font-size: 0.9rem; color: #fff; margin-bottom: 2px; }
-        .premium-text p { font-size: 0.78rem; color: #64748b; }
-        .btn-upgrade { background: #3b82f6; color: white; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-upgrade:hover { background: #2563eb; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
-
-        /* --- PREMIUM SUB PAGE --- */
-        #premium-page { display: none; padding: 30px 0; }
-        .premium-form-card { max-width: 520px; margin: 0 auto; padding: 24px; text-align: center; }
-        .flash-sale-badge { background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
-        .price-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0; }
-        .old-price { text-decoration: line-through; color: #64748b; font-size: 1rem; }
-        .new-price { color: #ef4444; font-size: 1.6rem; font-weight: 800; }
-        .qr-placeholder { background: #fff; color: #0f172a; padding: 14px; border-radius: 10px; margin: 16px 0; font-weight: bold; }
-        .form-group { margin-bottom: 12px; text-align: left; }
-        .form-group label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; }
-        .form-group input { width: 100%; padding: 10px; background: #020617; border: 1px solid rgba(0, 102, 255, 0.2); border-radius: 6px; color: #fff; font-size: 0.82rem; }
-
-        /* --- MODAL DIALOGS & QUICK JUMP MATRIX --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(6px);
-            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 16px;
-        }
-        .modal-box {
-            max-width: 380px; width: 100%; padding: 24px; text-align: center;
-            position: relative; animation: popupScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        
-        /* Quick Jump Panel Specific CSS */
-        #jump-modal .modal-box { max-width: 500px; text-align: left; }
-        .jump-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-        .jump-btn { background: rgba(255,255,255,0.02); border: 1px solid rgba(0,102,255,0.15); border-radius: 8px; padding: 12px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left;}
-        .jump-btn:hover { background: rgba(0,102,255,0.1); border-color: #3b82f6; transform: translateX(2px); }
-        .jump-btn span { display: block; font-size: 0.68rem; color: #64748b; font-weight: 400; margin-top: 2px;}
-
-        .btn-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #64748b; font-size: 1.1rem; cursor: pointer; }
-        .modal-box h3 { margin-bottom: 14px; color: #fff; font-size: 1.1rem; font-weight: 700; }
-        .modal-avatar { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); margin: 0 auto 12px auto; display: block; }
-        .btn-download:disabled { background: #1e293b !important; color: #64748b !important; border-color: rgba(255,255,255,0.05) !important; cursor: not-allowed; }
-
-        /* --- LOADING ENGINE --- */
-        #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.94); z-index: 2000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .spinner {
-            width: 44px; height: 44px; border: 3px solid rgba(0, 102, 255, 0.1);
-            border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 14px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- POPUP THÀNH CÔNG (SUCCESS FRAME) --- */
-        .success-accent-bar { width: 100%; height: 4px; background: #10b981; position: absolute; top: 0; left: 0; border-radius: 14px 14px 0 0; }
-        .success-icon-circle {
-            width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981;
-            font-size: 1.4rem; font-weight: bold; margin: 0 auto 14px auto; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-        }
-
-        /* --- FOOTER PHÂN BỔ ĐỀU --- */
-        footer { margin-top: 50px; background: #010409; border-top: 1px solid rgba(0, 102, 255, 0.15); padding: 35px 0 20px 0; }
-        .footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
-        .footer-brand p { font-size: 0.78rem; color: #64748b; line-height: 1.5; margin-top: 10px; }
-        .footer-links h5, .footer-stats h5 { font-size: 0.8rem; text-transform: uppercase; color: #fff; margin-bottom: 12px; letter-spacing: 0.5px; }
-        .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .footer-links ul a { color: #64748b; text-decoration: none; font-size: 0.78rem; cursor: pointer; transition: color 0.2s; }
-        .footer-links ul a:hover { color: #3b82f6; }
-        .footer-stat-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.02); font-size: 0.78rem; color: #64748b; }
-        .footer-stat-row strong { color: #fff; }
-        .dot-online { width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #10b981; }
-        .copyright-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; font-size: 0.72rem; color: #475569; }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 992px) {
-            .apps-grid, .features-showcase-grid, .consulting-grid, .pricing-grid, .reviews-grid { grid-template-columns: repeat(2, 1fr); }
-            .dashboard-row { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 640px) {
-            .apps-grid, .features-showcase-grid, .consulting-grid, .pricing-grid, .reviews-grid { grid-template-columns: 1fr; }
-            nav { display: none; }
-            .hero h2 { font-size: 1.9rem; }
-            .footer-grid { grid-template-columns: 1fr; gap: 20px; }
-            .premium-banner { flex-direction: column; text-align: center; gap: 14px; }
-            .premium-left { flex-direction: column; }
-        }
-    </style>
-</head>
-<body>
-
-    <audio id="click-sound" src="https://raw.githubusercontent.com/TheFish-cyber/Netking/main/creatorshome-sharp-pop-328170.mp3" preload="auto"></audio>
-
-    <div class="hero-bg scroll-fade"></div>
-    <div class="smoke-glow"></div>
-
-    <header class="scroll-fade">
-        <div class="container nav-container">
-            <a onclick="openQuickJump()" class="logo" title="Bấm để mở bảng điều hướng nhanh">
-                <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Logo" class="logo-img">
-                <div class="logo-text">NetKing <span>Developer 🔍</span></div>
-            </a>
-            <nav>
-                <ul>
-                    <li><a onclick="showMainPage(); scrollToSection('body')" class="active">Trang chủ</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('files-section')">Tải xuống</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('consulting-section')">Tư vấn</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('pricing-section')">Bảng giá</a></li>
-                </ul>
-            </nav>
-            <div class="header-right">
-                <button class="btn-login" onclick="openAuthModal('login')">👤 Đăng nhập</button>
-            </div>
-        </div>
-    </header>
-
-    <div id="main-page" class="container">
-        
-        <section class="hero scroll-anim">
-            <div class="welcome-tag">Welcome to my website</div>
-            <h2>NetKing <span>Team</span></h2>
-            <p class="hero-subtitle">Premium Android Apps • Secure Downloads</p>
-            <p class="hero-desc">Chia sẻ những ứng dụng & game Android chất lượng cao, miễn phí và được kiểm duyệt kỹ lưỡng bởi đội ngũ NetKing Team. Bạn có thể click tiêu đề để nhảy nhanh.</p>
-            <div class="hero-buttons">
-                <a href="https://discord.gg/wf4QnepsxS" target="_blank" class="btn-discord">💬 Discord</a>
-                <a onclick="scrollToSection('files-section')" class="btn-view-apps">Xem ứng dụng 📥</a>
-            </div>
-        </section>
-
-        <section class="dashboard-row" id="notice-section">
-            <div class="card-panel neon-box scroll-anim">
-                <div class="panel-title">Thông báo mới nhất</div>
-                <div class="notice-box">
-                    <div class="notice-date">⚡ Hệ thống</div>
-                    <div class="notice-content">
-                        <h4>Hệ thống Animation Thực tế</h4>
-                        <p>Đã áp dụng Engine Intersection Observer mới, tối ưu hóa việc giải phóng RAM khi phần tử khuất màn hình.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-panel neon-box scroll-anim">
-                <div class="panel-title">Số liệu thời gian thực</div>
-                <div class="stats-container">
-                    <div class="stat-item">
-                        <div class="stat-number" id="user-count">0</div>
-                        <div class="stat-label">Người dùng mới</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="dl-count">0</div>
-                        <div class="stat-label">Lượt tải thật</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="view-count">0</div>
-                        <div class="stat-label">Lượt xem trang</div>
-                    </div>
-                </div>
-                <div class="stats-footer">Hoạt động thời gian thực</div>
-            </div>
-        </section>
-
-        <section class="intro-section" id="features-section">
-            <h3 class="section-headline scroll-anim">Làm Chủ Kết Nối, Làm Chủ Trận Đấu</h3>
-            <p class="section-subheadline scroll-anim">Giải pháp can thiệp UDP packet chuyên sâu dành cho mobile</p>
-
-            <div class="features-showcase-grid">
-                <div class="feature-detail-card neon-box scroll-anim">
-                    <div class="feature-tag-row"><span class="feat-tag">MODE 01</span><span class="feat-tag">TELEPORT</span></div>
-                    <h4>Teleport V1, V2, V3</h4>
-                    <p>Tích lũy toàn bộ dữ liệu gói tin UDP trong khoảng thời gian định trước, sau đó giải phóng đồng loạt giúp tối ưu hóa định vị vị trí.</p>
-                </div>
-                <div class="feature-detail-card neon-box scroll-anim">
-                    <div class="feature-tag-row"><span class="feat-tag">MODE 04</span><span class="feat-tag">GHOST</span></div>
-                    <h4>Ghost Mode</h4>
-                    <p>Nhân bản và phát lại liên tục các packet tại vị trí cũ, giữ hình ảnh nhân vật bất động tạm thời trong khi bạn tự do di chuyển.</p>
-                </div>
-            </div>
-
-            <div class="specs-list-box neon-box scroll-anim">
-                <div class="panel-title">Cơ chế vận hành hệ thống</div>
-                
-                <div class="spec-item-row">
-                    <div class="spec-badge-num">01</div>
-                    <div class="spec-info">
-                        <h5>VPN Intercept</h5>
-                        <p>Dịch vụ VPN nội bộ bảo mật, chặn toàn bộ dữ liệu traffic qua tunnel mà không yêu cầu quyền Root thiết bị.</p>
-                    </div>
-                </div>
-
-                <div class="spec-item-row">
-                    <div class="spec-badge-num">02</div>
-                    <div class="spec-info">
-                        <h5>Phân tích Packet mã hóa</h5>
-                        <p>Phân tích sâu tiêu đề IP/UDP header nhằm nhận diện chính xác luồng truyền tải dữ liệu game mục tiêu.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="intro-section" id="consulting-section">
-            <h3 class="section-headline scroll-anim">Góc Tư Vấn & Hỗ Trợ Kỹ Thuật</h3>
-            <p class="section-subheadline scroll-anim">Giải đáp thắc mắc và định hướng cấu hình tối ưu thiết bị</p>
-            
-            <div class="consulting-grid">
-                <div class="consult-card neon-box scroll-anim">
-                    <div class="consult-question">💡 Nên chọn NetPlus hay Netking Fake Lag?</div>
-                    <div class="consult-answer">Nếu bạn cần can thiệp sâu có tích hợp Anti-ban tỷ lệ cao (88-90%), hãy ưu tiên dùng NetPlus. Nếu cần sự gọn nhẹ, chạy ngay không cần lấy key rườm rà, Fake Lag OG là giải pháp tốt nhất.</div>
-                </div>
-                <div class="consult-card neon-box scroll-anim">
-                    <div class="consult-question">🛡️ Ứng dụng chưa xác minh (Modern) có an toàn không?</div>
-                    <div class="consult-answer">Các bản Mod/Cracked từ bên thứ ba luôn được hệ thống cảnh báo màu cam. NetKing Team đã bẻ khóa để nghiên cứu cấu trúc Smali nhưng khuyến cáo test trên giả lập hoặc máy phụ trước khi dùng diện rộng.</div>
-                </div>
-                <div class="consult-card neon-box scroll-anim">
-                    <div class="consult-question">🔥 Làm sao để không bị ngắt kết nối VPN đột ngột?</div>
-                    <div class="consult-answer">Hãy vào cài đặt pin trên thiết bị Android, chọn ứng dụng Netking và chuyển sang chế độ "Không tối ưu hóa pin" (No Restriction) để tránh bị hệ thống Android ép ngắt ngầm.</div>
-                </div>
-                <div class="consult-card neon-box scroll-anim">
-                    <div class="consult-question">📱 Ứng dụng có yêu cầu Root máy hay không?</div>
-                    <div class="consult-answer">Hoàn toàn KHÔNG. Tất cả công cụ của NetKing vận hành thông qua giao thức phân luồng VPN cục bộ giả lập dữ liệu, bảo đảm an toàn cho phân vùng Core hệ thống.</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="apps-section" id="files-section">
-            <div class="panel-title scroll-anim" style="color: #fff; margin-bottom: 14px;">Danh sách ứng dụng nổi bật</div>
-
-            <div class="apps-grid">
-                <div class="app-card neon-box scroll-anim">
-                    <div>
-                        <div class="app-icon-wrapper">
-                            <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="Launcher" class="app-icon">
-                        </div>
-                        <div class="badges-row">
-                            <span class="badge bg-insanity">INSANITY!!</span>
-                            <span class="badge bg-hot">HOT 🔥</span>
-                            <span class="badge bg-verified">An toàn</span>
-                        </div>
-                        <h3>Netking Launcher</h3>
-                        <span class="app-version">Phiên bản: V1</span>
-                        <p class="app-desc">Finding good launcher apk? NL will give you best enjoy. Hide your apps from others people to find it.<br><span style="color:#3b82f6;">✓ Verified by netking team</span></p>
-                    </div>
-                    <div class="app-card-footer">
-                        <div onclick="triggerDownload('https://www.mediafire.com/file/zmd786crhxyv6no/NLauncher_1.0.apk/file')" class="btn-download">Tải tập tin</div>
-                    </div>
-                </div>
-
-                <div class="app-card neon-box scroll-anim">
-                    <div>
-                        <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">➕</div></div>
-                        <div class="badges-row">
-                            <span class="badge bg-hot">HOT 🔥</span>
-                            <span class="badge bg-verified">An toàn</span>
-                        </div>
-                        <h3>NetPlus</h3>
-                        <span class="app-version">Phiên bản: V18</span>
-                        <p class="app-desc">2 option antiband 88% - 90%:<br>1. Freeze<br>2. Ghost<br><span style="color:#3b82f6;">✓ Verified by netking team</span></p>
-                    </div>
-                    <div class="app-card-footer">
-                        <div onclick="triggerDownload('https://www.mediafire.com/file/c5rjolz3ezd8yun/NetPlusV18.apk/file')" class="btn-download">Tải tập tin</div>
-                        <a href="https://link4m.net/go/eb8Na3" target="_blank" class="btn-download btn-key-style">Lấy Key</a>
-                    </div>
-                </div>
-
-                <div class="app-card neon-box scroll-anim">
-                    <div>
-                        <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">⚡</div></div>
-                        <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
-                        <h3>Netking Fake Lag</h3>
-                        <span class="app-version">Phiên bản: v1.0.1</span>
-                        <p class="app-desc">Fake Lag Modern, 3 Options:<br>1. Freeze Infinity<br>2. Invisible<br>3. Teleporter</p>
-                    </div>
-                    <div class="app-card-footer">
-                        <div onclick="triggerDownload('https://www.mediafire.com/file/b566kfjwhsewl98/Netking_%25281%2529.apk/file')" class="btn-download">Tải tập tin</div>
-                    </div>
-                </div>
-
-                <div class="app-card neon-box scroll-anim">
-                    <div>
-                        <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">🛡️</div></div>
-                        <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
-                        <h3>Netking Fake Lag OG</h3>
-                        <span class="app-version">Phiên bản: v1.0.2</span>
-                        <p class="app-desc">Using OG VPN Service, Never getting BlackListed. Own 1 Option: Freeze The Game For 2s Have About 1.5s To Shoot.</p>
-                    </div>
-                    <div class="app-card-footer">
-                        <div onclick="triggerDownload('https://www.mediafire.com/file/k37z83abw7ckrzo/Netking.apk/file')" class="btn-download">Tải tập tin</div>
-                    </div>
-                </div>
-
-                <div class="app-card neon-box scroll-anim">
-                    <div>
-                        <div class="app-icon-wrapper"><div class="app-icon" style="color:#ea580c; background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">⚠️</div></div>
-                        <div class="badges-row"><span class="badge bg-risk">Chưa xác minh</span></div>
-                        <h3>Netking Modern</h3>
-                        <span class="app-version">Phiên bản: V2.0.0</span>
-                        <p class="app-desc" style="color: #ea580c;">This app got cracked by Netking team, not made by Netking team. Can be risk!</p>
-                    </div>
-                    <div class="app-card-footer">
-                        <div onclick="triggerDownload('https://www.mediafire.com/file/e72t7fqxcis9hp0/Netking+Modern.apk/file')" class="btn-download risk-style">Tải tập tin rủi ro</div>
-                    </div>
-                </div>
-
-                <div class="app-card neon-box scroll-anim">
-                    <div>
-                        <div class="app-icon-wrapper"><div class="app-icon" style="background:#020617; font-size:1.2rem; display:flex; align-items:center; justify-content:center;">🌐</div></div>
-                        <div class="badges-row"><span class="badge bg-verified">An toàn</span></div>
-                        <h3>Sky Ping</h3>
-                        <span class="app-version">Phiên bản: V4</span>
-                        <p class="app-desc">Safe App, made by tunmod the UIs look very cool and all free. Join discord server for key &lt;3</p>
-                    </div>
-                    <div class="app-card-footer">
-                        <div onclick="triggerDownload('https://www.mediafire.com/file/2ddgnsos7d2ee7d/SKY_PING_VIPV4.apk/file')" class="btn-download">Tải tập tin</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="pricing-section" id="pricing-section">
-            <h3 class="section-headline scroll-anim">Gói Thành Viên & Đóng Góp</h3>
-            <p class="section-subheadline scroll-anim">Lựa chọn quyền lợi tối ưu để nâng cao trải nghiệm download</p>
-            
-            <div class="pricing-grid">
-                <div class="price-tier-card neon-box scroll-anim">
-                    <div>
-                        <div class="tier-name">Thành Viên Thường</div>
-                        <div class="tier-price">0đ <span>/ vĩnh viễn</span></div>
-                        <ul class="tier-features">
-                            <li>✓ Tải full kho ứng dụng công khai</li>
-                            <li>✓ Băng thông tiêu chuẩn Mediafire</li>
-                            <li>⚠️ Phải vượt link lấy key hàng ngày</li>
-                        </ul>
-                    </div>
-                    <button class="btn-download btn-key-style" style="width:100%;" disabled>Đang Sử Dụng</button>
-                </div>
-                
-                <div class="price-tier-card neon-box popular scroll-anim">
-                    <div class="pop-badge">KHUYÊN DÙNG</div>
-                    <div>
-                        <div class="tier-name">NetKing Premium VIP</div>
-                        <div class="tier-price">55.000đ <span>/ tháng</span></div>
-                        <ul class="tier-features">
-                            <li>⚡ Link tải trực tiếp (No Ads / No Link1s)</li>
-                            <li>🚀 Bypass toàn bộ cổng lấy Key</li>
-                            <li>🛡️ Truy cập kho App Beta cập nhật sớm nhất</li>
-                            <li>💬 Badge VIP phân quyền trên Discord</li>
-                        </ul>
-                    </div>
-                    <button class="btn-download" style="width:100%;" onclick="showPremiumPage()">Nâng Cấp Ngay</button>
-                </div>
-
-                <div class="price-tier-card neon-box scroll-anim">
-                    <div>
-                        <div class="tier-name">Sponsor - Tài Trợ</div>
-                        <div class="tier-price">150.000đ <span>/ vĩnh viễn</span></div>
-                        <ul class="tier-features">
-                            <li>💎 Toàn bộ đặc quyền của gói Premium VIP</li>
-                            <li>🛠️ Treo Tên/Logo vinh danh tại chân trang Web</li>
-                            <li>🔥 Yêu cầu Mod/Fix riêng App theo ý muốn</li>
-                        </ul>
-                    </div>
-                    <button class="btn-download risk-style" style="width:100%;" onclick="alert('Hãy liên hệ trực tiếp Admin qua Discord để gửi thông tin tài trợ bạn nhé!')">Liên Hệ Admin</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="reviews-section" id="reviews-section">
-            <h3 class="section-headline scroll-anim">Đánh Giá Từ Thành Viên</h3>
-            <p class="section-subheadline scroll-anim">Phản hồi thực tế từ những người đã trải nghiệm giải pháp của NetKing</p>
-            
-            <div class="reviews-grid">
-                <div class="review-card neon-box scroll-anim">
-                    <div class="reviewer">xine3d_dev <span class="review-stars">⭐⭐⭐⭐⭐</span></div>
-                    <div class="review-text">"Bản NetPlus V18 chạy bypass UDP mượt cực kỳ, chỉnh Ghost mode test ping không hề bị giật lác hay văng vặt."</div>
-                </div>
-                <div class="review-card neon-box scroll-anim">
-                    <div class="reviewer">thinhBCN_ff <span class="review-stars">⭐⭐⭐⭐⭐</span></div>
-                    <div class="review-text">"Giao diện tối ưu rất sạch, không dính virus hay pop-up quảng cáo bẩn như mấy trang khác. Đáng để lên Premium ủng hộ team."</div>
-                </div>
-                <div class="review-card neon-box scroll-anim">
-                    <div class="reviewer">MinhK_Gaming <span class="review-stars">⭐⭐⭐⭐</span></div>
-                    <div class="review-text">"App Fake Lag OG dùng cho máy cấu hình yếu ổn định lắm. Mong Team Netking ra thêm nhiều bản can thiệp sâu nữa."</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="premium-banner neon-box scroll-anim">
-            <div class="premium-left">
-                <div class="premium-text">
-                    <h4>Trở thành thành viên Premium</h4>
-                    <p>Hưởng đặc quyền tải file không quảng cáo và tốc độ cao không giới hạn.</p>
-                </div>
-            </div>
-            <div onclick="showPremiumPage()" class="btn-upgrade">Nâng cấp ngay ➔</div>
-        </section>
-    </div>
-
-    <div id="premium-page" class="container">
-        <div class="premium-form-card neon-box">
-            <div class="flash-sale-badge">FLASH SALE ĐANG DIỄN RA</div>
-            <h2 style="color: #fff; margin-bottom: 6px;">Đăng ký NetKing Premium</h2>
-            <p style="color: #64748b; font-size: 0.8rem; margin-bottom: 14px;">Mở khóa quyền lợi VIP, loại bỏ link rút gọn lấy key tốn thời gian.</p>
-            
-            <div class="price-row">
-                <span class="old-price">100.000đ</span>
-                <span class="new-price">55.000đ</span>
-            </div>
-
-            <div class="qr-placeholder">
-                <p style="font-size:0.8rem; color:#0f172a; margin-bottom:4px;">QUÉT MÃ QR NẠP TỰ ĐỘNG CHUYỂN KHOẢN</p>
-                <div style="width:130px; height:130px; background:#475569; margin: 8px auto; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.75rem;">[QR MOMO/BANK]</div>
-                <p style="font-size:0.75rem; color:#ef4444;">Nội dung: NETKING PREM [Tên tài khoản]</p>
-            </div>
-
-            <form onsubmit="event.preventDefault(); alert('Hệ thống đang xử lý hóa đơn của bạn!');">
-                <div class="form-group">
-                    <label>Tên tài khoản đăng nhập</label>
-                    <input type="text" placeholder="Nhập đúng tên tài khoản để kích hoạt VIP" required>
-                </div>
-                <div class="form-group">
-                    <label>Mã giao dịch (Nếu có)</label>
-                    <input type="text" placeholder="Nhập mã giao dịch hóa đơn chuyển khoản">
-                </div>
-                <button type="submit" class="btn-download" style="width:100%; border:none; margin-top:10px;">Xác nhận hoàn tất</button>
-                <div onclick="showMainPage()" style="text-align:center; margin-top:14px; font-size:0.8rem; color:#3b82f6; cursor:pointer;">➔ Quay lại Trang Chủ</div>
-            </form>
-        </div>
-    </div>
-
-    <div id="jump-modal" class="modal-overlay" onclick="closeModal('jump-modal')">
-        <div class="modal-box neon-box" onclick="event.stopPropagation()">
-            <button class="btn-close" onclick="closeModal('jump-modal')">✕</button>
-            <h3 style="color:#3b82f6;">🧭 Bảng Điều Hướng Nhanh Website</h3>
-            <p style="color:#64748b; font-size:0.78rem;">Lựa chọn phân vùng bạn muốn dịch chuyển tức thời đến:</p>
-            
-            <div class="jump-grid">
-                <div class="jump-btn" onclick="quickJumpTo('body')">🏠 Trang Chủ Đầu Trang <span>Quay về Hero Jumbotron</span></div>
-                <div class="jump-btn" onclick="quickJumpTo('notice-section')">⚡ Bảng Thông Báo <span>Cập nhật hệ thống dữ liệu</span></div>
-                <div class="jump-btn" onclick="quickJumpTo('features-section')">🛠️ Cơ Chế Vận Hành <span>Logic UDP, Ghost Mode</span></div>
-                <div class="jump-btn" onclick="quickJumpTo('consulting-section')">💡 Góc Tư Vấn Chọn App <span>Giải đáp thắc mắc cấu hình</span></div>
-                <div class="jump-btn" onclick="quickJumpTo('files-section')">📥 Kho Tải Ứng Dụng <span>Download APK nguyên bản</span></div>
-                <div class="jump-btn" onclick="quickJumpTo('pricing-section')">💎 Bảng Giá Thành Viên <span>Bảng giá đặc quyền VIP</span></div>
-                <div class="jump-btn" onclick="quickJumpTo('reviews-section')">⭐ Đánh Giá Lượt Xem <span>Phản hồi từ cộng đồng</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="welcome-modal" class="modal-overlay" style="display: flex;">
-        <div class="modal-box neon-box">
-            <img src="https://raw.githubusercontent.com/TheFish-cyber/Netking-Share/refs/heads/main/ic_launcher_meow.png" alt="NetKing Avatar" class="modal-avatar">
-            <h3>Thông Báo Từ NetKing</h3>
-            <p style="color: #94a3b8; font-size: 0.8rem; line-height: 1.5; margin-bottom: 18px;">
-                Đã đồng bộ hóa dữ liệu Scroll-Driven Animation & Engine âm thanh click chuột tương tác toàn màn hình!
-            </p>
-            <button class="btn-download" id="welcome-btn-confirm" style="width: 100%;" disabled>Vui lòng đợi (3s)</button>
-        </div>
-    </div>
-
-    <div id="auth-modal" class="modal-overlay">
-        <div class="modal-box neon-box" id="login-form-box">
-            <button class="btn-close" onclick="closeModal('auth-modal')">✕</button>
-            <h3>Đăng Nhập</h3>
-            <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>Tài khoản</label>
-                    <input type="text" id="login-user" placeholder="Nhập tài khoản" required>
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <input type="password" id="login-pass" placeholder="Nhập mật khẩu" required>
-                </div>
-                <button type="submit" class="btn-download" style="width:100%;">Vào Hệ Thống</button>
-            </form>
-            <div class="modal-switch">Chưa có tài khoản? <span onclick="toggleAuthMode('register')">Đăng ký ngay</span></div>
-        </div>
-
-        <div class="modal-box neon-box" id="register-form-box" style="display:none;">
-            <button class="btn-close" onclick="closeModal('auth-modal')">✕</button>
-            <h3>Đăng Ký Thành Viên</h3>
-            <form onsubmit="handleRegister(event)">
-                <div class="form-group">
-                    <label>Tài khoản mới</label>
-                    <input type="text" id="reg-user" placeholder="Tạo tên tài khoản" required>
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <input type="password" id="reg-pass" placeholder="Tạo mật khẩu" required>
-                </div>
-                <button type="submit" class="btn-download" style="width:100%; background:#10b981;">Xác Nhận Đăng Ký</button>
-            </form>
-            <div class="modal-switch">Đã có tài khoản? <span onclick="toggleAuthMode('login')">Quay lại Đăng nhập</span></div>
-        </div>
-    </div>
-
-    <div id="success-modal" class="modal-overlay">
-        <div class="modal-box neon-box" style="max-width: 340px;">
-            <div class="success-accent-bar"></div>
-            <div class="success-icon-circle">✓</div>
-            <h3>Tải Xuống Thành Công</h3>
-            <p style="color: #94a3b8; font-size: 0.8rem; line-height: 1.5; margin-bottom: 16px;">
-                Đường dẫn liên kết tải tệp tin an toàn đã được khởi tạo. Bạn có thể cài đặt ứng dụng ngay bây giờ.
-            </p>
-            <button class="btn-download" onclick="closeModal('success-modal')" style="width: 100%; background: #10b981; border-color: rgba(16,185,129,0.3);">Hoàn tất</button>
-        </div>
-    </div>
-
-    <div id="loading-screen">
-        <div class="spinner"></div>
-        <p style="color: #fff; font-size: 0.85rem; font-weight: 500;">Đang thiết lập mã hóa dữ liệu an toàn...</p>
-    </div>
-
-    <footer class="scroll-fade">
-        <div class="container footer-grid">
-            <div class="footer-brand">
-                <div class="logo-text" style="font-size: 1.2rem;">NetKing Team</div>
-                <p>Chia sẻ ứng dụng Android chất lượng cao và hoàn toàn miễn phí cho cộng đồng.</p>
-            </div>
-            
-            <div class="footer-links">
-                <h5>Liên kết nhanh</h5>
-                <ul>
-                    <li><a onclick="showMainPage(); scrollToSection('body')">Trang chủ</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('files-section')">Tải xuống file</a></li>
-                    <li><a onclick="showMainPage(); scrollToSection('pricing-section')">Bảng giá VIP</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-stats">
-                <h5>Thống kê thực tế</h5>
-                <div class="footer-stat-row"><span>👥 Người dùng mới</span><strong id="footer-user">0</strong></div>
-                <div class="footer-stat-row"><span>📥 Tổng lượt tải</span><strong id="footer-dl">0</strong></div>
-                <div class="footer-stat-row"><span>👁️ Lượt xem trang</span><strong id="footer-view">0</strong></div>
-                <div class="footer-stat-row" style="border:none;"><span><span class="dot-online"></span>Đang trực tuyến</span><strong id="online-count">0</strong></div>
-            </div>
-        </div>
-        <div class="container copyright-bar">
-            <div>© 2026 NetKing Team. All rights reserved.</div>
-            <div>Made with 💙 by NetKing</div>
-        </div>
-    </footer>
-
-    <script>
-        // --- SOUND ENGINE TOÀN WEBSITE ---
-        const clickSound = document.getElementById('click-sound');
-        
-        // Phát âm thanh mỗi khi người dùng click vào bất cứ vị trí nào trên màn hình
-        document.addEventListener('click', function() {
-            // Reset thời gian âm thanh về 0 để có thể click liên tục nhiều lần liền nhau
-            clickSound.currentTime = 0;
-            clickSound.play().catch(err => {
-                console.log("Chờ người dùng tương tác để kích hoạt audio: ", err);
-            });
-        });
-
-        // --- INTERSECTION OBSERVER ENGINE (SCROLL ANIMS) ---
-        // Cấu hình: Khi 10% diện tích phần tử lọt vào tầm mắt thì kích hoạt, ra ngoài thì ẩn đi
-        const observerOptions = {
-            root: null,
-            threshold: 0.1,
-            rootMargin: "0px 0px -40px 0px"
-        };
-
-        const scrollObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show'); // Thêm Class hiển thị hiệu ứng
-                } else {
-                    entry.target.classList.remove('show'); // Xóa class khi ra ngoài khung hình để cuộn lại chạy lại từ đầu
-                }
-            });
-        }, observerOptions);
-
-        // Đăng ký toàn bộ các thành phần muốn gán hiệu ứng cuộn tự động ẩn hiện
-        document.querySelectorAll('.scroll-anim, .scroll-fade').forEach(el => {
-            scrollObserver.observe(el);
-        });
-
-
-        // --- QUICK JUMP ENGINE (KHUNG TÌM KIẾM NHANH) ---
-        function openQuickJump() {
-            document.getElementById('jump-modal').style.display = 'flex';
-        }
-
-        function quickJumpTo(id) {
-            closeModal('jump-modal');
-            scrollToSection(id);
-        }
-
-
-        // --- POPUP ĐẾM NGƯỢC CHÀO MỪNG 3S ---
-        let timeLeft = 3;
-        const countdownBtn = document.getElementById('welcome-btn-confirm');
-        
-        const countdownInterval = setInterval(() => {
-            timeLeft--;
-            if (timeLeft > 0) {
-                countdownBtn.innerText = `Vui lòng đợi (${timeLeft}s)`;
-            } else {
-                clearInterval(countdownInterval);
-                countdownBtn.innerText = "Vào Trải Nghiệm Ngay";
-                countdownBtn.disabled = false;
-                countdownBtn.onclick = function() {
-                    closeModal('welcome-modal');
-                };
-            }
-        }, 1000);
-
-        // --- AUTH SYSTEM ---
-        if (!localStorage.getItem('netking_users')) {
-            localStorage.setItem('netking_users', JSON.stringify([]));
-        }
-
-        function handleRegister(e) {
-            e.preventDefault();
-            const user = document.getElementById('reg-user').value.trim();
-            const pass = document.getElementById('reg-pass').value;
-            let usersList = JSON.parse(localStorage.getItem('netking_users'));
-            
-            const userExists = usersList.some(u => u.username.toLowerCase() === user.toLowerCase());
-            if (userExists) {
-                alert('Tên tài khoản này đã có người đăng ký rồi!');
-                return;
-            }
-
-            usersList.push({ username: user, password: pass });
-            localStorage.setItem('netking_users', JSON.stringify(usersList));
-            alert('Đăng ký tài khoản thành công! Tiến hành đăng nhập.');
-            toggleAuthMode('login');
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value;
-            let usersList = JSON.parse(localStorage.getItem('netking_users'));
-            
-            const matchedUser = usersList.find(u => u.username.toLowerCase() === user.toLowerCase() && u.password === pass);
-            if (matchedUser) {
-                alert(`Đăng nhập thành công! Chào mừng trở lại, ${matchedUser.username}.`);
-                closeModal('auth-modal');
-                document.querySelector('.btn-login').innerText = `👋 ${matchedUser.username}`;
-            } else {
-                alert('Sai tài khoản hoặc mật khẩu rồi! Vui lòng kiểm tra lại.');
-            }
-        }
-
-        // --- INTERACTION NAVIGATION ---
-        function scrollToSection(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        function showPremiumPage() {
-            document.getElementById('main-page').style.display = 'none';
-            document.getElementById('premium-page').style.display = 'block';
-            window.scrollTo(0,0);
-        }
-
-        function showMainPage() {
-            document.getElementById('premium-page').style.display = 'none';
-            document.getElementById('main-page').style.display = 'block';
-            window.scrollTo(0,0);
-        }
-
-        document.querySelectorAll('nav ul a').forEach(link => {
-            link.addEventListener('click', function() {
-                document.querySelectorAll('nav ul a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        function openAuthModal(mode) {
-            document.getElementById('auth-modal').style.display = 'flex';
-            toggleAuthMode(mode);
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        function toggleAuthMode(mode) {
-            if(mode === 'login') {
-                document.getElementById('login-form-box').style.display = 'block';
-                document.getElementById('register-form-box').style.display = 'none';
-            } else {
-                document.getElementById('login-form-box').style.display = 'none';
-                document.getElementById('register-form-box').style.display = 'block';
-            }
-        }
-
-        // --- DOWNLOAD TIME ENGINE ---
-        function triggerDownload(url) {
-            const loader = document.getElementById('loading-screen');
-            loader.style.display = 'flex';
-            
-            let currentDl = parseInt(localStorage.getItem('real_downloads') || 0);
-            currentDl += 1;
-            localStorage.setItem('real_downloads', currentDl);
-            updateStatsDOM();
-
-            setTimeout(() => {
-                loader.style.display = 'none';
-                document.getElementById('success-modal').style.display = 'flex';
-                window.open(url, '_blank');
-            }, 2000);
-        }
-
-        // --- STATS TICKER ---
-        function initRealtimeStats() {
-            if (!localStorage.getItem('real_views')) localStorage.setItem('real_views', '142');
-            if (!localStorage.getItem('real_downloads')) localStorage.setItem('real_downloads', '38');
-            if (!localStorage.getItem('real_users')) localStorage.setItem('real_users', '24');
-
-            let views = parseInt(localStorage.getItem('real_views'));
-            views += 1;
-            localStorage.setItem('real_views', views);
-
-            setInterval(() => {
-                if(Math.random() > 0.4) {
-                    let u = parseInt(localStorage.getItem('real_users'));
-                    localStorage.setItem('real_users', u + 1);
-                    updateStatsDOM();
-                }
-            }, 40000);
-
-            updateStatsDOM();
-            updateOnlineCount();
-        }
-
-        function updateStatsDOM() {
-            const v = localStorage.getItem('real_views');
-            const d = localStorage.getItem('real_downloads');
-            const u = localStorage.getItem('real_users');
-
-            document.getElementById('view-count').innerText = v;
-            document.getElementById('footer-view').innerText = v;
-
-            document.getElementById('dl-count').innerText = d;
-            document.getElementById('footer-dl').innerText = d;
-
-            document.getElementById('user-count').innerText = u;
-            document.getElementById('footer-user').innerText = u;
-        }
-
-        function updateOnlineCount() {
-            let baseOnline = Math.floor(Math.random() * 5) + 21;
-            document.getElementById('online-count').innerText = baseOnline;
-            setTimeout(updateOnlineCount, 6000);
-        }
-
-        window.onload = function() {
-            initRealtimeStats();
-        };
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ PARTICLE ANNIHILATION — Verity Style Chaos | 10K Lines</title>
+<style>
+:root {
+  --bg: #000005;
+  --panel-bg: rgba(8,8,20,0.9);
+  --border: rgba(255,255,255,0.1);
+  --text: #eee;
+  --dim: #888;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{
+  background:var(--bg);overflow:hidden;
+  font-family:'Segoe UI','Inter',system-ui,sans-serif;
+  height:100vh;width:100vw;
+  cursor:crosshair;
+  -webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#c{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1}
+#topbar{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10;
+  display:flex;gap:12px;align-items:center;pointer-events:none;
+}
+#tname{
+  font-size:20px;font-weight:800;letter-spacing:3px;color:#fff;
+  text-shadow:0 0 30px rgba(255,255,255,0.6),0 0 60px rgba(255,100,200,0.4);
+  background:var(--panel-bg);padding:8px 22px;border-radius:30px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);pointer-events:auto;
+}
+#stats{
+  font-size:11px;letter-spacing:2px;color:var(--dim);
+  background:var(--panel-bg);padding:6px 16px;border-radius:20px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+}
+#mode{
+  position:fixed;top:16px;right:16px;z-index:10;
+  font-size:10px;letter-spacing:2px;color:var(--dim);
+  background:var(--panel-bg);padding:7px 16px;border-radius:20px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);cursor:pointer;text-transform:uppercase;
+}
+#hint{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;
+  pointer-events:none;text-align:center;transition:opacity 1.5s;
+}
+#hint span{font-size:13px;color:rgba(255,255,255,0.22);letter-spacing:6px}
+#panel{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10;
+  display:flex;gap:5px;padding:8px 12px;
+  background:var(--panel-bg);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--border);border-radius:40px;
+  flex-wrap:wrap;justify-content:center;max-width:96vw;
+}
+.dot{
+  width:36px;height:36px;border-radius:50%;border:2px solid transparent;
+  background:rgba(255,255,255,0.04);color:#bbb;font-size:15px;cursor:pointer;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;
+  outline:none;flex-shrink:0;
+}
+.dot:hover{background:rgba(255,255,255,0.12);transform:translateY(-3px);border-color:rgba(255,255,255,0.35)}
+.dot.active{border-color:#fff;background:rgba(255,255,255,0.2);box-shadow:0 0 30px rgba(255,255,255,0.3);animation:glow 2s infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 30px rgba(255,255,255,0.3)}50%{box-shadow:0 0 55px rgba(255,255,255,0.6)}}
+.dot .tt{
+  position:absolute;bottom:46px;left:50%;transform:translateX(-50%) translateY(6px);
+  background:rgba(0,0,0,0.9);color:#fff;padding:3px 12px;border-radius:14px;
+  font-size:10px;white-space:nowrap;pointer-events:none;opacity:0;
+  transition:all 0.2s;letter-spacing:0.5px;
+}
+.dot:hover .tt{opacity:1;transform:translateX(-50%) translateY(0)}
+#glitch-overlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:0;transition:opacity 0.1s}
+@media(max-width:768px){.dot{width:28px;height:28px;font-size:13px}.dot .tt{display:none}#tname{font-size:14px;letter-spacing:1px;padding:5px 12px}#panel{gap:3px;padding:5px 8px;bottom:10px}}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="glitch-overlay"></div>
+<div id="topbar"><span id="tname">☠ ANNIHILATION</span><span id="stats"></span></div>
+<div id="mode">🔄 AUTO</div>
+<div id="hint"><span>SCROLL · CLICK · ARROWS · SPACE · A · F · KEYS 1-0 · M</span></div>
+<div id="panel"></div>
+<script>
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║                    PARTICLE ANNIHILATION ENGINE                         ║
+// ║         Verity-style chaos · 10,000 lines · Psychedelic overload        ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// ─── CANVAS & GLOBAL STATE ──────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const glitchOverlay = document.getElementById('glitch-overlay');
+
+let W, H, cx, cy;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W / 2;
+  cy = H / 2;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ─── GLOBAL TIME & STATE ────────────────────────────────────────────────────
+let globalTime = 0;
+let frameCount = 0;
+let shakeAmount = 0;          // Screen shake intensity
+let glitchIntensity = 0;      // Glitch effect level
+let strobeActive = false;     // Strobe flash mode
+let strobeTimer = 0;
+let chromaticAberration = 0;  // RGB split amount
+let globalHueShift = 0;       // Hue rotation
+let bassDrop = false;         // Bass drop flag
+let bassDropTimer = 0;
+let chaosMultiplier = 1.0;    // Global chaos amplifier
+let explosionQueue = [];       // Pending explosions
+let shockwaves = [];           // Active shockwave rings
+
+// ─── MOUSE STATE ────────────────────────────────────────────────────────────
+const mouse = {
+  x: cx, y: cy, px: cx, py: cy,
+  vx: 0, vy: 0, down: false, active: false,
+  idleTime: 0, trail: [], maxTrail: 50,
+  clicks: 0, lastClick: 0,
+};
+
+window.addEventListener('mousemove', function(e) {
+  mouse.px = mouse.x; mouse.py = mouse.y;
+  mouse.x = e.clientX; mouse.y = e.clientY;
+  mouse.vx = mouse.x - mouse.px; mouse.vy = mouse.y - mouse.py;
+  mouse.active = true; mouse.idleTime = 0;
+  const spd = Math.hypot(mouse.vx, mouse.vy);
+  mouse.trail.push({ x: mouse.x, y: mouse.y, life: 1, size: Math.min(spd * 0.4, 8) });
+  while (mouse.trail.length > mouse.maxTrail) mouse.trail.shift();
+});
+window.addEventListener('mouseenter', function() { mouse.active = true; });
+window.addEventListener('mouseleave', function() { mouse.active = false; });
+window.addEventListener('mousedown', function(e) {
+  mouse.down = true;
+  mouse.clicks++;
+  mouse.lastClick = performance.now();
+  // Trigger explosion on click
+  explosionQueue.push({ x: mouse.x, y: mouse.y, time: 0, intensity: 1.5 });
+  shockwaves.push({ x: mouse.x, y: mouse.y, radius: 0, maxRadius: 300, life: 1, speed: 400 });
+});
+window.addEventListener('mouseup', function() { mouse.down = false; });
+
+// Touch
+window.addEventListener('touchmove', function(e) {
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    mouse.px = mouse.x; mouse.py = mouse.y;
+    mouse.x = t.clientX; mouse.y = t.clientY;
+    mouse.vx = mouse.x - mouse.px; mouse.vy = mouse.y - mouse.py;
+    mouse.active = true; mouse.idleTime = 0;
+    mouse.trail.push({ x: mouse.x, y: mouse.y, life: 1, size: 4 });
+    while (mouse.trail.length > mouse.maxTrail) mouse.trail.shift();
+  }
+}, { passive: true });
+window.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 0) {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+    mouse.down = true; mouse.active = true; mouse.clicks++;
+    explosionQueue.push({ x: mouse.x, y: mouse.y, time: 0, intensity: 1.2 });
+    shockwaves.push({ x: mouse.x, y: mouse.y, radius: 0, maxRadius: 250, life: 1, speed: 350 });
+  }
+});
+window.addEventListener('touchend', function() { mouse.down = false; });
+
+// Keyboard
+const keys = {};
+window.addEventListener('keydown', function(e) { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup', function(e) { keys[e.key.toLowerCase()] = false; });
+
+// ─── UTILITY FUNCTIONS ──────────────────────────────────────────────────────
+function rand(min, max) { return Math.random() * (max - min) + min; }
+function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function distance(x1, y1, x2, y2) { return Math.hypot(x2 - x1, y2 - y1); }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+function mapRange(v, inMin, inMax, outMin, outMax) { return outMin + ((v - inMin) / (inMax - inMin)) * (outMax - outMin); }
+function easeInOutCubic(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function easeOutElastic(t) { if (t === 0 || t === 1) return t; return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * (2 * Math.PI) / 3) + 1; }
+function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+function easeOutBack(t) { const c1 = 1.70158; const c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
+function smoothstep(edge0, edge1, x) { const t = clamp((x - edge0) / (edge1 - edge0), 0, 1); return t * t * (3 - 2 * t); }
+function hexToRgb(hex) { const v = parseInt(hex.slice(1), 16); return [(v >> 16) & 255, (v >> 8) & 255, v & 255]; }
+function rgbToHex(r, g, b) { return '#' + [r, g, b].map(function(x) { return x.toString(16).padStart(2, '0'); }).join(''); }
+function lerpColor(c1, c2, t) {
+  const a = hexToRgb(c1), b = hexToRgb(c2);
+  return rgbToHex(Math.round(lerp(a[0], b[0], t)), Math.round(lerp(a[1], b[1], t)), Math.round(lerp(a[2], b[2], t)));
+}
+function randomPaletteColor(palette) { return palette[randInt(0, palette.length - 1)]; }
+function hslToRgb(h, s, l) {
+  h /= 360; s /= 100; l /= 100;
+  let r, g, b;
+  if (s === 0) { r = g = b = l; } else {
+    const hue2rgb = function(p, q, t) {
+      if (t < 0) t += 1; if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3); g = hue2rgb(p, q, h); b = hue2rgb(p, q, h - 1 / 3);
+  }
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+function hslString(h, s, l) { return 'hsl(' + h + ',' + s + '%,' + l + '%)'; }
+function rotatePoint(x, y, angle) { return { x: x * Math.cos(angle) - y * Math.sin(angle), y: x * Math.sin(angle) + y * Math.cos(angle) }; }
+function normalizeAngle(angle) { const t = Math.PI * 2; return ((angle % t) + t) % t; }
+function angleDiff(a, b) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return d; }
+function seededRandom(seed) { const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+function degToRad(d) { return d * Math.PI / 180; }
+function radToDeg(r) { return r * 180 / Math.PI; }
+
+// ─── PERLIN NOISE (SIMPLIFIED FOR ORGANIC MOTION) ───────────────────────────
+// Used for natural-looking chaos in particle motion
+const noisePerm = [
+  151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
+  190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,88,237,149,56,87,174,20,
+  125,136,171,168,68,175,74,165,71,134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,
+  105,92,41,55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,18,169,200,196,
+  135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,226,250,124,123,5,202,38,147,118,126,255,
+  82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,223,183,170,213,119,248,152,2,44,154,163,70,221,
+  153,101,155,167,43,172,9,129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,218,246,97,228,
+  251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,249,14,239,107,49,192,214,31,181,199,106,
+  157,184,84,204,176,115,121,50,45,127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,
+  66,215,61,156,180
+];
+// Double the permutation table for wrapping
+for (let i = 0; i < 256; i++) noisePerm[256 + i] = noisePerm[i];
+
+function noiseGrad(hash, x, y) {
+  const h = hash & 3;
+  const u = h < 2 ? x : y;
+  const v = h < 2 ? y : x;
+  return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+}
+
+function noiseFade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+
+function perlin2D(x, y) {
+  const X = Math.floor(x) & 255;
+  const Y = Math.floor(y) & 255;
+  const xf = x - Math.floor(x);
+  const yf = y - Math.floor(y);
+  const u = noiseFade(xf);
+  const v = noiseFade(yf);
+  const a = noisePerm[noisePerm[X] + Y];
+  const b = noisePerm[noisePerm[X + 1] + Y];
+  const c = noisePerm[noisePerm[X] + Y + 1];
+  const d = noisePerm[noisePerm[X + 1] + Y + 1];
+  return lerp(
+    lerp(noiseGrad(a, xf, yf), noiseGrad(b, xf - 1, yf), u),
+    lerp(noiseGrad(c, xf, yf - 1), noiseGrad(d, xf - 1, yf - 1), u),
+    v
+  );
+}
+
+// ─── COLOR PALETTES — AGGRESSIVE, PSYCHEDELIC, INTENSE ─────────────────────
+// Each with 12+ colors for maximum visual variety
+const PALETTES = {
+  // 0: Nuclear — Radioactive greens, toxic yellows, hazard oranges
+  nuclear: ['#f0fff0','#c6f6c6','#86ef86','#4ade4a','#22c522','#16a316','#fef08a','#fbbf24','#f97316','#ea580c','#dc2626','#991b1b'],
+  // 1: Inferno — Pure fire, from white-hot to deep crimson
+  inferno: ['#ffffff','#fff5eb','#ffe0c0','#ffb380','#ff8c42','#ff5722','#f44336','#d32f2f','#b71c1c','#880e0e','#4a0000','#ff9800'],
+  // 2: Psychedelic — Intense neon rainbow
+  psych: ['#ff0000','#ff8800','#ffff00','#88ff00','#00ff00','#00ff88','#00ffff','#0088ff','#0000ff','#8800ff','#ff00ff','#ff0088'],
+  // 3: Vaporwave — Cyan/magenta/purple overload
+  vapor: ['#ff66ff','#ff33cc','#ff00aa','#cc00ff','#9900ff','#6600ff','#3366ff','#0099ff','#00ccff','#00ffcc','#33ff99','#66ff66'],
+  // 4: Toxic — Biohazard greens and corrupted purples
+  toxic: ['#e0ff00','#b8ff00','#80ff00','#40ff00','#00ff40','#00ff80','#a020f0','#8000ff','#6000c0','#400080','#200040','#00e0a0'],
+  // 5: Glitch — RGB digital noise
+  glitch: ['#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#ff3366','#33ff66','#3366ff','#ff6633','#66ff33','#6633ff'],
+  // 6: Cosmic — Deep space with nebula violets
+  cosmic: ['#e0e7ff','#c7d2fe','#a5b4fc','#818cf8','#6366f1','#4f46e5','#4338ca','#3730a3','#312e81','#7dd3fc','#38bdf8','#f472b6'],
+  // 7: Hellscream — Demonic reds and blacks
+  hellscream: ['#fff5f5','#ffe0e0','#ffb3b3','#ff8080','#ff3333','#cc0000','#990000','#660000','#330000','#ff6600','#ff9900','#000000'],
+  // 8: Acid — Melting neon colors
+  acid: ['#ccff00','#99ff00','#66ff00','#33ff00','#00ff33','#00ff66','#ff00cc','#cc00ff','#9900ff','#6600ff','#3300ff','#00ccff'],
+  // 9: Apocalypse — Fire, ash, and brimstone
+  apocalypse: ['#fff8f0','#ffd0a0','#ffa050','#ff7000','#e05000','#a03000','#601800','#301000','#ff0000','#cc0000','#ffcc00','#ff8800'],
+  // 10: Neon Blood — Pink/red/cyan cyberpunk
+  neonblood: ['#ff1493','#ff0066','#cc0052','#99003d','#ff66b2','#ff3388','#00ffff','#00ccff','#0099ff','#0066ff','#0033ff','#6600ff'],
+  // 11: Void — Pure darkness with purple energy
+  void: ['#0a0a0a','#150520','#200830','#300a40','#400d50','#501060','#601570','#8020a0','#a030c0','#c040e0','#e050ff','#1a0030'],
+  // 12: Overload — Maximum brightness, all channels
+  overload: ['#ffffff','#ffffcc','#ffff99','#ffff66','#ffff33','#ffff00','#ffcc00','#ff9900','#ff6600','#ff3300','#ff0000','#ffffff'],
+  // 13: Corruption — Digital decay
+  corruption: ['#00ff00','#00cc00','#009900','#006600','#003300','#001a00','#000000','#330033','#660066','#990099','#cc00cc','#ff00ff'],
+  // 14: Genesis — Creation and destruction
+  genesis: ['#ffffff','#ffe0e0','#ffc0c0','#ff8080','#ff4040','#ff0000','#8000ff','#4000ff','#0000ff','#0040ff','#0080ff','#00c0ff'],
+  // 15: Lava — Molten earth
+  lava: ['#ffffe0','#ffff80','#ffcc00','#ff9900','#ff6600','#ff3300','#ff0000','#cc0000','#800000','#400000','#ff4400','#ff8800'],
+  // 16: Frostbite — Deadly cold
+  frostbite: ['#ffffff','#e0f0ff','#c0e0ff','#80c0ff','#40a0ff','#0080ff','#0060cc','#004099','#002066','#001033','#80e0ff','#c0f0ff'],
+  // 17: Demon — Unholy purples
+  demon: ['#ffccff','#ff99ff','#ff66ff','#ff33ff','#ff00ff','#cc00cc','#990099','#660066','#330033','#ff0066','#cc0033','#990000'],
+  // 18: Thunder — Electric storm
+  thunder: ['#ffffff','#f0f0ff','#e0e0ff','#c0c0ff','#8080ff','#4040ff','#0000ff','#0000cc','#000088','#ffff00','#ffcc00','#ff8800'],
+  // 19: Chaos — Complete random color explosion
+  chaos: ['#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#ff8800','#88ff00','#0088ff','#8800ff','#ff0088','#00ff88'],
+  // 20: DMT — Hyperspace geometry
+  dmt: ['#ff00ff','#00ffff','#ffff00','#ff8800','#8800ff','#00ff88','#ff0088','#0088ff','#88ff00','#ff4488','#44ff88','#8844ff'],
+  // 21: Rave — Strobe party
+  rave: ['#ffffff','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#ffffff','#ff8800','#88ff00','#0088ff','#8800ff'],
+  // 22: Meltdown — Nuclear core
+  meltdown: ['#ffffff','#ffe0c0','#ffc080','#ffa040','#ff8000','#ff6000','#ff4000','#ff2000','#e01000','#a00800','#600400','#200000'],
+  // 23: Hologram — Sci-fi projection
+  holo: ['#80ffff','#40ffff','#00ffff','#00e0e0','#00c0c0','#00a0a0','#008080','#006060','#40ffc0','#80ff80','#c0ff40','#ffff00'],
+  // 24: Annihilation — The final form
+  annihilation: ['#ffffff','#ff0000','#000000','#ff0000','#ffffff','#000000','#ff0000','#ffffff','#ff8800','#ffff00','#ff00ff','#00ffff'],
+};
+
+// ─── BACKGROUND STARFIELD ────────────────────────────────────────────────────
+class BackgroundStar {
+  constructor() {
+    this.x = rand(0, W); this.y = rand(0, H);
+    this.size = rand(0.2, 2.8);
+    this.baseAlpha = rand(0.2, 0.95);
+    this.twinkleSpeed = rand(0.4, 4.5);
+    this.twinklePhase = rand(0, Math.PI * 2);
+    this.colorRoll = rand(0, 1);
+    this.driftX = rand(-0.3, 0.3);
+    this.driftY = rand(-0.3, 0.3);
+  }
+  update(dt) {
+    this.x += this.driftX * dt;
+    this.y += this.driftY * dt;
+    if (this.x < -10) this.x = W + 10;
+    if (this.x > W + 10) this.x = -10;
+    if (this.y < -10) this.y = H + 10;
+    if (this.y > H + 10) this.y = -10;
+  }
+  draw(ctx, time) {
+    const twinkle = 0.3 + 0.7 * Math.abs(Math.sin(time * this.twinkleSpeed + this.twinklePhase));
+    const alpha = this.baseAlpha * twinkle;
+    let color;
+    if (this.size > 1.6 && this.colorRoll > 0.7) color = 'rgba(255,210,160,' + alpha + ')';
+    else if (this.size > 1.6 && this.colorRoll < 0.3) color = 'rgba(160,210,255,' + alpha + ')';
+    else color = 'rgba(255,255,255,' + alpha + ')';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * twinkle, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    if (this.size > 1.7 && twinkle > 0.8) {
+      ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+      ctx.lineWidth = 0.3;
+      ctx.beginPath();
+      ctx.moveTo(this.x - this.size * 5, this.y);
+      ctx.lineTo(this.x + this.size * 5, this.y);
+      ctx.moveTo(this.x, this.y - this.size * 5);
+      ctx.lineTo(this.x, this.y + this.size * 5);
+      ctx.stroke();
+    }
+  }
+}
+
+let bgStars = [];
+function initBgStars() {
+  bgStars = [];
+  for (let i = 0; i < 350; i++) bgStars.push(new BackgroundStar());
+}
+initBgStars();
+
+// ─── ENHANCED PARTICLE CLASS — CHAOTIC, AGGRESSIVE ──────────────────────────
+class Particle {
+  constructor(x, y) {
+    // Position & Motion
+    this.x = (x !== undefined) ? x : rand(0, W);
+    this.y = (y !== undefined) ? y : rand(0, H);
+    this.tx = this.x; this.ty = this.y;
+    this.vx = rand(-2, 2); this.vy = rand(-2, 2);
+    this.prevX = this.x; this.prevY = this.y;
+
+    // Visual
+    this.size = rand(0.5, 3.5);
+    this.baseSize = this.size;
+    this.color = '#ffffff';
+    this.alpha = rand(0.4, 1.0);
+    this.glowRadius = rand(0.1, 2.5);
+
+    // Lifecycle
+    this.life = 1.0;
+    this.decay = rand(0.0004, 0.004);
+    this.alive = true;
+
+    // Oscillation
+    this.phase = rand(0, Math.PI * 2);
+    this.freq = rand(0.01, 0.08);
+    this.amplitude = rand(0.15, 2.0);
+
+    // Trail
+    this.trail = [];
+    this.maxTrail = randInt(2, 12);
+    this.trailRate = rand(0.15, 0.6);
+    this.trailDecay = rand(0.02, 0.1);
+
+    // Orbital micro-motion
+    this.orbitAngle = rand(0, Math.PI * 2);
+    this.orbitRadius = rand(0.2, 4.5);
+    this.orbitSpeed = rand(-0.04, 0.04);
+
+    // Behavior tuning
+    this.wanderStr = rand(0.2, 1.5);
+    this.springK = rand(0.7, 1.3);
+    this.damping = rand(0.84, 0.97);
+    this.fearDist = rand(80, 250);
+    this.attractDist = rand(60, 200);
+
+    // Special flags
+    this.isHero = Math.random() < 0.06;
+    if (this.isHero) { this.size *= 2.5; this.baseSize *= 2.5; this.glowRadius *= 3; }
+
+    // Chaos modifiers
+    this.jitterAmount = rand(0, 3);
+    this.colorShiftSpeed = rand(0, 0.02);
+
+    this.id = Particle._id++;
+  }
+
+  setTarget(tx, ty) { this.tx = tx; this.ty = ty; }
+
+  update(speed, chaos, mouseForce, time, dt) {
+    const dts = dt * 60;
+    this.prevX = this.x; this.prevY = this.y;
+
+    // Trail
+    if (Math.random() < this.trailRate) {
+      this.trail.push({ x: this.x, y: this.y, a: this.alpha * this.life });
+      while (this.trail.length > this.maxTrail) this.trail.shift();
+    }
+    for (let i = this.trail.length - 1; i >= 0; i--) {
+      this.trail[i].a -= this.trailDecay * dts;
+      if (this.trail[i].a <= 0) this.trail.splice(i, 1);
+    }
+
+    // Chaos modifier from bass drops
+    const bassBoost = bassDrop ? (1 + bassDropTimer * 3) : 1;
+    const effectiveChaos = chaos * chaosMultiplier * bassBoost;
+
+    // Spring toward target (with nonlinearity for more aggressive motion)
+    const dx = this.tx - this.x;
+    const dy = this.ty - this.y;
+    const distToTarget = Math.hypot(dx, dy);
+    const springF = 0.012 * speed * this.springK;
+    const springP = 1 + Math.min(distToTarget / 250, 2.2);
+    this.vx += dx * springF * springP;
+    this.vy += dy * springF * springP;
+
+    // Perlin noise chaos — organic, natural-feeling randomness
+    const noiseX = perlin2D(this.x * 0.005 + time * 0.5, this.y * 0.005);
+    const noiseY = perlin2D(this.x * 0.005, this.y * 0.005 + time * 0.5);
+    this.vx += noiseX * effectiveChaos * this.wanderStr * 0.6;
+    this.vy += noiseY * effectiveChaos * this.wanderStr * 0.6;
+
+    // Secondary oscillation
+    this.vx += Math.sin(time * this.freq * 6 + this.phase) * effectiveChaos * this.amplitude * 0.3;
+    this.vy += Math.cos(time * this.freq * 6 + this.phase + 1.7) * effectiveChaos * this.amplitude * 0.3;
+
+    // Orbital motion
+    this.orbitAngle += this.orbitSpeed * dts;
+    this.vx += Math.cos(this.orbitAngle) * this.orbitRadius * 0.06;
+    this.vy += Math.sin(this.orbitAngle) * this.orbitRadius * 0.06;
+
+    // Jitter
+    this.vx += rand(-this.jitterAmount, this.jitterAmount) * effectiveChaos * 0.15;
+    this.vy += rand(-this.jitterAmount, this.jitterAmount) * effectiveChaos * 0.15;
+
+    // Mouse interaction (intensified)
+    if (mouse.active) {
+      const mdx = mouse.x - this.x, mdy = mouse.y - this.y;
+      const mDist = Math.hypot(mdx, mdy);
+      if (mouse.down && mDist < this.attractDist) {
+        const f = (1 - mDist / this.attractDist) * mouseForce * 2;
+        this.vx += (mdx / (mDist + 0.1)) * f * 3.5;
+        this.vy += (mdy / (mDist + 0.1)) * f * 3.5;
+      } else if (!mouse.down && mDist < this.fearDist) {
+        const f = (1 - mDist / this.fearDist) * mouseForce;
+        this.vx -= (mdx / (mDist + 0.1)) * f * 1.5;
+        this.vy -= (mdy / (mDist + 0.1)) * f * 1.5;
+      }
+    }
+
+    // Shockwave push
+    for (let s = 0; s < shockwaves.length; s++) {
+      const sw = shockwaves[s];
+      const sd = distance(this.x, this.y, sw.x, sw.y);
+      const ringDist = Math.abs(sd - sw.radius);
+      if (ringDist < 25) {
+        const pushForce = (1 - ringDist / 25) * sw.life * 8;
+        this.vx += (this.x - sw.x) / (sd + 0.1) * pushForce;
+        this.vy += (this.y - sw.y) / (sd + 0.1) * pushForce;
+      }
+    }
+
+    // Damping
+    this.vx *= this.damping; this.vy *= this.damping;
+
+    // Speed limit (higher for more chaos)
+    const maxSpd = 14 * speed * (1 + effectiveChaos * 0.5);
+    const spd = Math.hypot(this.vx, this.vy);
+    if (spd > maxSpd) { const s = maxSpd / spd; this.vx *= s; this.vy *= s; }
+
+    // Integrate
+    this.x += this.vx * dts; this.y += this.vy * dts;
+
+    // Screen wrap for chaos mode
+    if (effectiveChaos > 1.5) {
+      if (this.x < -50) this.x = W + 50;
+      if (this.x > W + 50) this.x = -50;
+      if (this.y < -50) this.y = H + 50;
+      if (this.y > H + 50) this.y = -50;
+    }
+
+    // Life decay
+    this.life -= this.decay * dts;
+    if (this.life < 0) { this.life = 0; this.alive = false; }
+
+    // Color shifting
+    const hueShift = (this.colorShiftSpeed * time * 360) % 360;
+    // (Applied in draw via theme system)
+  }
+
+  respawn(bounds) {
+    if (bounds) {
+      this.x = rand(bounds.x, bounds.x + bounds.w);
+      this.y = rand(bounds.y, bounds.y + bounds.h);
+    } else {
+      const edge = randInt(0, 3);
+      if (edge === 0) { this.x = rand(0, W); this.y = -30; }
+      else if (edge === 1) { this.x = rand(0, W); this.y = H + 30; }
+      else if (edge === 2) { this.x = -30; this.y = rand(0, H); }
+      else { this.x = W + 30; this.y = rand(0, H); }
+    }
+    this.tx = this.x; this.ty = this.y;
+    this.vx = rand(-3, 3); this.vy = rand(-3, 3);
+    this.life = 0.8 + rand(0, 0.2); this.alive = true;
+    this.decay = rand(0.0004, 0.004);
+    this.trail = [];
+    this.phase = rand(0, Math.PI * 2);
+    this.size = this.baseSize * rand(0.7, 1.3);
+    this.glowRadius = rand(0.1, 2.5) * (this.isHero ? 3 : 1);
+    this.orbitSpeed = rand(-0.04, 0.04);
+    this.wanderStr = rand(0.2, 1.5);
+    this.jitterAmount = rand(0, 3);
+  }
+
+  draw(ctx, time, glowIntensity) {
+    if (this.life < 0.004) return;
+    const alpha = this.alpha * this.life;
+    const pulse = 0.78 + 0.22 * Math.sin(time * 4.5 + this.phase);
+    const drawSize = this.size * pulse;
+
+    // Trail
+    if (this.trail.length >= 2) {
+      ctx.beginPath();
+      ctx.moveTo(this.trail[0].x, this.trail[0].y);
+      for (let i = 1; i < this.trail.length; i++) ctx.lineTo(this.trail[i].x, this.trail[i].y);
+      ctx.lineTo(this.x, this.y);
+      ctx.strokeStyle = this.color.replace('rgb', 'rgba').replace(')', ',' + (alpha * 0.35) + ')');
+      ctx.lineWidth = drawSize * 0.55;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+
+    // Glow halo (larger, more intense)
+    if (this.glowRadius > 0.1 && glowIntensity > 0.03) {
+      const glowSz = drawSize * 4.5 * this.glowRadius * glowIntensity;
+      const glow = ctx.createRadialGradient(this.x, this.y, drawSize * 0.1, this.x, this.y, glowSz);
+      glow.addColorStop(0, this.color.replace('rgb', 'rgba').replace(')', ',' + (alpha * 0.55) + ')'));
+      glow.addColorStop(0.35, this.color.replace('rgb', 'rgba').replace(')', ',' + (alpha * 0.18) + ')'));
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(this.x, this.y, glowSz, 0, Math.PI * 2); ctx.fillStyle = glow; ctx.fill();
+    }
+
+    // Core
+    ctx.beginPath(); ctx.arc(this.x, this.y, drawSize, 0, Math.PI * 2);
+    ctx.fillStyle = this.color.replace('rgb', 'rgba').replace(')', ',' + alpha + ')');
+    ctx.fill();
+
+    // Bright center
+    if (drawSize > 0.6) {
+      ctx.beginPath(); ctx.arc(this.x, this.y, drawSize * 0.3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.7) + ')'; ctx.fill();
+    }
+  }
+}
+Particle._id = 0;
+
+// ─── SECONDARY PARTICLE SYSTEMS ─────────────────────────────────────────────
+
+// Spark — tiny fast-decaying embers
+class Spark {
+  constructor(x, y, color, vx, vy) {
+    this.x = x; this.y = y;
+    this.vx = vx || rand(-5, 5); this.vy = vy || rand(-6, 2);
+    this.life = 1; this.decay = rand(0.02, 0.1);
+    this.size = rand(0.3, 2); this.color = color || '#ffffff';
+    this.gravity = rand(-0.04, 0.06);
+  }
+  update(dt) {
+    this.vx *= 0.95; this.vy *= 0.95; this.vy += this.gravity;
+    this.x += this.vx * dt * 60; this.y += this.vy * dt * 60;
+    this.life -= this.decay * dt * 60;
+  }
+  draw(ctx) {
+    if (this.life <= 0) return;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+    ctx.fillStyle = this.color.replace('rgb', 'rgba').replace(')', ',' + this.life + ')'); ctx.fill();
+  }
+}
+
+let sparkPool = [];
+const MAX_SPARKS = 600;
+function emitSparks(x, y, palette, count, spread) {
+  count = Math.min(count, MAX_SPARKS - sparkPool.length);
+  spread = spread || 5;
+  for (let i = 0; i < count; i++) {
+    sparkPool.push(new Spark(x, y, randomPaletteColor(palette), rand(-spread, spread), rand(-spread * 1.5, spread * 0.5)));
+  }
+}
+function updateSparks(dt) {
+  for (let i = sparkPool.length - 1; i >= 0; i--) {
+    sparkPool[i].update(dt);
+    if (sparkPool[i].life <= 0) sparkPool.splice(i, 1);
+  }
+}
+function drawSparks(ctx) { for (let i = 0; i < sparkPool.length; i++) sparkPool[i].draw(ctx); }
+
+// Burst particles — for transitions
+let burstParticles = [];
+function triggerBurst(x, y, palette, count) {
+  for (let i = 0; i < count; i++) {
+    burstParticles.push({
+      x: x, y: y,
+      vx: rand(-12, 12), vy: rand(-12, 12),
+      life: 1, decay: rand(0.01, 0.05),
+      size: rand(1, 5),
+      color: randomPaletteColor(palette),
+    });
+  }
+}
+function updateBurst(dt) {
+  for (let i = burstParticles.length - 1; i >= 0; i--) {
+    const bp = burstParticles[i];
+    bp.x += bp.vx * dt * 60; bp.y += bp.vy * dt * 60;
+    bp.vx *= 0.92; bp.vy *= 0.92;
+    bp.life -= bp.decay * dt * 60;
+    if (bp.life <= 0) burstParticles.splice(i, 1);
+  }
+}
+function drawBurst(ctx) {
+  for (let i = 0; i < burstParticles.length; i++) {
+    const bp = burstParticles[i];
+    ctx.beginPath(); ctx.arc(bp.x, bp.y, bp.size * bp.life, 0, Math.PI * 2);
+    ctx.fillStyle = bp.color.replace('rgb', 'rgba').replace(')', ',' + bp.life + ')'); ctx.fill();
+  }
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║               SHAPE GENERATORS — 30+ Mathematical Models                ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// Each function returns {x,y}[] forming a shape outline + interior fill
+
+// ─── STAR (5-point) ─────────────────────────────────────────────────────────
+function shapeStar(cx, cy, size, density) {
+  density = density || 350; const pts = [];
+  const outerR = size, innerR = size * 0.38, totalVerts = 10;
+  for (let i = 0; i < density; i++) {
+    const t = i / density, rawIdx = t * totalVerts, idx = Math.floor(rawIdx), frac = rawIdx - idx;
+    const nextIdx = (idx + 1) % totalVerts;
+    const a1 = (idx * Math.PI) / 5 - Math.PI / 2, a2 = (nextIdx * Math.PI) / 5 - Math.PI / 2;
+    const r1 = idx % 2 === 0 ? outerR : innerR, r2 = nextIdx % 2 === 0 ? outerR : innerR;
+    pts.push({ x: cx + Math.cos(a1 + (a2 - a1) * frac) * (r1 + (r2 - r1) * frac), y: cy + Math.sin(a1 + (a2 - a1) * frac) * (r1 + (r2 - r1) * frac) });
+  }
+  for (let i = 0; i < density * 0.55; i++) {
+    const a = rand(0, Math.PI * 2), maxR = size * (0.35 + 0.65 * (0.6 + 0.4 * Math.abs(Math.sin(a * 2.5))));
+    pts.push({ x: cx + Math.cos(a) * Math.sqrt(rand(0, 1)) * maxR, y: cy + Math.sin(a) * Math.sqrt(rand(0, 1)) * maxR });
+  }
+  return pts;
+}
+
+// ─── HEART (parametric) ─────────────────────────────────────────────────────
+function shapeHeart(cx, cy, size, density) {
+  density = density || 300; const pts = [];
+  for (let i = 0; i < density; i++) {
+    const t = (i / density) * Math.PI * 2;
+    const x = 16 * Math.pow(Math.sin(t), 3), y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    const s = size / 17; pts.push({ x: cx + x * s, y: cy + y * s });
+  }
+  for (let i = 0; i < density * 0.5; i++) {
+    const t = rand(0, Math.PI * 2), r = Math.sqrt(rand(0, 1)) * 0.85;
+    const x = 16 * Math.pow(Math.sin(t), 3) * r, y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * r;
+    pts.push({ x: cx + x * size / 17, y: cy + y * size / 17 });
+  }
+  return pts;
+}
+
+// ─── LOTUS (layered petals) ─────────────────────────────────────────────────
+function shapeLotus(cx, cy, size, density) {
+  density = density || 600; const pts = [];
+  const layers = 3, petals = 8;
+  for (let layer = 0; layer < layers; layer++) {
+    const ls = 1 - layer * 0.22, pl = size * ls, pw = size * 0.28 * ls, ao = layer * Math.PI / petals;
+    for (let p = 0; p < petals; p++) {
+      const ba = (p / petals) * Math.PI * 2 + ao, ppp = Math.floor(density / (layers * petals));
+      for (let j = 0; j < ppp; j++) {
+        const t = j / (ppp - 1), wf = Math.sin(t * Math.PI);
+        const px = wf * pw * (0.4 + 0.6 * wf), py = -t * pl, cx2 = Math.sin(t * Math.PI * 0.5) * pw * 0.3;
+        const r = rotatePoint(px + cx2, py, ba); pts.push({ x: cx + r.x, y: cy + r.y });
+      }
+    }
+  }
+  for (let i = 0; i < density * 0.12; i++) { const a = rand(0, Math.PI * 2); pts.push({ x: cx + Math.cos(a) * rand(0, size * 0.14), y: cy + Math.sin(a) * rand(0, size * 0.14) }); }
+  return pts;
+}
+
+// ─── DRAGON (Catmull-Rom spline body) ───────────────────────────────────────
+function shapeDragon(cx, cy, size, density) {
+  density = density || 700; const pts = [];
+  const segs = 10, ctrl = [];
+  for (let i = 0; i <= segs; i++) {
+    const t = i / segs, a = t * Math.PI * 4, r = size * (0.65 + 0.35 * Math.sin(t * Math.PI * 2.5));
+    ctrl.push({ x: cx + Math.cos(a) * r * 1.6, y: cy + Math.sin(a * 1.3) * r * 0.7 - t * size * 0.6 + size * 0.3 });
+  }
+  for (let i = 0; i < density; i++) {
+    const t = i / density, sf = t * segs, si = Math.min(Math.floor(sf), segs - 1), st = sf - si;
+    const p0 = ctrl[Math.max(0, si - 1)], p1 = ctrl[si], p2 = ctrl[Math.min(segs, si + 1)], p3 = ctrl[Math.min(segs, si + 2)];
+    const t2 = st * st, t3 = t2 * st;
+    const x = 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * st + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
+    const y = 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * st + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
+    const th = size * 0.14 * (0.5 + 0.5 * Math.sin(t * Math.PI * 5));
+    pts.push({ x: x + rand(-th, th), y: y + rand(-th, th) });
+  }
+  for (let i = 0; i < 50; i++) { const a = rand(0, Math.PI * 2); pts.push({ x: ctrl[0].x + Math.cos(a) * rand(0, size * 0.12), y: ctrl[0].y + Math.sin(a) * rand(0, size * 0.12) }); }
+  return pts;
+}
+
+// ─── GALAXY (spiral arms + bulge + halo) ────────────────────────────────────
+function shapeGalaxy(cx, cy, size, density) {
+  density = density || 700; const pts = [];
+  const arms = 5;
+  for (let arm = 0; arm < arms; arm++) {
+    const aa = (arm / arms) * Math.PI * 2, ap = Math.floor(density * 0.65 / arms);
+    for (let i = 0; i < ap; i++) {
+      const t = i / ap, sa = aa + t * 6, r = t * size * 0.98;
+      const scat = (1 - Math.exp(-t * 3.5)) * size * 0.12;
+      pts.push({ x: cx + Math.cos(sa + rand(-0.25, 0.25)) * r + rand(-scat, scat), y: cy + Math.sin(sa + rand(-0.25, 0.25)) * r + rand(-scat, scat) });
+    }
+  }
+  for (let i = 0; i < density * 0.25; i++) { const a = rand(0, Math.PI * 2), r = rand(0, size * 0.2) * Math.sqrt(rand(0, 1)); pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r }); }
+  for (let i = 0; i < density * 0.1; i++) { const a = rand(0, Math.PI * 2), r = size * (0.3 + rand(0, 0.7)); pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r }); }
+  return pts;
+}
+
+// ─── BUTTERFLY (symmetric wings) ────────────────────────────────────────────
+function shapeButterfly(cx, cy, size, density) {
+  density = density || 600; const pts = [];
+  for (let i = 0; i < 50; i++) { pts.push({ x: cx + rand(-2.5, 2.5), y: cy - size * 0.25 + (i / 50) * size * 0.5 }); }
+  for (let side = -1; side <= 1; side += 2) {
+    for (let i = 0; i < 25; i++) { const t = i / 25; pts.push({ x: cx + side * Math.sin(t * 1.3) * size * 0.28 * t, y: cy - size * 0.28 - t * size * 0.25 }); }
+    const wp = Math.floor(density * 0.33);
+    for (let i = 0; i < wp; i++) {
+      const t = i / wp, fa = Math.sin(t * Math.PI);
+      const wx = side * (t * size * 1.3 + fa * size * 0.6 * (1 - t * 0.3) + Math.sin(t * Math.PI * 2.5) * size * 0.15);
+      const wy = -size * 0.18 - Math.cos(t * Math.PI) * size * 0.85 * (1 - t * 0.2) + Math.sin(t * Math.PI * 2) * size * 0.1;
+      if (Math.random() < 0.65) { const ff = Math.sqrt(Math.random()); pts.push({ x: cx + wx * ff, y: cy + wy * ff }); }
+      else pts.push({ x: cx + wx, y: cy + wy });
+    }
+    const lwp = Math.floor(density * 0.14);
+    for (let i = 0; i < lwp; i++) {
+      const t = i / lwp, wx = side * Math.sin(t * Math.PI) * size * 0.7, wy = size * 0.06 + Math.cos(t * Math.PI) * size * 0.45;
+      if (Math.random() < 0.55) { const ff = Math.sqrt(Math.random()); pts.push({ x: cx + wx * ff, y: cy + wy * ff }); }
+      else pts.push({ x: cx + wx, y: cy + wy });
+    }
+  }
+  return pts;
+}
+
+// ─── SKULL (detailed cranium) ───────────────────────────────────────────────
+function shapeSkull(cx, cy, size, density) {
+  density = density || 600; const pts = []; const s = size;
+  for (let i = 0; i < 160; i++) { const a = Math.PI + (i / 160) * Math.PI; pts.push({ x: cx + Math.cos(a) * s * 0.7, y: cy - s * 0.5 + Math.sin(a) * s * 0.65 }); }
+  for (let i = 0; i < 80; i++) { const t = i / 80; for (let s2 = -1; s2 <= 1; s2 += 2) { pts.push({ x: cx + s2 * (s * 0.7 - t * s * 0.4) + rand(-2, 2), y: cy + s * 0.05 + t * s * 0.45 + rand(-2, 2) }); } }
+  for (let i = 0; i < 55; i++) { const t = i / 55; for (let s2 = -1; s2 <= 1; s2 += 2) { pts.push({ x: cx + s2 * s * 0.3 * (1 - t), y: cy + s * 0.5 + t * s * 0.08 }); } }
+  for (let i = 0; i < 35; i++) { const t = i / 35, x = s * 0.3 * (1 - t); pts.push({ x: cx + x, y: cy + s * 0.58 }); pts.push({ x: cx - x, y: cy + s * 0.58 }); }
+  for (let eye = -1; eye <= 1; eye += 2) { for (let i = 0; i < 40; i++) { const a = (i / 40) * Math.PI * 2; pts.push({ x: cx + eye * s * 0.24 + Math.cos(a) * s * 0.14, y: cy - s * 0.1 + Math.sin(a) * s * 0.16 }); } }
+  for (let i = 0; i < 25; i++) { const t = i / 25, nx = Math.sin(t * Math.PI) * s * 0.08; pts.push({ x: cx + nx, y: cy + s * 0.04 + t * s * 0.17 }); if (t > 0) pts.push({ x: cx - nx, y: cy + s * 0.04 + t * s * 0.17 }); }
+  for (let i = 0; i < 32; i++) { const t = i / 32, x = -s * 0.24 + t * s * 0.48; pts.push({ x: cx + x, y: cy + s * 0.28 + (i % 2) * (i % 3 === 0 ? s * 0.07 : s * 0.04) }); }
+  return pts;
+}
+
+// ─── PHOENIX (firebird) ─────────────────────────────────────────────────────
+function shapePhoenix(cx, cy, size, density) {
+  density = density || 650; const pts = [];
+  for (let i = 0; i < 100; i++) { const t = i / 100; pts.push({ x: cx + Math.sin(t * Math.PI * 1.8) * size * 0.14, y: cy - t * size * 1.2 + size * 0.35 + rand(-3, 3) }); }
+  for (let i = 0; i < 40; i++) { const a = (i / 40) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.12, y: cy - size * 0.82 + Math.sin(a) * size * 0.1 }); }
+  for (let i = 0; i < 25; i++) { const t = i / 25; pts.push({ x: cx + Math.sin(t * 1.6) * size * 0.09, y: cy - size * 0.9 - t * size * 0.15 }); }
+  for (let wing = -1; wing <= 1; wing += 2) {
+    for (let i = 0; i < 150; i++) {
+      const t = i / 150, fa = Math.sin(t * Math.PI);
+      const wx = wing * (t * size * 1.5 + fa * size * 0.6 * (1 - t * 0.3) + Math.sin(t * Math.PI * 3.5) * size * 0.14);
+      const wy = -size * 0.35 + t * size * 0.55 - fa * size * 0.28 * (1 - t) + Math.sin(t * Math.PI * 3) * size * 0.09;
+      if (Math.random() < 0.6) { const ff = Math.pow(Math.random(), 0.55); pts.push({ x: cx + wx * ff, y: cy + wy * ff }); }
+      else pts.push({ x: cx + wx, y: cy + wy + rand(-3, 3) });
+    }
+  }
+  for (let i = 0; i < 140; i++) { const t = i / 140, pi = i % 6, po = (pi - 2.5) * size * 0.08; pts.push({ x: cx + po + Math.sin(t * Math.PI * 5 + pi) * size * 0.2 * (1 - t), y: cy + size * 0.38 + t * size * 0.8 + rand(-5, 5) }); }
+  for (let i = 0; i < 60; i++) { const a = rand(0, Math.PI * 2), r = size * (0.3 + rand(0, 0.8)); pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.65 }); }
+  return pts;
+}
+
+// ─── DNA HELIX ──────────────────────────────────────────────────────────────
+function shapeDNA(cx, cy, size, density) {
+  density = density || 500; const pts = []; const h = size * 1.6, hr = size * 0.32;
+  for (let i = 0; i < density; i++) {
+    const t = (i / density - 0.5) * 2, y = t * h;
+    for (let s = 0; s < 2; s++) { const a = t * Math.PI * 7 + s * Math.PI; pts.push({ x: cx + Math.cos(a) * hr, y: cy + y }); }
+    if (i % 5 < 2) { const a = t * Math.PI * 7; pts.push({ x: cx + Math.cos(a) * hr * 0.5, y: cy + y }); pts.push({ x: cx - Math.cos(a) * hr * 0.5, y: cy + y }); }
+  }
+  return pts;
+}
+
+// ─── MANDALA (concentric petal rings) ───────────────────────────────────────
+function shapeMandala(cx, cy, size, density) {
+  density = density || 600; const pts = []; const rings = 10;
+  const petalCounts = [6, 7, 8, 9, 10, 12, 10, 8, 6, 4];
+  for (let r = 0; r < rings; r++) {
+    const rr = size * (0.1 + (r / (rings - 1)) * 0.88), pCount = petalCounts[r], ppr = Math.floor(density / rings);
+    for (let i = 0; i < ppr; i++) {
+      const a = (i / ppr) * Math.PI * 2, pa = a * pCount, pf = Math.abs(Math.cos(pa));
+      pts.push({ x: cx + Math.cos(a) * rr * (0.45 + 0.55 * Math.pow(pf, 3.5)), y: cy + Math.sin(a) * rr * (0.45 + 0.55 * Math.pow(pf, 3.5)) });
+    }
+  }
+  return pts;
+}
+
+// ─── CRESCENT MOON ──────────────────────────────────────────────────────────
+function shapeCrescent(cx, cy, size, density) {
+  density = density || 500; const pts = []; const outerR = size, innerR = size * 0.65, ix = size * 0.38;
+  for (let i = 0; i < density; i++) { const a = (i / density) * Math.PI * 2, ox = cx + Math.cos(a) * outerR, oy = cy + Math.sin(a) * outerR; if (Math.hypot(ox - (cx + ix), oy - cy) > innerR * 0.82) pts.push({ x: ox, y: oy }); }
+  for (let i = 0; i < density * 0.55; i++) { const a = rand(0, Math.PI * 2), r = rand(0, outerR), fx = cx + Math.cos(a) * r, fy = cy + Math.sin(a) * r; if (Math.hypot(fx - (cx + ix), fy - cy) > innerR * 0.78 && r > outerR * 0.12) pts.push({ x: fx, y: fy }); }
+  return pts;
+}
+
+// ─── RING / ANNULUS ─────────────────────────────────────────────────────────
+function shapeRing(cx, cy, size, thickness, density) {
+  thickness = thickness || 0.2; density = density || 400; const pts = []; const midR = size, ht = size * thickness;
+  for (let i = 0; i < density; i++) { const a = (i / density) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * (midR + rand(-ht, ht)), y: cy + Math.sin(a) * (midR + rand(-ht, ht)) }); }
+  return pts;
+}
+
+// ─── SINE WAVE (dual ribbon) ────────────────────────────────────────────────
+function shapeWave(cx, cy, size, density) {
+  density = density || 500; const pts = []; const w = size * 2.2, amp = size * 0.55;
+  for (let i = 0; i < density; i++) {
+    const t = (i / density - 0.5) * 2, x = t * w, y1 = Math.sin(t * Math.PI * 6) * amp, y2 = Math.sin(t * Math.PI * 6 + Math.PI) * amp * 0.55;
+    const sp = amp * 0.18; pts.push({ x: cx + x + rand(-sp, sp), y: cy + y1 + rand(-sp, sp) }); pts.push({ x: cx + x + rand(-sp, sp), y: cy + y2 + rand(-sp, sp) });
+  }
+  return pts;
+}
+
+// ─── CROSS / PLUS ───────────────────────────────────────────────────────────
+function shapeCross(cx, cy, size, density) {
+  density = density || 350; const pts = []; const aw = size * 0.16, al = size;
+  for (let i = 0; i < density; i++) { if (Math.random() < 0.5) pts.push({ x: cx + rand(-al, al), y: cy + rand(-aw, aw) }); else pts.push({ x: cx + rand(-aw, aw), y: cy + rand(-al, al) }); }
+  return pts;
+}
+
+// ─── INFINITY (lemniscate) ──────────────────────────────────────────────────
+function shapeInfinity(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  for (let i = 0; i < density; i++) { const t = (i / density) * Math.PI * 2, cos2t = Math.cos(2 * t), r = size * Math.sqrt(Math.max(0, cos2t)), j = size * 0.05; pts.push({ x: cx + Math.cos(t) * r + rand(-j, j), y: cy + Math.sin(t) * r * 0.7 + rand(-j, j) }); }
+  return pts;
+}
+
+// ─── DIAMOND ────────────────────────────────────────────────────────────────
+function shapeDiamond(cx, cy, size, density) {
+  density = density || 350; const pts = []; const hw = size, hh = size * 0.75;
+  for (let i = 0; i < density;) { const px = rand(-hw, hw), py = rand(-hh, hh); if (Math.abs(px) / hw + Math.abs(py) / hh <= 1) { pts.push({ x: cx + px, y: cy + py }); i++; } }
+  return pts;
+}
+
+// ─── CROWN ──────────────────────────────────────────────────────────────────
+function shapeCrown(cx, cy, size, density) {
+  density = density || 500; const pts = []; const cw = size, cH = size * 0.75, points = 5;
+  for (let i = 0; i < density * 0.22; i++) { const t = i / (density * 0.22); pts.push({ x: cx - cw + t * cw * 2, y: cy + cH * 0.5 + rand(-size * 0.06, size * 0.06) }); }
+  for (let p = 0; p < points; p++) { const px = cx - cw + (p / (points - 1)) * cw * 2; for (let i = 0; i < density * 0.1; i++) { const t = i / (density * 0.1); pts.push({ x: px + rand(-size * 0.05, size * 0.05), y: cy - cH * 0.55 * t + rand(-3, 3) }); } }
+  for (let i = 0; i < density * 0.35; i++) { pts.push({ x: cx + rand(-cw, cw), y: cy + rand(-cH * 0.55, cH * 0.55) }); }
+  return pts;
+}
+
+// ─── SWORD ──────────────────────────────────────────────────────────────────
+function shapeSword(cx, cy, size, density) {
+  density = density || 500; const pts = []; const bH = size * 1.2, bW = size * 0.09;
+  for (let i = 0; i < density * 0.38; i++) { pts.push({ x: cx + rand(-bW, bW), y: cy - size * 0.6 + rand(-bH * 0.85, bH * 0.85) }); }
+  for (let i = 0; i < density * 0.14; i++) { pts.push({ x: cx + rand(-size * 0.35, size * 0.35), y: cy + size * 0.28 + rand(-size * 0.04, size * 0.04) }); }
+  for (let i = 0; i < density * 0.2; i++) { pts.push({ x: cx + rand(-bW * 1.8, bW * 1.8), y: cy + size * 0.3 + rand(-size * 0.28, size * 0.28) }); }
+  for (let i = 0; i < density * 0.1; i++) { const a = rand(0, Math.PI * 2); pts.push({ x: cx + Math.cos(a) * rand(0, size * 0.1), y: cy + size * 0.6 + Math.sin(a) * rand(0, size * 0.1) }); }
+  return pts;
+}
+
+// ─── SPIDERWEB ──────────────────────────────────────────────────────────────
+function shapeSpiderweb(cx, cy, size, density) {
+  density = density || 550; const pts = []; const radials = 18, spirals = 7;
+  for (let i = 0; i < density * 0.38; i++) { const r = (i / (density * 0.38)) * size; for (let rad = 0; rad < radials; rad++) { const a = (rad / radials) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.85 }); } }
+  for (let s = 1; s <= spirals; s++) { const r = size * (s / spirals); for (let i = 0; i < density * 0.07; i++) { const a = (i / (density * 0.07)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.85 }); } }
+  return pts;
+}
+
+// ─── ATOM (nucleus + 3 electron rings) ──────────────────────────────────────
+function shapeAtom(cx, cy, size, density) {
+  density = density || 550; const pts = [];
+  for (let i = 0; i < density * 0.15; i++) { const a = rand(0, Math.PI * 2); pts.push({ x: cx + Math.cos(a) * rand(0, size * 0.14), y: cy + Math.sin(a) * rand(0, size * 0.14) }); }
+  const orbits = [{ rx: size * 0.9, ry: size * 0.22, a: 0 }, { rx: size * 0.9, ry: size * 0.22, a: Math.PI / 3 }, { rx: size * 0.9, ry: size * 0.22, a: -Math.PI / 3 }];
+  for (let o = 0; o < 3; o++) { const orb = orbits[o]; for (let i = 0; i < density * 0.2; i++) { const a = (i / (density * 0.2)) * Math.PI * 2; const r = rotatePoint(Math.cos(a) * orb.rx, Math.sin(a) * orb.ry, orb.a); pts.push({ x: cx + r.x, y: cy + r.y }); } }
+  return pts;
+}
+
+// ─── COMPASS ────────────────────────────────────────────────────────────────
+function shapeCompass(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  for (let i = 0; i < density * 0.28; i++) { const a = (i / (density * 0.28)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size, y: cy + Math.sin(a) * size }); }
+  const dirs = [{ a: -Math.PI / 2 }, { a: Math.PI / 2 }, { a: 0 }, { a: Math.PI }];
+  for (let d = 0; d < 4; d++) { const da = dirs[d].a; for (let i = 0; i < density * 0.04; i++) { const t = i / (density * 0.04); pts.push({ x: cx + Math.cos(da) * size * (1 + t * 0.3), y: cy + Math.sin(da) * size * (1 + t * 0.3) + rand(-2, 2) }); } }
+  for (let i = 0; i < density * 0.08; i++) { pts.push({ x: cx + rand(-2.5, 2.5), y: cy + rand(-size * 0.75, size * 0.75) }); }
+  for (let i = 0; i < density * 0.04; i++) { pts.push({ x: cx + rand(-size * 0.35, size * 0.35), y: cy + rand(-2.5, 2.5) }); }
+  return pts;
+}
+
+// ─── CLOCK ──────────────────────────────────────────────────────────────────
+function shapeClock(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  for (let i = 0; i < density * 0.25; i++) { const a = (i / (density * 0.25)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.97, y: cy + Math.sin(a) * size * 0.97 }); }
+  for (let h = 1; h <= 12; h++) { const a = (h / 12) * Math.PI * 2 - Math.PI / 2; for (let i = 0; i < density * 0.02; i++) { pts.push({ x: cx + Math.cos(a) * size * 0.88, y: cy + Math.sin(a) * size * 0.88 + rand(-3, 3) }); } }
+  for (let i = 0; i < density * 0.06; i++) { const t = i / (density * 0.06); pts.push({ x: cx + rand(-2, 2), y: cy - t * size * 0.55 }); }
+  for (let i = 0; i < density * 0.06; i++) { const t = i / (density * 0.06); pts.push({ x: cx + rand(-1.5, 1.5), y: cy - t * size * 0.75 }); }
+  return pts;
+}
+
+// ─── ANCHOR ─────────────────────────────────────────────────────────────────
+function shapeAnchor(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  for (let i = 0; i < density * 0.1; i++) { const a = (i / (density * 0.1)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.16, y: cy - size * 0.85 + Math.sin(a) * size * 0.14 }); }
+  for (let i = 0; i < density * 0.25; i++) { pts.push({ x: cx + rand(-size * 0.05, size * 0.05), y: cy - size * 0.75 + rand(-size * 0.85, size * 0.85) }); }
+  for (let i = 0; i < density * 0.1; i++) { pts.push({ x: cx + rand(-size * 0.35, size * 0.35), y: cy + rand(-size * 0.05, size * 0.05) }); }
+  for (let side = -1; side <= 1; side += 2) { for (let i = 0; i < density * 0.08; i++) { const t = i / (density * 0.08), a = -Math.PI / 2 + t * Math.PI * 0.65; pts.push({ x: cx + side * (Math.cos(a) * size * 0.35 + size * 0.12), y: cy + Math.sin(a) * size * 0.35 + size * 0.06 }); } }
+  return pts;
+}
+
+// ─── SHIELD ─────────────────────────────────────────────────────────────────
+function shapeShield(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  for (let i = 0; i < density * 0.1; i++) { pts.push({ x: cx + rand(-size * 0.45, size * 0.45), y: cy - size * 0.75 + rand(-3, 3) }); }
+  for (let i = 0; i < density * 0.5; i++) { const t = i / (density * 0.5), a = Math.PI * 0.5 + t * Math.PI; const y = cy + Math.sin(a) * size * 0.75, xw = size * 0.45 * Math.sqrt(1 - Math.pow(t * 2 - 1, 2)); pts.push({ x: cx + rand(-xw, xw), y: y }); }
+  for (let i = 0; i < density * 0.3; i++) { const t = rand(0, 1), a = Math.PI * 0.5 + t * Math.PI; const y = cy + Math.sin(a) * size * 0.75, xw = size * 0.45 * Math.sqrt(1 - Math.pow(t * 2 - 1, 2)) * 0.78; pts.push({ x: cx + rand(-xw, xw), y: y + rand(-6, 6) }); }
+  return pts;
+}
+
+// ─── ROSE (concentric petals) ───────────────────────────────────────────────
+function shapeRose(cx, cy, size, density) {
+  density = density || 550; const pts = [];
+  for (let petal = 0; petal < 7; petal++) { const ba = (petal / 7) * Math.PI * 2; for (let i = 0; i < density * 0.1; i++) { const t = i / (density * 0.1), a = ba + t * Math.PI * 0.85, r = size * t * 0.8; pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r }); } }
+  for (let i = 0; i < density * 0.15; i++) { const a = rand(0, Math.PI * 2); pts.push({ x: cx + Math.cos(a) * rand(0, size * 0.22), y: cy + Math.sin(a) * rand(0, size * 0.22) }); }
+  return pts;
+}
+
+// ─── SCORPION ───────────────────────────────────────────────────────────────
+function shapeScorpion(cx, cy, size, density) {
+  density = density || 550; const pts = [];
+  const bodyLen = size * 0.8;
+  for (let i = 0; i < density * 0.2; i++) { const t = i / (density * 0.2); pts.push({ x: cx + rand(-size * 0.06, size * 0.06), y: cy - bodyLen * 0.3 + t * bodyLen + rand(-2, 2) }); }
+  for (let side = -1; side <= 1; side += 2) { for (let i = 0; i < density * 0.06; i++) { const t = i / (density * 0.06); pts.push({ x: cx + side * (Math.sin(t * Math.PI) * size * 0.3), y: cy - bodyLen * 0.3 + rand(-2, 2) }); } }
+  for (let i = 0; i < density * 0.1; i++) { const t = i / (density * 0.1), a = Math.PI / 2 + t * Math.PI; pts.push({ x: cx + Math.cos(a) * size * 0.25, y: cy + bodyLen * 0.6 - Math.sin(a) * size * 0.4 }); }
+  return pts;
+}
+
+// ─── EYE ────────────────────────────────────────────────────────────────────
+function shapeEye(cx, cy, size, density) {
+  density = density || 450; const pts = [];
+  for (let i = 0; i < density * 0.35; i++) { const a = (i / (density * 0.35)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.75, y: cy + Math.sin(a) * size * 0.35 }); }
+  for (let i = 0; i < density * 0.2; i++) { const a = (i / (density * 0.2)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.25, y: cy + Math.sin(a) * size * 0.25 }); }
+  for (let i = 0; i < density * 0.1; i++) { const a = (i / (density * 0.1)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.08, y: cy + Math.sin(a) * size * 0.08 }); }
+  for (let i = 0; i < density * 0.2; i++) { pts.push({ x: cx + rand(-size * 0.7, size * 0.7), y: cy + rand(-size * 0.3, size * 0.3) }); }
+  return pts;
+}
+
+// ─── PENTAGRAM (occult star) ────────────────────────────────────────────────
+function shapePentagram(cx, cy, size, density) {
+  density = density || 400; const pts = [];
+  const verts = []; for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2 - Math.PI / 2; verts.push({ x: cx + Math.cos(a) * size, y: cy + Math.sin(a) * size }); }
+  for (let i = 0; i < density * 0.4; i++) {
+    const t = i / (density * 0.4), raw = t * 5, idx = Math.floor(raw), frac = raw - idx, nxt = (idx + 2) % 5;
+    pts.push({ x: lerp(verts[idx].x, verts[nxt].x, frac), y: lerp(verts[idx].y, verts[nxt].y, frac) });
+  }
+  for (let i = 0; i < density * 0.3; i++) { const a = rand(0, Math.PI * 2), r = rand(0, size * 0.5); pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r }); }
+  return pts;
+}
+
+// ─── SPIRAL (Fibonacci) ─────────────────────────────────────────────────────
+function shapeSpiral(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  const turns = 6, growth = size / (turns * Math.PI * 2);
+  for (let i = 0; i < density; i++) { const t = (i / density) * turns * Math.PI * 2; const r = t * growth; pts.push({ x: cx + Math.cos(t) * r, y: cy + Math.sin(t) * r }); }
+  return pts;
+}
+
+// ─── TRIANGLE ───────────────────────────────────────────────────────────────
+function shapeTriangle(cx, cy, size, density) {
+  density = density || 350; const pts = [];
+  const verts = []; for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2 - Math.PI / 2; verts.push({ x: cx + Math.cos(a) * size, y: cy + Math.sin(a) * size }); }
+  for (let i = 0; i < density * 0.3; i++) { const t = i / (density * 0.3), raw = t * 3, idx = Math.floor(raw), frac = raw - idx, nxt = (idx + 1) % 3; pts.push({ x: lerp(verts[idx].x, verts[nxt].x, frac), y: lerp(verts[idx].y, verts[nxt].y, frac) }); }
+  for (let i = 0; i < density * 0.5; i++) { const a = rand(0, Math.PI * 2), r = rand(0, size); const px = cx + Math.cos(a) * r, py = cy + Math.sin(a) * r; if (/* barycentric check simplified */ Math.abs(px - cx) < size && Math.abs(py - cy) < size * 0.87) pts.push({ x: px, y: py }); }
+  return pts;
+}
+
+// ─── HEXAGON ────────────────────────────────────────────────────────────────
+function shapeHexagon(cx, cy, size, density) {
+  density = density || 350; const pts = [];
+  for (let i = 0; i < density * 0.3; i++) {
+    const t = i / (density * 0.3), raw = t * 6, idx = Math.floor(raw), frac = raw - idx, nxt = (idx + 1) % 6;
+    const a1 = (idx / 6) * Math.PI * 2, a2 = (nxt / 6) * Math.PI * 2, a = a1 + (a2 - a1) * frac;
+    pts.push({ x: cx + Math.cos(a) * size, y: cy + Math.sin(a) * size });
+  }
+  for (let i = 0; i < density * 0.5; i++) { const a = rand(0, Math.PI * 2), r = rand(0, size); pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r }); }
+  return pts;
+}
+
+// ─── ALL-SEEING EYE (triangle + eye + rays) ─────────────────────────────────
+function shapeAllSeeingEye(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  const verts = []; for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2 - Math.PI / 2; verts.push({ x: cx + Math.cos(a) * size, y: cy + Math.sin(a) * size * 0.7 }); }
+  for (let i = 0; i < density * 0.2; i++) { const t = i / (density * 0.2), raw = t * 3, idx = Math.floor(raw), frac = raw - idx, nxt = (idx + 1) % 3; pts.push({ x: lerp(verts[idx].x, verts[nxt].x, frac), y: lerp(verts[idx].y, verts[nxt].y, frac) }); }
+  for (let i = 0; i < density * 0.15; i++) { const a = (i / (density * 0.15)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.3, y: cy + Math.sin(a) * size * 0.18 }); }
+  for (let i = 0; i < density * 0.1; i++) { const a = (i / (density * 0.1)) * Math.PI * 2; pts.push({ x: cx + Math.cos(a) * size * 0.12, y: cy + Math.sin(a) * size * 0.12 }); }
+  for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; for (let j = 0; j < density * 0.03; j++) { const t = j / (density * 0.03); pts.push({ x: cx + Math.cos(a) * size * (0.4 + t * 0.6), y: cy + Math.sin(a) * size * 0.3 * (0.4 + t * 0.6) }); } }
+  return pts;
+}
+
+// ─── SIGIL (random occult symbol) ───────────────────────────────────────────
+function shapeSigil(cx, cy, size, density) {
+  density = density || 450; const pts = [];
+  const numLines = 8;
+  for (let l = 0; l < numLines; l++) {
+    const a1 = rand(0, Math.PI * 2), a2 = rand(0, Math.PI * 2);
+    const r1 = rand(size * 0.2, size), r2 = rand(size * 0.2, size);
+    for (let i = 0; i < density / numLines; i++) {
+      const t = i / (density / numLines);
+      pts.push({ x: cx + lerp(Math.cos(a1) * r1, Math.cos(a2) * r2, t), y: cy + lerp(Math.sin(a1) * r1, Math.sin(a2) * r2, t) + rand(-3, 3) });
+    }
+  }
+  return pts;
+}
+
+// ─── BLACK HOLE (accretion disc + jet) ──────────────────────────────────────
+function shapeBlackHole(cx, cy, size, density) {
+  density = density || 600; const pts = [];
+  for (let i = 0; i < density * 0.5; i++) { const a = (i / (density * 0.5)) * Math.PI * 2, r = size * (0.2 + (i / (density * 0.5)) * 0.8); pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 0.3 }); }
+  for (let i = 0; i < density * 0.1; i++) { pts.push({ x: cx + rand(-size * 0.08, size * 0.08), y: cy + rand(-size * 0.6, size * 0.6) }); }
+  for (let i = 0; i < density * 0.15; i++) { const a = rand(0, Math.PI * 2); pts.push({ x: cx + Math.cos(a) * rand(0, size * 0.18), y: cy + Math.sin(a) * rand(0, size * 0.18) }); }
+  return pts;
+}
+
+// ─── TESSELLATION (grid of triangles) ───────────────────────────────────────
+function shapeTessellation(cx, cy, size, density) {
+  density = density || 500; const pts = [];
+  const gridSize = 5, cellSz = size * 2 / gridSize;
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      const bx = cx - size + c * cellSz + cellSz / 2, by = cy - size + r * cellSz + cellSz / 2;
+      const offset = (r + c) % 2 === 0 ? 0 : cellSz / 2;
+      for (let i = 0; i < density / (gridSize * gridSize); i++) {
+        const a = rand(0, Math.PI * 2), rr = rand(0, cellSz * 0.4);
+        pts.push({ x: bx + offset + Math.cos(a) * rr, y: by + Math.sin(a) * rr });
+      }
+    }
+  }
+  return pts;
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║            THEME DEFINITIONS — 25 CHAOTIC THEMES                       ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+function createTheme(cfg) {
+  return {
+    name: cfg.name, icon: cfg.icon, palette: cfg.palette,
+    particleCount: cfg.particleCount || 800,
+    speed: cfg.speed || 0.6, chaos: cfg.chaos || 0.6, mouseForce: cfg.mouseForce || 1.2,
+    getTarget: cfg.getTarget,
+    drawBackground: cfg.drawBackground || function() {},
+    updateGlobals: cfg.updateGlobals || function() { return {}; },
+  };
+}
+
+const THEMES = [
+  // ════════════════════════════════════════════════════════════════════
+  // 0: NUCLEAR STAR — Aggressive radioactive star with chaos bursts
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '☢ NUCLEAR STAR', icon: '☢️', palette: PALETTES.nuclear,
+    particleCount: 900, speed: 0.7, chaos: 0.7, mouseForce: 1.5,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 15) / 15) { this._c = shapeStar(cx, cy, Math.min(W, H) * 0.42, total); this._ct = Math.floor(time * 15) / 15; }
+      const pt = this._c[i % this._c.length]; const orb = 22 + 18 * Math.sin(time * 0.9 + i * 0.03);
+      return { x: pt.x + Math.cos(time * 0.6 + i * 0.07) * orb * 0.7, y: pt.y + Math.sin(time * 0.6 + i * 0.07) * orb * 0.7 };
+    },
+    drawBackground: function(ctx, time) {
+      for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2 + time * 0.12; const g = ctx.createLinearGradient(cx, cy, cx + Math.cos(a) * 500, cy + Math.sin(a) * 500); g.addColorStop(0, 'rgba(255,200,0,0.06)'); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * W, cy + Math.sin(a) * H); ctx.strokeStyle = g; ctx.lineWidth = 1.2; ctx.stroke(); }
+    },
+    updateGlobals: function(time) { return { pulse: 1 + Math.sin(time * 2) * 0.05, rot: time * 0.15 }; },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 1: INFERNO LOTUS — Burning sacred geometry
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🔥 INFERNO LOTUS', icon: '🔥', palette: PALETTES.inferno,
+    particleCount: 1000, speed: 0.55, chaos: 0.75, mouseForce: 1.0,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 6) / 6) { this._c = shapeLotus(cx, cy, Math.min(W, H) * 0.4, total); this._ct = Math.floor(time * 6) / 6; }
+      const bloom = 0.5 + 0.5 * Math.sin(time * 0.4), pt = this._c[i % this._c.length];
+      return { x: cx + (pt.x - cx) * bloom + Math.sin(time * 0.5 + i * 0.02) * 8, y: cy + (pt.y - cy) * bloom + Math.cos(time * 0.5 + i * 0.02) * 8 };
+    },
+    drawBackground: function(ctx, time) {
+      for (let r = 0; r < 8; r++) { const rad = 70 + r * 60 + Math.sin(time * 0.8 + r) * 40; ctx.beginPath(); ctx.arc(cx, cy + 60, rad, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,100,50,' + (0.06 - r * 0.006) + ')'; ctx.lineWidth = 2; ctx.stroke(); }
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 2: PSYCHEDELIC DRAGON — Hallucinogenic serpent
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🌈 PSYCH DRAGON', icon: '🐉', palette: PALETTES.psych,
+    particleCount: 1100, speed: 0.75, chaos: 0.65, mouseForce: 1.8,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 8) / 8) { this._c = shapeDragon(cx, cy, Math.min(W, H) * 0.4, total); this._ct = Math.floor(time * 8) / 8; }
+      const pt = this._c[i % this._c.length]; const und = Math.sin(time * 0.7 + i * 0.012) * 18;
+      return { x: pt.x + und * 0.6 + perlin2D(i * 0.01, time * 0.5) * 10, y: pt.y + Math.cos(time * 0.6 + i * 0.015) * 12 + perlin2D(i * 0.01 + 100, time * 0.5) * 10 };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 3: VAPORWAVE GALAXY — Aesthetic spiral
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '💜 VAPOR GALAXY', icon: '🌌', palette: PALETTES.vapor,
+    particleCount: 1200, speed: 0.4, chaos: 0.85, mouseForce: 0.7,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 4) / 4) { this._c = shapeGalaxy(cx, cy, Math.min(W, H) * 0.5, total); this._ct = Math.floor(time * 4) / 4; }
+      const pt = this._c[i % this._c.length]; return { x: pt.x + Math.sin(time * 0.2 + i * 0.008) * 14, y: pt.y + Math.cos(time * 0.2 + i * 0.008) * 14 };
+    },
+    drawBackground: function(ctx, time) {
+      const neb = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.5);
+      neb.addColorStop(0, 'rgba(200,0,255,0.06)'); neb.addColorStop(0.4, 'rgba(0,200,255,0.03)'); neb.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(cx, cy, Math.min(W, H) * 0.5, 0, Math.PI * 2); ctx.fillStyle = neb; ctx.fill();
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 4: TOXIC BUTTERFLY — Biohazard wings
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '☣ TOXIC BUTTERFLY', icon: '🦋', palette: PALETTES.toxic,
+    particleCount: 950, speed: 0.6, chaos: 0.6, mouseForce: 1.1,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 14) / 14) { this._c = shapeButterfly(cx, cy, Math.min(W, H) * 0.42, total); this._ct = Math.floor(time * 14) / 14; }
+      const flap = Math.sin(time * 9), pt = this._c[i % this._c.length], dx = pt.x - cx;
+      return { x: cx + dx * (1 + flap * 0.35 * (1 - Math.abs(dx) / (Math.min(W, H) * 0.55))), y: pt.y + Math.sin(time * 0.6) * 10 };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 5: GLITCH SKULL — Digital death
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '💀 GLITCH SKULL', icon: '💀', palette: PALETTES.glitch,
+    particleCount: 850, speed: 0.55, chaos: 0.45, mouseForce: 1.6,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 10) / 10) { this._c = shapeSkull(cx, cy, Math.min(W, H) * 0.4, total); this._ct = Math.floor(time * 10) / 10; }
+      const fY = Math.sin(time * 0.7) * 22, pt = this._c[i % this._c.length];
+      const glitchX = Math.sin(time * 20 + i * 0.5) > 0.85 ? rand(-15, 15) : 0;
+      const glitchY = Math.sin(time * 20 + i * 0.5 + 1) > 0.85 ? rand(-15, 15) : 0;
+      return { x: pt.x + glitchX, y: pt.y + fY + glitchY };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 6: COSMIC PHOENIX — Space firebird
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '✨ COSMIC PHOENIX', icon: '🔥', palette: PALETTES.cosmic,
+    particleCount: 1100, speed: 0.7, chaos: 0.75, mouseForce: 1.4,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 12) / 12) { this._c = shapePhoenix(cx, cy, Math.min(W, H) * 0.4, total); this._ct = Math.floor(time * 12) / 12; }
+      const rise = Math.sin(time * 0.5) * 40, pt = this._c[i % this._c.length], fl = 7 * Math.sin(time * 16 + i * 0.3);
+      return { x: pt.x + fl * 0.5, y: pt.y - rise + fl * 0.5 };
+    },
+    drawBackground: function(ctx, time) {
+      for (let i = 0; i < 60; i++) { const ex = cx + Math.sin(i * 3.2 + time * 0.8) * 220, ey = cy - ((i * 8 + time * 100) % (H + 150)) + 75; const p = ((i * 8 + time * 100) % (H + 150)) / (H + 150); ctx.beginPath(); ctx.arc(ex, ey, rand(1, 4), 0, Math.PI * 2); ctx.fillStyle = 'rgba(150,100,255,' + ((1 - p) * 0.35) + ')'; ctx.fill(); }
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 7: HELLSCREAM HEART — Demonic love
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🖤 HELLSCREAM HEART', icon: '💔', palette: PALETTES.hellscream,
+    particleCount: 900, speed: 0.6, chaos: 0.6, mouseForce: 1.1,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 18) / 18) { this._c = shapeHeart(cx, cy, Math.min(W, H) * 0.42, total); this._ct = Math.floor(time * 18) / 18; }
+      const pulse = 1 + Math.sin(time * 3) * 0.08, pt = this._c[i % this._c.length];
+      return { x: cx + (pt.x - cx) * pulse + Math.cos(time * 4 + i * 0.03) * 7, y: cy + (pt.y - cy) * pulse + Math.sin(time * 4 + i * 0.03) * 7 };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 8: ACID WAVE — Melting hallucinations
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🌀 ACID WAVE', icon: '🌀', palette: PALETTES.acid,
+    particleCount: 1000, speed: 0.5, chaos: 0.9, mouseForce: 0.8,
+    getTarget: function(p, i, total, time) {
+      const t = i / total;
+      const wx = (t - 0.5) * W * 0.85;
+      const wy = cy + Math.sin(t * 18 + time * 1.5) * 150 + Math.cos(t * 9 + time) * 80 + perlin2D(t * 5, time * 0.8) * 60;
+      return { x: wx + rand(-50, 50) * (0.5 + 0.5 * Math.sin(time + t * 10)), y: wy + rand(-30, 30) };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 9: APOCALYPSE — End of days
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '☠ APOCALYPSE', icon: '☠️', palette: PALETTES.apocalypse,
+    particleCount: 1100, speed: 0.8, chaos: 0.8, mouseForce: 1.7,
+    getTarget: function(p, i, total, time) {
+      const chaos = (Math.sin(time * 0.3) + 1) * 0.5;
+      // Fragmented shapes
+      if (i < total * 0.25) { const s = shapeStar(cx - 150, cy - 100, Math.min(W, H) * 0.14, total / 4); return s[i % s.length]; }
+      else if (i < total * 0.5) { const h = shapeHeart(cx + 150, cy + 100, Math.min(W, H) * 0.12, total / 4); return h[(i - total * 0.25) % h.length]; }
+      else if (i < total * 0.75) { const d = shapeDiamond(cx - 100, cy + 100, Math.min(W, H) * 0.12, total / 4); return d[(i - total * 0.5) % d.length]; }
+      else { const r = shapeRing(cx + 120, cy - 120, Math.min(W, H) * 0.2, 0.25, total / 4); return r[(i - total * 0.75) % r.length]; }
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 10: NEON BLOOD — Cyberpunk carnage
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '💉 NEON BLOOD', icon: '💉', palette: PALETTES.neonblood,
+    particleCount: 1050, speed: 0.8, chaos: 0.55, mouseForce: 1.8,
+    getTarget: function(p, i, total, time) {
+      const gs = 7, col = i % gs, row = Math.floor(i / gs) % gs;
+      const cw = Math.min(W, H) * 0.6 / gs, ch = Math.min(W, H) * 0.6 / gs;
+      const bx = cx - (gs * cw) / 2 + col * cw + cw / 2, by = cy - (gs * ch) / 2 + row * ch + ch / 2;
+      const orb = cw * 0.4, ang = time * 2.5 + (col + row) * 0.9;
+      return { x: bx + Math.cos(ang) * orb, y: by + Math.sin(ang) * orb };
+    },
+    drawBackground: function(ctx, time) { for (let i = 0; i < 25; i++) { const sy = (i * 42 + time * 40) % H; ctx.fillStyle = 'rgba(255,0,100,0.025)'; ctx.fillRect(0, sy, W, 1.5); } },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 11: VOID CONSUMPTION — All-consuming darkness
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🕳 VOID', icon: '🕳️', palette: PALETTES.void,
+    particleCount: 800, speed: 0.35, chaos: 0.9, mouseForce: 0.5,
+    getTarget: function(p, i, total, time) {
+      const ri = i % 5, t = Math.floor(i / 5) / (total / 5);
+      const ra = (ri / 5) * Math.PI * 2 + Math.sin(time * 0.25) * 0.6;
+      const rt = Math.cos(ra) * 0.45, a = t * Math.PI * 2 + time * 0.35 * (ri + 1);
+      const r = Math.min(W, H) * 0.4 * (0.4 + 0.6 * t);
+      return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * rt + Math.cos(ra) * 40 };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 12: OVERLOAD — MAXIMUM INTENSITY
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '💥 OVERLOAD', icon: '💥', palette: PALETTES.overload,
+    particleCount: 1400, speed: 0.9, chaos: 1.0, mouseForce: 2.0,
+    getTarget: function(p, i, total, time) {
+      const shapes = [shapeStar, shapeHeart, shapeDiamond, shapeRing, shapeHexagon, shapeTriangle, shapeSpiral, shapeCross];
+      const si = i % shapes.length, st = Math.floor(i / shapes.length) / (total / shapes.length);
+      const s = shapes[si](cx + Math.sin(si * 2.5 + time) * 200, cy + Math.cos(si * 2.5 + time) * 200, Math.min(W, H) * 0.12, total / shapes.length);
+      const idx = Math.floor(st * s.length); return s[Math.min(idx, s.length - 1)];
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 13: CORRUPTION — Digital decay spreading
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🐛 CORRUPTION', icon: '🐛', palette: PALETTES.corruption,
+    particleCount: 850, speed: 0.5, chaos: 0.7, mouseForce: 1.3,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 10) / 10) { this._c = shapeSpiderweb(cx, cy, Math.min(W, H) * 0.45, total); this._ct = Math.floor(time * 10) / 10; }
+      const pt = this._c[i % this._c.length]; return { x: pt.x + Math.sin(time * 0.4 + i * 0.02) * 6, y: pt.y + Math.cos(time * 0.45 + i * 0.02) * 6 };
+    },
+  }),
+
+  // ════════════════════════════════════════════════════════════════════
+  // 14: GENESIS — Creation myth
+  // ════════════════════════════════════════════════════════════════════
+  createTheme({
+    name: '🌌 GENESIS', icon: '🌌', palette: PALETTES.genesis,
+    particleCount: 1000, speed: 0.55, chaos: 0.6, mouseForce: 1.0,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 6) / 6) { this._c = shapeMandala(cx, cy, Math.min(W, H) * 0.45, total); this._ct = Math.floor(time * 6) / 6; }
+      const pt = this._c[i % this._c.length]; const rot = time * 0.2;
+      return { x: cx + (pt.x - cx) * Math.cos(rot) - (pt.y - cy) * Math.sin(rot), y: cy + (pt.x - cx) * Math.sin(rot) + (pt.y - cy) * Math.cos(rot) };
+    },
+  }),
+];
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║            MORE THEMES (15-29) + CHAOS EFFECTS + SYSTEM                 ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// Continue THEMES array from part-b — starting at index 15
+const THEMES_PART2 = [
+  // 15: LAVA — Molten destruction
+  createTheme({
+    name: '🌋 LAVA FLOW', icon: '🌋', palette: PALETTES.lava,
+    particleCount: 1000, speed: 0.55, chaos: 0.7, mouseForce: 1.4,
+    getTarget: function(p, i, total, time) {
+      const t = i / total;
+      // Rising magma columns
+      const col = i % 8, colX = cx - 300 + (col / 7) * 600;
+      const rise = (t * H * 1.2 + time * 60) % (H + 200) - 100;
+      return { x: colX + Math.sin(time * 3 + col) * 40 + rand(-25, 25), y: cy + H / 2 - rise + rand(-20, 20) };
+    },
+    drawBackground: function(ctx, time) {
+      for (let i = 0; i < 50; i++) { const ex = cx + Math.sin(i * 2.5 + time) * 300, ey = cy - ((i * 15 + time * 120) % (H + 200)) + 100; const p = ((i * 15 + time * 120) % (H + 200)) / (H + 200); ctx.beginPath(); ctx.arc(ex, ey, rand(2, 6), 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,100,0,' + ((1 - p) * 0.4) + ')'; ctx.fill(); }
+    },
+  }),
+
+  // 16: FROSTBITE — Deadly ice
+  createTheme({
+    name: '❄ FROSTBITE', icon: '❄️', palette: PALETTES.frostbite,
+    particleCount: 850, speed: 0.4, chaos: 0.4, mouseForce: 0.8,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 10) / 10) { this._c = shapeHexagon(cx, cy, Math.min(W, H) * 0.4, total); this._ct = Math.floor(time * 10) / 10; }
+      const pt = this._c[i % this._c.length];
+      return { x: pt.x + Math.sin(time * 0.3 + i * 0.03) * 5, y: pt.y + Math.cos(time * 0.35 + i * 0.03) * 5 };
+    },
+    drawBackground: function(ctx, time) {
+      for (let i = 0; i < 50; i++) { const sx = (i * 79 + time * 4) % W, sy = (i * 191 - time * 15) % H; ctx.beginPath(); ctx.arc(sx, sy, rand(0.5, 2.5), 0, Math.PI * 2); ctx.fillStyle = 'rgba(180,220,255,0.3)'; ctx.fill(); }
+    },
+  }),
+
+  // 17: DEMON — Unholy summoning
+  createTheme({
+    name: '👿 DEMON SIGIL', icon: '👿', palette: PALETTES.demon,
+    particleCount: 900, speed: 0.6, chaos: 0.55, mouseForce: 1.5,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 12) / 12) { this._c = shapePentagram(cx, cy, Math.min(W, H) * 0.4, total); this._ct = Math.floor(time * 12) / 12; }
+      const pt = this._c[i % this._c.length]; const pulse = 1 + Math.sin(time * 1.5) * 0.07;
+      return { x: cx + (pt.x - cx) * pulse, y: cy + (pt.y - cy) * pulse };
+    },
+  }),
+
+  // 18: THUNDER — Electric storm
+  createTheme({
+    name: '⚡ THUNDER', icon: '⚡', palette: PALETTES.thunder,
+    particleCount: 900, speed: 0.7, chaos: 0.6, mouseForce: 1.6,
+    getTarget: function(p, i, total, time) {
+      // Lightning bolt zigzag pattern
+      const boltIdx = i % 8;
+      const t = Math.floor(i / 8) / (total / 8);
+      const bx = cx + (boltIdx - 3.5) * 60;
+      let by = cy - 200 + t * 400;
+      // Zigzag
+      const zigzag = Math.sin(t * 25 + boltIdx) * 30 * (1 - t * 0.5);
+      return { x: bx + zigzag + rand(-8, 8), y: by + rand(-5, 5) };
+    },
+    drawBackground: function(ctx, time) {
+      for (let i = 0; i < 6; i++) { const lx = cx + Math.sin(i * 2.1) * 200, ly1 = cy - 150, ly2 = cy + 150; ctx.beginPath(); ctx.moveTo(lx, ly1); ctx.lineTo(lx + Math.sin(time * 8 + i) * 30, ly2); ctx.strokeStyle = 'rgba(100,100,255,' + (0.03 + Math.random() * 0.04) + ')'; ctx.lineWidth = 2; ctx.stroke(); }
+    },
+  }),
+
+  // 19: CHAOS — Complete mayhem
+  createTheme({
+    name: '💀 PURE CHAOS', icon: '💀', palette: PALETTES.chaos,
+    particleCount: 1500, speed: 1.0, chaos: 1.2, mouseForce: 2.2,
+    getTarget: function(p, i, total, time) {
+      // Every particle does something completely different
+      const mode = i % 12;
+      const t = Math.floor(i / 12) / (total / 12);
+      switch (mode) {
+        case 0: { const s = shapeStar(cx + Math.sin(time) * 200, cy + Math.cos(time * 1.3) * 150, Math.min(W, H) * 0.1, 50); return s[Math.floor(t * 50)]; }
+        case 1: { const s = shapeHeart(cx - Math.cos(time * 0.7) * 200, cy - Math.sin(time * 0.9) * 150, Math.min(W, H) * 0.08, 50); return s[Math.floor(t * 50)]; }
+        case 2: { const s = shapeDiamond(cx + 180, cy - 100, Math.min(W, H) * 0.09, 50); return s[Math.floor(t * 50)]; }
+        case 3: { const s = shapeRing(cx - 150, cy + 120, Math.min(W, H) * 0.15, 0.3, 50); return s[Math.floor(t * 50)]; }
+        case 4: { const s = shapeTriangle(cx + Math.sin(time * 1.2) * 250, cy + Math.cos(time) * 200, Math.min(W, H) * 0.1, 50); return s[Math.floor(t * 50)]; }
+        case 5: { const s = shapeHexagon(cx - Math.cos(time * 0.8) * 180, cy + Math.sin(time * 1.1) * 180, Math.min(W, H) * 0.09, 50); return s[Math.floor(t * 50)]; }
+        case 6: { const s = shapeSpiral(cx + 100, cy - 150, Math.min(W, H) * 0.08, 50); return s[Math.floor(t * 50)]; }
+        case 7: { const s = shapeInfinity(cx - 100, cy + 80, Math.min(W, H) * 0.1, 50); return s[Math.floor(t * 50)]; }
+        case 8: { return { x: cx + (t - 0.5) * W * 1.2 + rand(-30, 30), y: cy + Math.sin(t * 20 + time * 2) * 200 + rand(-30, 30) }; }
+        case 9: { const a = t * Math.PI * 2 + time; return { x: cx + Math.cos(a) * 200, y: cy + Math.sin(a) * 180 }; }
+        case 10: { const a = t * Math.PI * 2 + time * 1.5; return { x: cx + Math.cos(a) * 300, y: cy + Math.sin(a) * 100 }; }
+        case 11: { return { x: rand(0, W), y: rand(0, H) }; }
+        default: return { x: cx, y: cy };
+      }
+    },
+  }),
+
+  // 20: DMT — Hyperspace
+  createTheme({
+    name: '👁 DMT HYPERSPACE', icon: '👁', palette: PALETTES.dmt,
+    particleCount: 1200, speed: 0.65, chaos: 0.9, mouseForce: 1.3,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 20) / 20) { this._c = shapeAllSeeingEye(cx, cy, Math.min(W, H) * 0.45, total); this._ct = Math.floor(time * 20) / 20; }
+      const pt = this._c[i % this._c.length];
+      const fractalX = perlin2D(pt.x * 0.01 + time * 0.3, pt.y * 0.01) * 15;
+      const fractalY = perlin2D(pt.x * 0.01, pt.y * 0.01 + time * 0.3) * 15;
+      return { x: pt.x + fractalX, y: pt.y + fractalY };
+    },
+  }),
+
+  // 21: RAVE — Strobe overload
+  createTheme({
+    name: '🔊 RAVE MADNESS', icon: '🔊', palette: PALETTES.rave,
+    particleCount: 1300, speed: 0.85, chaos: 0.85, mouseForce: 1.9,
+    getTarget: function(p, i, total, time) {
+      const beat = Math.abs(Math.sin(time * 4)) > 0.7 ? 1.5 : 1;
+      const shapes = [shapeStar, shapeRing, shapeHexagon, shapeDiamond];
+      const si = i % 4, st = Math.floor(i / 4) / (total / 4);
+      const s = shapes[si](cx + Math.sin(time * 3 + si) * 180 * beat, cy + Math.cos(time * 3 + si) * 150 * beat, Math.min(W, H) * 0.13 * beat, total / 4);
+      const idx = Math.floor(st * s.length); return s[Math.min(idx, s.length - 1)];
+    },
+    drawBackground: function(ctx, time) {
+      if (Math.abs(Math.sin(time * 4)) > 0.7) { ctx.fillStyle = 'rgba(255,255,255,' + (0.08 + Math.random() * 0.04) + ')'; ctx.fillRect(0, 0, W, H); }
+    },
+  }),
+
+  // 22: MELTDOWN — Nuclear catastrophe
+  createTheme({
+    name: '☢ MELTDOWN', icon: '☢️', palette: PALETTES.meltdown,
+    particleCount: 1100, speed: 0.75, chaos: 0.8, mouseForce: 1.7,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 8) / 8) { this._c = shapeBlackHole(cx, cy, Math.min(W, H) * 0.5, total); this._ct = Math.floor(time * 8) / 8; }
+      const pt = this._c[i % this._c.length];
+      const implode = 1 - 0.15 * Math.sin(time * 0.5);
+      return { x: cx + (pt.x - cx) * implode, y: cy + (pt.y - cy) * implode };
+    },
+    drawBackground: function(ctx, time) {
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.6);
+      glow.addColorStop(0, 'rgba(255,120,0,' + (0.1 + 0.05 * Math.sin(time * 2)) + ')');
+      glow.addColorStop(0.5, 'rgba(255,40,0,0.04)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(cx, cy, Math.min(W, H) * 0.6, 0, Math.PI * 2); ctx.fillStyle = glow; ctx.fill();
+    },
+  }),
+
+  // 23: HOLOGRAM — Sci-fi projection
+  createTheme({
+    name: '📡 HOLOGRAM', icon: '📡', palette: PALETTES.holo,
+    particleCount: 850, speed: 0.45, chaos: 0.4, mouseForce: 1.0,
+    getTarget: function(p, i, total, time) {
+      if (!this._c || this._ct !== Math.floor(time * 6) / 6) { this._c = shapeCompass(cx, cy, Math.min(W, H) * 0.42, total); this._ct = Math.floor(time * 6) / 6; }
+      const pt = this._c[i % this._c.length]; const rot = time * 0.5;
+      return { x: cx + (pt.x - cx) * Math.cos(rot) - (pt.y - cy) * Math.sin(rot), y: cy + (pt.x - cx) * Math.sin(rot) + (pt.y - cy) * Math.cos(rot) };
+    },
+  }),
+
+  // 24: ANNIHILATION — THE END
+  createTheme({
+    name: '☠ ANNIHILATION ☠', icon: '💀', palette: PALETTES.annihilation,
+    particleCount: 1600, speed: 1.2, chaos: 1.5, mouseForce: 2.5,
+    getTarget: function(p, i, total, time) {
+      // TOTAL FRAGMENTATION — all shapes simultaneously breaking apart
+      const allShapes = [shapeStar, shapeHeart, shapeSkull, shapeDiamond, shapePentagram,
+        shapeRing, shapeSpiral, shapeTriangle, shapeHexagon, shapeCross, shapeInfinity];
+      const si = i % allShapes.length;
+      const st = Math.floor(i / allShapes.length) / Math.ceil(total / allShapes.length);
+      const offsetX = Math.sin(si * 1.7 + time * 1.5) * 250;
+      const offsetY = Math.cos(si * 1.7 + time * 1.5) * 200;
+      const sz = Math.min(W, H) * (0.06 + 0.04 * Math.sin(time * 2 + si));
+      const s = allShapes[si](cx + offsetX, cy + offsetY, sz, Math.floor(total / allShapes.length));
+      const idx = Math.floor(st * s.length);
+      const pt = s[Math.min(idx, s.length - 1)] || { x: cx + offsetX, y: cy + offsetY };
+      // Aggressive jitter
+      return { x: pt.x + rand(-20, 20) * chaosMultiplier, y: pt.y + rand(-20, 20) * chaosMultiplier };
+    },
+    drawBackground: function(ctx, time) {
+      // Strobe
+      if (Math.sin(time * 7) > 0.8) { ctx.fillStyle = 'rgba(255,255,255,' + (0.05 + Math.random() * 0.1) + ')'; ctx.fillRect(0, 0, W, H); }
+      if (Math.sin(time * 13) > 0.9) { ctx.fillStyle = 'rgba(255,0,0,0.06)'; ctx.fillRect(0, 0, W, H); }
+      // Random glitch bars
+      if (Math.random() < 0.15) { const gy = rand(0, H); ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fillRect(0, gy, W, rand(2, 20)); }
+    },
+    updateGlobals: function(time) {
+      // Trigger bass drops periodically
+      if (Math.sin(time * 1.7) > 0.95 && !bassDrop) { bassDrop = true; bassDropTimer = 1; chaosMultiplier = 2.5; }
+      if (bassDrop) { bassDropTimer -= 0.015; if (bassDropTimer <= 0) { bassDrop = false; chaosMultiplier = 1.0; } }
+      shakeAmount = bassDrop ? bassDropTimer * 8 : 0;
+      glitchIntensity = bassDrop ? bassDropTimer * 0.5 : 0;
+      chromaticAberration = bassDrop ? bassDropTimer * 3 : 0;
+      return { armageddon: bassDrop, shake: shakeAmount };
+    },
+  }),
+];
+
+// Merge all themes
+const ALL_THEMES = THEMES.concat(THEMES_PART2);
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║               VISUAL EFFECTS — GLITCH, SHAKE, STROBE                   ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// Screen shake offset
+let shakeOffsetX = 0, shakeOffsetY = 0;
+
+function updateEffects(dt) {
+  // Decay shake
+  if (shakeAmount > 0.01) {
+    shakeOffsetX = (Math.random() - 0.5) * shakeAmount * 2;
+    shakeOffsetY = (Math.random() - 0.5) * shakeAmount * 2;
+    shakeAmount *= 0.88;
+  } else {
+    shakeOffsetX = 0; shakeOffsetY = 0;
+    shakeAmount = 0;
+  }
+
+  // Decay glitch
+  if (glitchIntensity > 0.005) {
+    glitchOverlay.style.opacity = glitchIntensity * (0.3 + Math.random() * 0.7);
+    glitchIntensity *= 0.85;
+  } else {
+    glitchOverlay.style.opacity = '0';
+    glitchIntensity = 0;
+  }
+
+  // Strobe timer
+  if (strobeActive) { strobeTimer -= dt; if (strobeTimer <= 0) strobeActive = false; }
+
+  // Update shockwaves
+  for (let i = shockwaves.length - 1; i >= 0; i--) {
+    const sw = shockwaves[i];
+    sw.radius += sw.speed * dt;
+    sw.life = 1 - sw.radius / sw.maxRadius;
+    if (sw.life <= 0) shockwaves.splice(i, 1);
+  }
+
+  // Update explosions
+  for (let i = explosionQueue.length - 1; i >= 0; i--) {
+    explosionQueue[i].time += dt;
+    if (explosionQueue[i].time > 1.5) explosionQueue.splice(i, 1);
+  }
+
+  // Emit sparks from explosions
+  for (const exp of explosionQueue) {
+    if (exp.time < 0.1 && Math.random() < 0.5) {
+      emitSparks(exp.x, exp.y, PALETTES.inferno, 3, 8 * exp.intensity);
+    }
+  }
+}
+
+function drawShockwaves(ctx) {
+  for (const sw of shockwaves) {
+    ctx.beginPath();
+    ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,' + (sw.life * 0.6) + ')';
+    ctx.lineWidth = 3 * sw.life;
+    ctx.stroke();
+
+    // Inner glow ring
+    ctx.beginPath();
+    ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,150,50,' + (sw.life * 0.3) + ')';
+    ctx.lineWidth = 8 * sw.life;
+    ctx.stroke();
+  }
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║               PARTICLE SYSTEM MANAGER — CHAOS EDITION                  ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+class ParticleSystem {
+  constructor() {
+    this.particles = [];
+    this.currentTheme = 0; this.targetTheme = 0; this.transitionProgress = 1;
+    this.time = 0;
+    this.autoCycle = true; this.cycleTimer = 0; this.cycleInterval = 10;
+    this.fps = 60; this.fpsTimer = 0; this.fpsFrames = 0;
+    this.particleBudget = 2000;
+    this.globalSpeed = 1.0; this.globalChaos = 1.0; this.glowIntensity = 0.8;
+    this.globals = {};
+    this.initParticles();
+  }
+
+  initParticles() {
+    const theme = ALL_THEMES[this.currentTheme];
+    const count = Math.min(theme.particleCount, this.particleBudget);
+    this.particles = [];
+    for (let i = 0; i < count; i++) {
+      const p = new Particle(rand(0, W), rand(0, H));
+      p.color = theme.palette[i % theme.palette.length];
+      this.particles.push(p);
+    }
+  }
+
+  transitionTo(themeIdx) {
+    if (themeIdx === this.targetTheme && this.transitionProgress >= 1) return;
+    const oldTheme = ALL_THEMES[this.currentTheme];
+    triggerBurst(cx, cy, oldTheme.palette, 100);
+    // Trigger screen shake on transition
+    shakeAmount = Math.max(shakeAmount, 12);
+    glitchIntensity = Math.max(glitchIntensity, 0.4);
+    shockwaves.push({ x: cx, y: cy, radius: 0, maxRadius: Math.min(W, H) * 0.7, life: 1, speed: 500 });
+    this.targetTheme = themeIdx; this.transitionProgress = 0;
+    const targetCount = Math.min(ALL_THEMES[themeIdx].particleCount, this.particleBudget);
+    while (this.particles.length < targetCount) {
+      const p = new Particle(rand(0, W), rand(0, H));
+      p.color = ALL_THEMES[themeIdx].palette[this.particles.length % ALL_THEMES[themeIdx].palette.length];
+      this.particles.push(p);
+    }
+    for (let i = targetCount; i < this.particles.length; i++) this.particles[i].decay = 0.025;
+  }
+
+  update(dt) {
+    if (dt > 0.1) dt = 0.1; if (dt <= 0) dt = 0.016;
+    this.time += dt;
+
+    // FPS tracking
+    this.fpsFrames++; this.fpsTimer += dt;
+    if (this.fpsTimer >= 1.0) { this.fps = this.fpsFrames; this.fpsFrames = 0; this.fpsTimer -= 1.0; }
+
+    // Auto cycle (faster when bass dropping)
+    const cycleSpeed = bassDrop ? 3 : 1;
+    if (this.autoCycle) { this.cycleTimer += dt * cycleSpeed; if (this.cycleTimer >= this.cycleInterval) { this.cycleTimer = 0; this.transitionTo((this.targetTheme + 1) % ALL_THEMES.length); } }
+
+    // Mouse tracking
+    if (mouse.active) { mouse.hoverTime += dt; mouse.idleTime += dt; if (Math.abs(mouse.vx) > 0.5 || Math.abs(mouse.vy) > 0.5) mouse.idleTime = 0; }
+
+    // Random chaos bursts
+    if (Math.random() < 0.002 * chaosMultiplier) {
+      shakeAmount = Math.max(shakeAmount, rand(3, 8) * chaosMultiplier);
+      glitchIntensity = Math.max(glitchIntensity, rand(0.1, 0.3));
+      const rx = rand(0, W), ry = rand(0, H);
+      emitSparks(rx, ry, PALETTES.inferno, randInt(5, 20), 12);
+    }
+
+    // Random bass drops in Annihilation mode
+    if (this.currentTheme === 24 && Math.random() < 0.008) {
+      bassDrop = true; bassDropTimer = 0.8 + rand(0, 0.4);
+      chaosMultiplier = 2 + rand(0, 2);
+    }
+
+    // Transition
+    if (this.transitionProgress < 1) { this.transitionProgress = Math.min(1, this.transitionProgress + dt * 0.9); if (this.transitionProgress >= 1) { this.currentTheme = this.targetTheme; const keep = Math.min(ALL_THEMES[this.currentTheme].particleCount, this.particleBudget); while (this.particles.length > keep) this.particles.pop(); } }
+
+    const theme = ALL_THEMES[this.currentTheme], targetTheme = ALL_THEMES[this.targetTheme];
+    const total = this.particles.length, tp = this.transitionProgress, ease = easeInOutCubic(tp);
+
+    let effSpeed, effChaos, effMouseForce;
+    if (tp < 1) { effSpeed = lerp(theme.speed, targetTheme.speed, ease) * this.globalSpeed; effChaos = lerp(theme.chaos, targetTheme.chaos, ease) * this.globalChaos; effMouseForce = lerp(theme.mouseForce, targetTheme.mouseForce, ease); }
+    else { effSpeed = theme.speed * this.globalSpeed; effChaos = theme.chaos * this.globalChaos; effMouseForce = theme.mouseForce; }
+
+    // Audio reactivity boost
+    if (typeof audioActive !== 'undefined' && audioActive) { effSpeed *= (1 + audioBassLevel * 0.8); effChaos *= (1 + audioHighLevel * 0.7); }
+
+    this.globals = tp < 1 ? targetTheme.updateGlobals(this.time) : theme.updateGlobals(this.time);
+
+    for (let i = 0; i < total; i++) {
+      const p = this.particles[i]; let target;
+      if (tp < 1) { const ft = theme.getTarget(p, i, total, this.time), tt = targetTheme.getTarget(p, i, total, this.time); target = { x: lerp(ft.x, tt.x, ease), y: lerp(ft.y, tt.y, ease) }; }
+      else target = theme.getTarget(p, i, total, this.time);
+      p.setTarget(target.x, target.y);
+      if (tp < 1) p.color = lerpColor(theme.palette[i % theme.palette.length], targetTheme.palette[i % targetTheme.palette.length], ease);
+      else p.color = theme.palette[i % theme.palette.length];
+      p.update(effSpeed, effChaos, effMouseForce, this.time, dt);
+      if (!p.alive && p.life <= 0) { p.respawn(); const pal = tp < 1 ? targetTheme.palette : theme.palette; p.color = pal[i % pal.length]; }
+    }
+
+    updateSparks(dt); updateBurst(dt); updateEffects(dt);
+
+    for (let j = mouse.trail.length - 1; j >= 0; j--) { mouse.trail[j].life -= dt * 2; if (mouse.trail[j].life <= 0) mouse.trail.splice(j, 1); }
+
+    // Update background stars
+    for (let i = 0; i < bgStars.length; i++) bgStars[i].update(dt);
+  }
+
+  draw(ctx) {
+    ctx.save();
+
+    // Apply screen shake
+    if (shakeAmount > 0.3) { ctx.translate(shakeOffsetX, shakeOffsetY); }
+
+    // Apply chromatic aberration (RGB split)
+    if (chromaticAberration > 0.3) {
+      // We'll draw normally but with offset for red channel
+      // Simplified: slight red/blue offset drawing
+    }
+
+    ctx.clearRect(-20, -20, W + 40, H + 40);
+
+    // Background stars
+    for (let i = 0; i < bgStars.length; i++) bgStars[i].draw(ctx, this.time);
+
+    // Theme background
+    const activeTheme = this.transitionProgress < 1 ? ALL_THEMES[this.targetTheme] : ALL_THEMES[this.currentTheme];
+    activeTheme.drawBackground(ctx, this.time);
+
+    // Shockwaves
+    drawShockwaves(ctx);
+
+    // Burst particles
+    drawBurst(ctx);
+
+    // Main particles with chaos boost
+    const glowBoost = bassDrop ? 1 + bassDropTimer * 2 : 1;
+    for (let i = 0; i < this.particles.length; i++) this.particles[i].draw(ctx, this.time, this.glowIntensity * glowBoost);
+
+    // Sparks
+    drawSparks(ctx);
+
+    // Mouse glow
+    if (mouse.active && mouse.idleTime < 3) {
+      const alpha = Math.max(0, 0.25 - mouse.idleTime * 0.06);
+      const glow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 90);
+      glow.addColorStop(0, 'rgba(255,255,255,' + alpha + ')');
+      glow.addColorStop(0.5, 'rgba(255,255,255,' + (alpha * 0.3) + ')');
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(mouse.x, mouse.y, 90, 0, Math.PI * 2); ctx.fillStyle = glow; ctx.fill();
+
+      if (mouse.trail.length > 2) {
+        ctx.beginPath(); ctx.moveTo(mouse.trail[0].x, mouse.trail[0].y);
+        for (let i = 1; i < mouse.trail.length; i++) ctx.lineTo(mouse.trail[i].x, mouse.trail[i].y);
+        ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+        ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
+      }
+    }
+
+    // Strobe flash
+    if (strobeActive && strobeTimer > 0) {
+      ctx.fillStyle = 'rgba(255,255,255,' + (strobeTimer * 0.3) + ')';
+      ctx.fillRect(-20, -20, W + 40, H + 40);
+    }
+
+    // Vignette
+    const inner = Math.min(W, H) * 0.45, outer = Math.max(W, H) * 0.95;
+    const vg = ctx.createRadialGradient(cx, cy, inner, cx, cy, outer);
+    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = vg; ctx.fillRect(-20, -20, W + 40, H + 40);
+
+    ctx.restore();
+  }
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║               AUDIO SYSTEM — MICROPHONE VISUALIZATION                  ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+let audioContext = null, audioAnalyser = null, audioDataArray = null;
+let audioActive = false, audioLevel = 0, audioBassLevel = 0, audioMidLevel = 0, audioHighLevel = 0;
+
+function initAudio() {
+  if (audioContext) return;
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioAnalyser = audioContext.createAnalyser();
+    audioAnalyser.fftSize = 256;
+    audioAnalyser.smoothingTimeConstant = 0.65;
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(audioAnalyser);
+      audioActive = 'real';
+    }).catch(function() {
+      audioActive = 'simulated';
+    });
+  } catch(e) { audioActive = 'simulated'; }
+}
+
+function updateAudio() {
+  if (!audioActive) return;
+  if (audioActive === 'simulated') {
+    const mouseSpeed = Math.hypot(mouse.vx, mouse.vy);
+    audioBassLevel = lerp(audioBassLevel || 0, Math.min(1, mouseSpeed * 0.025 + 0.08 * Math.abs(Math.sin(globalTime * 2.5))), 0.3);
+    audioMidLevel = lerp(audioMidLevel || 0, 0.25 + 0.35 * Math.abs(Math.sin(globalTime * 1.7)), 0.2);
+    audioHighLevel = lerp(audioHighLevel || 0, 0.15 + 0.45 * Math.abs(Math.sin(globalTime * 4.2)), 0.25);
+    audioLevel = (audioBassLevel + audioMidLevel + audioHighLevel) / 3;
+    return;
+  }
+  if (!audioDataArray) audioDataArray = new Uint8Array(audioAnalyser.frequencyBinCount);
+  audioAnalyser.getByteFrequencyData(audioDataArray);
+  let bassSum = 0, midSum = 0, highSum = 0; const len = audioDataArray.length;
+  for (let i = 0; i < len; i++) { const v = audioDataArray[i] / 255; if (i < len * 0.15) bassSum += v; else if (i < len * 0.5) midSum += v; else highSum += v; }
+  audioBassLevel = bassSum / (len * 0.15); audioMidLevel = midSum / (len * 0.35); audioHighLevel = highSum / (len * 0.5); audioLevel = (audioBassLevel + audioMidLevel + audioHighLevel) / 3;
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║               APPLICATION BOOTSTRAP — UI, MAIN LOOP, API               ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+// ─── INSTANTIATE PARTICLE SYSTEM ────────────────────────────────────────────
+const system = new ParticleSystem();
+
+// ─── UI ELEMENT REFERENCES ──────────────────────────────────────────────────
+const themeNameEl = document.getElementById('tname');
+const statsEl = document.getElementById('stats');
+const modeBadgeEl = document.getElementById('mode');
+const hintOverlayEl = document.getElementById('hint');
+const themePanelEl = document.getElementById('panel');
+
+// ─── BUILD THEME BUTTONS ────────────────────────────────────────────────────
+function buildThemeButtons() {
+  themePanelEl.innerHTML = '';
+  for (let i = 0; i < ALL_THEMES.length; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'dot';
+    btn.setAttribute('data-theme', i);
+    btn.setAttribute('aria-label', ALL_THEMES[i].name);
+    btn.innerHTML = ALL_THEMES[i].icon + '<span class="tt">' + ALL_THEMES[i].name + '</span>';
+    btn.addEventListener('click', (function(idx) {
+      return function() {
+        system.transitionTo(idx);
+        system.autoCycle = false;
+        system.cycleTimer = 0;
+        updateModeLabel();
+        hideHint();
+      };
+    })(i));
+    themePanelEl.appendChild(btn);
+  }
+}
+buildThemeButtons();
+
+// ─── UI UPDATE ──────────────────────────────────────────────────────────────
+function updateUI() {
+  const theme = system.transitionProgress < 1 ? ALL_THEMES[system.targetTheme] : ALL_THEMES[system.currentTheme];
+  themeNameEl.textContent = theme.icon + ' ' + theme.name;
+  statsEl.textContent = system.particles.length + ' ⬤ | ' + system.fps + ' FPS';
+
+  const btns = themePanelEl.querySelectorAll('.dot');
+  for (let i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', parseInt(btns[i].dataset.theme) === system.targetTheme);
+  }
+}
+
+function updateModeLabel() {
+  modeBadgeEl.textContent = system.autoCycle ? '🔄 AUTO' : '🎯 MANUAL';
+}
+updateModeLabel();
+
+function hideHint() { hintOverlayEl.style.opacity = '0'; }
+
+// ─── EVENT HANDLERS ─────────────────────────────────────────────────────────
+
+// Mode badge click
+modeBadgeEl.addEventListener('click', function() {
+  system.autoCycle = !system.autoCycle;
+  system.cycleTimer = 0;
+  updateModeLabel();
+  hideHint();
+});
+
+// Canvas click — toggle auto or trigger effects
+canvas.addEventListener('click', function(e) {
+  if (e.target === canvas) {
+    if (e.shiftKey) {
+      // Shift+click = random theme
+      let rnd = randInt(0, ALL_THEMES.length - 1);
+      while (rnd === system.targetTheme && ALL_THEMES.length > 1) rnd = randInt(0, ALL_THEMES.length - 1);
+      system.transitionTo(rnd);
+      system.autoCycle = false; system.cycleTimer = 0; updateModeLabel();
+    } else {
+      system.autoCycle = !system.autoCycle;
+      system.cycleTimer = 0;
+      updateModeLabel();
+    }
+    hideHint();
+    // Emit sparks at click
+    const theme = ALL_THEMES[system.currentTheme];
+    emitSparks(e.clientX, e.clientY, theme.palette, 30, 8);
+    shockwaves.push({ x: e.clientX, y: e.clientY, radius: 0, maxRadius: 200, life: 1, speed: 350 });
+  }
+});
+
+// Double click — max chaos
+canvas.addEventListener('dblclick', function(e) {
+  bassDrop = true; bassDropTimer = 1.5;
+  chaosMultiplier = 3.0;
+  shakeAmount = 20;
+  glitchIntensity = 0.6;
+  strobeActive = true; strobeTimer = 0.3;
+  triggerBurst(e.clientX, e.clientY, PALETTES.chaos, 200);
+  emitSparks(e.clientX, e.clientY, PALETTES.overload, 100, 20);
+  shockwaves.push({ x: e.clientX, y: e.clientY, radius: 0, maxRadius: 500, life: 1, speed: 600 });
+  // Also switch to annihilation
+  system.transitionTo(24);
+  system.autoCycle = false;
+  system.cycleTimer = 0;
+  updateModeLabel();
+  hideHint();
+});
+
+// Keyboard controls
+window.addEventListener('keydown', function(e) {
+  const k = e.key.toLowerCase();
+
+  switch (k) {
+    case 'a':
+      system.autoCycle = !system.autoCycle;
+      system.cycleTimer = 0;
+      updateModeLabel();
+      hideHint();
+      break;
+
+    case 'arrowleft':
+      e.preventDefault();
+      system.transitionTo((system.targetTheme - 1 + ALL_THEMES.length) % ALL_THEMES.length);
+      system.autoCycle = false; system.cycleTimer = 0;
+      updateModeLabel(); hideHint();
+      break;
+
+    case 'arrowright':
+      e.preventDefault();
+      system.transitionTo((system.targetTheme + 1) % ALL_THEMES.length);
+      system.autoCycle = false; system.cycleTimer = 0;
+      updateModeLabel(); hideHint();
+      break;
+
+    case ' ':
+      e.preventDefault();
+      // Space = random theme
+      system.transitionTo(randInt(0, ALL_THEMES.length - 1));
+      system.autoCycle = false; system.cycleTimer = 0;
+      updateModeLabel(); hideHint();
+      break;
+
+    case 'f':
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else { document.body.requestFullscreen().catch(function() {}); }
+      break;
+
+    case 'm':
+      initAudio();
+      break;
+
+    case 'b':
+      // B = BASS DROP
+      bassDrop = true; bassDropTimer = 1.2;
+      chaosMultiplier = 2.8;
+      shakeAmount = 15;
+      glitchIntensity = 0.4;
+      strobeActive = true; strobeTimer = 0.25;
+      triggerBurst(cx, cy, PALETTES.overload, 150);
+      emitSparks(cx, cy, PALETTES.inferno, 80, 18);
+      shockwaves.push({ x: cx, y: cy, radius: 0, maxRadius: Math.min(W, H) * 0.8, life: 1, speed: 550 });
+      break;
+
+    case 'g':
+      // G = Glitch spike
+      glitchIntensity = 0.8;
+      shakeAmount = Math.max(shakeAmount, 10);
+      break;
+
+    case 'x':
+      // X = EXPLOSION at mouse
+      explosionQueue.push({ x: mouse.x, y: mouse.y, time: 0, intensity: 2 });
+      shockwaves.push({ x: mouse.x, y: mouse.y, radius: 0, maxRadius: 350, life: 1, speed: 450 });
+      emitSparks(mouse.x, mouse.y, PALETTES.overload, 60, 15);
+      break;
+
+    case 'r':
+      // R = Reset to chill
+      bassDrop = false; bassDropTimer = 0;
+      chaosMultiplier = 1.0;
+      shakeAmount = 0;
+      glitchIntensity = 0;
+      strobeActive = false;
+      break;
+
+    // Number keys for direct theme access
+    case '1': system.transitionTo(0); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '2': system.transitionTo(1); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '3': system.transitionTo(2); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '4': system.transitionTo(3); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '5': system.transitionTo(4); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '6': system.transitionTo(5); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '7': system.transitionTo(6); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '8': system.transitionTo(7); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '9': system.transitionTo(8); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case '0': system.transitionTo(9); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+
+    // More number keys for themes 10+
+    case 'q': system.transitionTo(10); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'w': system.transitionTo(11); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'e': system.transitionTo(12); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'r': system.transitionTo(13); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 't': system.transitionTo(14); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'y': system.transitionTo(15); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'u': system.transitionTo(16); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'i': system.transitionTo(17); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'o': system.transitionTo(18); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+    case 'p': system.transitionTo(19); system.autoCycle = false; system.cycleTimer = 0; updateModeLabel(); hideHint(); break;
+  }
+});
+
+// ─── SCROLL WHEEL THEME NAVIGATION ──────────────────────────────────────────
+let scrollAccum = 0;
+window.addEventListener('wheel', function(e) {
+  scrollAccum += e.deltaY;
+  if (Math.abs(scrollAccum) > 60) {
+    const dir = scrollAccum > 0 ? 1 : -1;
+    system.transitionTo((system.targetTheme + dir + ALL_THEMES.length) % ALL_THEMES.length);
+    system.autoCycle = false; system.cycleTimer = 0;
+    updateModeLabel(); hideHint();
+    scrollAccum = 0;
+  }
+}, { passive: true });
+
+// ─── RESIZE HANDLER ─────────────────────────────────────────────────────────
+window.addEventListener('resize', function() {
+  resize();
+  initBgStars();
+  // Clear all theme caches
+  for (let i = 0; i < ALL_THEMES.length; i++) ALL_THEMES[i]._c = null;
+});
+
+// ─── AUTO-HIDE HINT ─────────────────────────────────────────────────────────
+setTimeout(function() { hintOverlayEl.style.opacity = '0'; }, 12000);
+
+// ─── MAIN RENDER LOOP ───────────────────────────────────────────────────────
+let lastFrameTime = performance.now();
+
+function mainLoop(timestamp) {
+  let dt = (timestamp - lastFrameTime) / 1000;
+  lastFrameTime = timestamp;
+  if (dt > 0.1) dt = 0.1;
+  if (dt <= 0) dt = 0.016;
+
+  globalTime += dt;
+
+  // Decay bass drop
+  if (bassDrop) {
+    bassDropTimer -= dt;
+    if (bassDropTimer <= 0) { bassDrop = false; bassDropTimer = 0; chaosMultiplier = Math.max(1.0, chaosMultiplier - 0.5); }
+  }
+
+  // Auto-init simulated audio
+  if (!audioActive) { audioActive = 'simulated'; }
+
+  // Update
+  updateAudio();
+  system.update(dt);
+  system.draw(ctx);
+  updateUI();
+
+  // Chromatic aberration on glitch overlay
+  if (chromaticAberration > 0.3 && Math.random() < 0.3) {
+    const r = randInt(0, 255), g = randInt(0, 255), b = randInt(0, 255);
+    glitchOverlay.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',' + (chromaticAberration * 0.15) + ')';
+    glitchOverlay.style.boxShadow = 'inset ' + rand(-5, 5) + 'px 0 0 rgba(255,0,0,' + (chromaticAberration * 0.2) + '), inset ' + rand(-5, 5) + 'px 0 0 rgba(0,0,255,' + (chromaticAberration * 0.2) + ')';
+  }
+
+  requestAnimationFrame(mainLoop);
+}
+
+// ─── START ──────────────────────────────────────────────────────────────────
+lastFrameTime = performance.now();
+requestAnimationFrame(mainLoop);
+
+// Automatically start simulated audio
+audioActive = 'simulated';
+
+// ─── CONSOLE API ────────────────────────────────────────────────────────────
+// Expose full control API for advanced users
+window.__api = {
+  system: system,
+  ALL_THEMES: ALL_THEMES,
+  PALETTES: PALETTES,
+  Particle: Particle,
+  Spark: Spark,
+
+  // Navigation
+  go: function(idx) { system.transitionTo(clamp(idx, 0, ALL_THEMES.length - 1)); },
+  next: function() { system.transitionTo((system.targetTheme + 1) % ALL_THEMES.length); },
+  prev: function() { system.transitionTo((system.targetTheme - 1 + ALL_THEMES.length) % ALL_THEMES.length); },
+  random: function() { system.transitionTo(randInt(0, ALL_THEMES.length - 1)); },
+
+  // Control
+  toggleAuto: function() { system.autoCycle = !system.autoCycle; updateModeLabel(); },
+  setSpeed: function(v) { system.globalSpeed = v; },
+  setChaos: function(v) { system.globalChaos = v; },
+  setGlow: function(v) { system.glowIntensity = v; },
+
+  // Effects
+  bassDrop: function(intensity) {
+    intensity = intensity || 1.5;
+    bassDrop = true; bassDropTimer = intensity;
+    chaosMultiplier = 2 + intensity;
+    shakeAmount = 10 + intensity * 5;
+    glitchIntensity = 0.3 + intensity * 0.2;
+    triggerBurst(cx, cy, PALETTES.overload, Math.floor(100 * intensity));
+    shockwaves.push({ x: cx, y: cy, radius: 0, maxRadius: Math.min(W, H) * (0.5 + intensity * 0.3), life: 1, speed: 400 + intensity * 200 });
+  },
+  nuke: function() {
+    // MAXIMUM CHAOS
+    bassDrop = true; bassDropTimer = 2.5;
+    chaosMultiplier = 5.0;
+    shakeAmount = 30;
+    glitchIntensity = 1.0;
+    strobeActive = true; strobeTimer = 0.5;
+    chromaticAberration = 8;
+    for (let i = 0; i < 5; i++) {
+      triggerBurst(rand(0, W), rand(0, H), PALETTES.chaos, 150);
+    }
+    for (let i = 0; i < 10; i++) {
+      shockwaves.push({
+        x: rand(0, W), y: rand(0, H),
+        radius: rand(0, 100),
+        maxRadius: rand(300, 700),
+        life: 1, speed: rand(300, 700)
+      });
+    }
+    emitSparks(cx, cy, PALETTES.annihilation, 200, 30);
+  },
+
+  // Info
+  info: function() {
+    console.log('Themes: ' + ALL_THEMES.length);
+    console.log('Particles: ' + system.particles.length);
+    console.log('FPS: ' + system.fps);
+    console.log('Auto-cycle: ' + system.autoCycle);
+    console.log('Current theme: ' + ALL_THEMES[system.currentTheme].name);
+    console.log('Chaos level: ' + chaosMultiplier.toFixed(2));
+    console.log('Bass drop: ' + bassDrop);
+  },
+
+  // List themes
+  list: function() {
+    console.table(ALL_THEMES.map(function(t, i) { return { index: i, name: t.name, particles: t.particleCount, speed: t.speed, chaos: t.chaos }; }));
+  },
+
+  // Audio
+  audio: initAudio,
+
+  // Screenshot (downloads canvas as PNG)
+  screenshot: function() {
+    const link = document.createElement('a');
+    link.download = 'particle-annihilation-' + Date.now() + '.png';
+    link.href = canvas.toDataURL();
+    link.click();
+    console.log('📸 Screenshot saved!');
+  },
+};
+
+// Welcome message
+console.log('%c💀 %cPARTICLE ANNIHILATION %cREADY %c|',
+  'font-size:24px;', 'color:#ff0000;font-size:20px;font-weight:bold;', 'color:#ff8800;', '');
+console.log('%c25 Themes %c| %cHigh Chaos %c| %c10K+ Lines %c| %cPsychedelic Overload',
+  'color:#ff00ff;', '', 'color:#ffff00;', '', 'color:#00ffff;', '', 'color:#ff0000;');
+console.log('%c──────────────────────────────────────────────────', 'color:#444;');
+console.log('%c🖱️  Click %c= Auto %c| %cShift+Click %c= Random %c| %cDblClick %c= NUKE',
+  'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;');
+console.log('%c⌨️  A=Auto %c←→=Nav %cSpace=Random %cF=Fullscreen %cM=Mic %cB=BASS %cX=Explode %cG=Glitch %cR=Reset',
+  'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;', 'color:#fff;', 'color:#888;', 'color:#fff;');
+console.log('%c──────────────────────────────────────────────────', 'color:#444;');
+console.log('%c💡 %cTry %c__api.nuke() %cfor MAXIMUM CHAOS %c💀',
+  'color:#ff8800;', 'color:#fff;', 'color:#ff0000;font-weight:bold;font-size:14px;', 'color:#fff;', 'color:#ff0000;');
+console.log('%c💡 %c__api.list() %c__api.info() %c__api.bassDrop() %c__api.screenshot()',
+  'color:#ff8800;', 'color:#4ecdc4;', 'color:#fff;', 'color:#4ecdc4;', 'color:#fff;', 'color:#4ecdc4;');
+
+</script>
 </body>
 </html>
