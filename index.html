@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sơn Tùng M-TP Playlist - Outro Edition</title>
+    <title>Sơn Tùng M-TP Playlist - Custom UI Edition</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +17,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-family: 'Courier New', monospace, sans-serif;
             overflow: hidden;
             color: #fff;
         }
@@ -32,6 +32,7 @@
             align-items: center;
             flex-direction: column;
             overflow: hidden;
+            padding: 20px;
         }
 
         #grainCanvas {
@@ -71,287 +72,236 @@
             100% { transform: rotate(360deg) scale(1.2); }
         }
 
-        .main-content {
+        /* ===== MAIN CONTENT AREA ===== */
+        .wrapper {
             position: relative;
             z-index: 5;
-            text-align: center;
-            animation: fadeInUp 1.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            opacity: 0;
-            transform: translateY(30px);
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 650px;
+            width: 100%;
+            max-height: 90vh;
         }
 
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        .main-content {
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 15px;
         }
 
         .main-text {
-            font-size: clamp(3rem, 12vw, 8rem);
+            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
             font-weight: 900;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             text-transform: uppercase;
             color: #fff;
             text-shadow: 
                 0 0 10px rgba(255, 215, 0, 0.8),
                 0 0 20px rgba(255, 215, 0, 0.6),
-                0 0 40px rgba(255, 215, 0, 0.4),
-                0 0 80px rgba(255, 215, 0, 0.2);
+                0 0 40px rgba(255, 215, 0, 0.4);
             position: relative;
             display: inline-block;
-            animation: glowPulse 2.5s ease-in-out infinite alternate;
-        }
-
-        .main-text::before {
-            content: '';
-            position: absolute;
-            top: -5%;
-            left: -10%;
-            width: 120%;
-            height: 110%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.3) 30%,
-                rgba(255, 255, 255, 0.8) 50%,
-                rgba(255, 255, 255, 0.3) 70%,
-                transparent 100%
-            );
-            background-size: 200% 100%;
-            animation: shimmer 3s infinite linear;
-            pointer-events: none;
-            mix-blend-mode: overlay;
-            border-radius: 4px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        @keyframes glowPulse {
-            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4); }
-            100% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 215, 0, 0.5), 0 0 120px rgba(255, 215, 0, 0.3); }
         }
 
         .sub-line {
-            margin-top: 10px;
-            font-size: clamp(0.9rem, 2vw, 1.5rem);
-            font-weight: 300;
-            color: #aaa;
-            letter-spacing: 8px;
+            margin-top: 5px;
+            font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+            font-weight: bold;
+            color: #ffd700;
+            letter-spacing: 6px;
             text-transform: uppercase;
-            opacity: 0;
-            animation: fadeInSub 2s 0.6s forwards;
-            border-top: 1px solid rgba(255, 215, 0, 0.2);
-            padding-top: 15px;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            padding-top: 5px;
             display: inline-block;
-            text-shadow: 0 0 10px rgba(0, 180, 255, 0.3);
-        }
-
-        @keyframes fadeInSub {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 0.7; transform: scale(1); }
-        }
-
-        .scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 3px,
-                rgba(0, 0, 0, 0.03) 3px,
-                rgba(0, 0, 0, 0.03) 4px
-            );
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .vignette {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
-            pointer-events: none;
-            z-index: 1;
         }
 
         .char {
             display: inline-block;
             min-width: 0.7em;
             text-align: center;
-            transition: none;
             color: #fff;
         }
 
-        /* Glitch Corner Right */
-        .corner-text {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            z-index: 10;
-            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
-            font-weight: 700;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: right;
-            opacity: 0.7;
-            pointer-events: none;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
-            mix-blend-mode: screen;
-        }
-
-        .corner-text .glitch-word {
-            display: inline-block;
-            transition: all 0.05s ease;
-            position: relative;
-        }
-
-        .corner-text .glitch-word.glitch-active {
-            animation: glitchEffect 0.4s steps(1) 1;
-        }
-
-        @keyframes glitchEffect {
-            0% { transform: translate(0, 0); text-shadow: 2px 0 red, -2px 0 blue; clip-path: inset(0 0 0 0); }
-            10% { transform: translate(-2px, 1px); text-shadow: -3px 0 cyan, 3px 0 magenta; clip-path: inset(10% 0 20% 0); }
-            20% { transform: translate(3px, -1px); text-shadow: 4px 0 lime, -4px 0 red; clip-path: inset(40% 0 10% 0); }
-            30% { transform: translate(-1px, 2px); text-shadow: -2px 0 yellow, 2px 0 blue; clip-path: inset(70% 0 5% 0); }
-            40% { transform: translate(0, 0); text-shadow: 0 0 8px rgba(255,255,255,0.8); clip-path: inset(0 0 0 0); }
-            50% { transform: translate(1px, -2px); text-shadow: 3px 0 red, -3px 0 blue; clip-path: inset(20% 0 30% 0); }
-            60% { transform: translate(-2px, 0); text-shadow: -4px 0 cyan, 4px 0 magenta; clip-path: inset(50% 0 20% 0); }
-            70% { transform: translate(2px, 1px); text-shadow: 2px 0 lime, -2px 0 red; clip-path: inset(10% 0 60% 0); }
-            80% { transform: translate(-1px, -1px); text-shadow: -3px 0 yellow, 3px 0 blue; clip-path: inset(80% 0 5% 0); }
-            90% { transform: translate(0, 0); text-shadow: 0 0 12px rgba(255,215,0,0.8); clip-path: inset(0 0 0 0); }
-            100% { transform: translate(0, 0); text-shadow: none; clip-path: inset(0 0 0 0); }
-        }
-
-        /* Glitch Corner Left */
-        .corner-text-left {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            z-index: 10;
-            font-size: clamp(0.6rem, 1vw, 0.9rem);
-            font-weight: 300;
-            color: #888;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.5;
-            pointer-events: none;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 0 5px rgba(0,180,255,0.2);
-            mix-blend-mode: screen;
-        }
-
-        .corner-text-left .glitch-word-small {
-            display: inline-block;
-            transition: all 0.1s ease;
-        }
-
-        .corner-text-left .glitch-word-small.glitch-active {
-            animation: glitchEffectSmall 0.5s steps(1) 1;
-        }
-
-        @keyframes glitchEffectSmall {
-            0% { transform: translate(0, 0); text-shadow: 1px 0 red, -1px 0 blue; }
-            20% { transform: translate(-1px, 1px); text-shadow: -2px 0 cyan, 2px 0 magenta; }
-            40% { transform: translate(2px, -1px); text-shadow: 2px 0 lime, -2px 0 red; }
-            60% { transform: translate(-1px, -1px); text-shadow: -2px 0 yellow, 2px 0 blue; }
-            80% { transform: translate(1px, 0); text-shadow: 1px 0 red, -1px 0 blue; }
-            100% { transform: translate(0, 0); text-shadow: none; }
-        }
-
-        /* ===== MUSIC PLAYER CONTROLS & PLAYLIST ===== */
+        /* ===== CUSTOM PLAYER PANEL ===== */
         .player-panel {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            z-index: 10;
-            background: rgba(15, 15, 15, 0.7);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            border-radius: 8px;
-            max-width: 320px;
-            width: calc(100% - 60px);
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            font-family: 'Courier New', monospace;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(12px);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 215, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .now-playing {
             font-size: 0.85rem;
             color: #ffd700;
-            margin-bottom: 10px;
+            font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            text-align: center;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
         }
 
         .controls {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            justify-content: center;
+            gap: 15px;
         }
 
         .btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.4);
             color: #fff;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 8px 16px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: bold;
+            font-family: inherit;
             transition: all 0.2s ease;
         }
 
         .btn:hover {
             background: #ffd700;
             color: #000;
-            box-shadow: 0 0 10px #ffd700;
-            border-color: #ffd700;
+            box-shadow: 0 0 12px #ffd700;
         }
 
-        .playlist-select {
+        /* Search Bar */
+        .search-box {
             width: 100%;
-            background: #111;
-            color: #ccc;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            border-radius: 4px;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
             font-family: inherit;
             font-size: 0.8rem;
             outline: none;
-            cursor: pointer;
+            transition: border-color 0.2s;
         }
 
-        .playlist-select option {
-            background: #111;
+        .search-input:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Custom Playlist UI */
+        .custom-playlist {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .custom-playlist::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-playlist::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 2px;
+        }
+
+        .playlist-item {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 215, 0, 0.15);
             color: #fff;
         }
 
-        /* Khung chứa Youtube Iframe Ẩn */
-        #youtube-player {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            visibility: hidden;
+        .playlist-item.active {
+            background: rgba(255, 215, 0, 0.25);
+            color: #ffd700;
+            font-weight: bold;
+            border-left: 3px solid #ffd700;
         }
 
-        @media (max-width: 600px) {
-            .corner-text { bottom: 20px; right: 20px; font-size: 0.7rem; }
-            .corner-text-left { top: 15px; left: 15px; font-size: 0.5rem; }
-            .player-panel { left: 50%; transform: translateX(-50%); bottom: 20px; max-width: 90%; }
+        /* Glitch Corner Text */
+        .corner-text {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            font-size: clamp(0.7rem, 1.2vw, 1rem);
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .corner-text-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-size: clamp(0.6rem, 1vw, 0.8rem);
+            color: #888;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .glitch-active {
+            animation: glitchEffect 0.3s steps(1) 1;
+        }
+
+        @keyframes glitchEffect {
+            0% { transform: translate(0, 0); text-shadow: 2px 0 red, -2px 0 blue; }
+            20% { transform: translate(-2px, 1px); text-shadow: -3px 0 cyan, 3px 0 magenta; }
+            50% { transform: translate(2px, -1px); text-shadow: 3px 0 lime, -3px 0 red; }
+            100% { transform: translate(0, 0); text-shadow: none; }
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0, 0, 0, 0.05) 3px, rgba(0, 0, 0, 0.05) 4px);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .vignette {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #youtube-player {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0.01;
+            pointer-events: none;
+            left: -9999px;
         }
     </style>
 </head>
@@ -360,45 +310,52 @@
     <div class="outro-container">
         <div class="light-ring"></div>
         <div class="light-ring"></div>
-
         <div class="vignette"></div>
         <div class="scanline"></div>
         <canvas id="grainCanvas"></canvas>
 
-        <div class="main-content" title="Click để chạy lại Animation M-TP">
-            <div class="main-text">
-                <span class="char">M</span>
-                <span style="display:inline-block; min-width:0.3em;">-</span>
-                <span class="char">T</span>
-                <span class="char">P</span>
+        <div class="wrapper">
+            <div class="main-content" title="Click để chạy lại Animation Glitch">
+                <div class="main-text">
+                    <span class="char">M</span>
+                    <span style="display:inline-block; min-width:0.3em;">-</span>
+                    <span class="char">T</span>
+                    <span class="char">P</span>
+                </div>
+                <br>
+                <div class="sub-line">⚡ COME MY WAY ⚡</div>
             </div>
-            <br>
-            <div class="sub-line">⚡ COME MY WAY ⚡</div>
+
+            <div class="player-panel">
+                <div class="now-playing" id="trackTitle">▶ Chọn bài hát để bắt đầu</div>
+                
+                <div class="controls">
+                    <button class="btn" id="prevBtn">◄ PREV</button>
+                    <button class="btn" id="playBtn">▶ PLAY</button>
+                    <button class="btn" id="nextBtn">NEXT ►</button>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm bài hát Sơn Tùng...">
+                </div>
+
+                <div class="custom-playlist" id="playlistContainer">
+                    </div>
+            </div>
         </div>
 
         <div class="corner-text" id="cornerRight">
-            <span class="glitch-word" id="glitchRight">● SƠN TÙNG MTP</span>
+            <span id="glitchRight">● SƠN TÙNG MTP</span>
         </div>
         <div class="corner-text-left" id="cornerLeft">
-            <span class="glitch-word-small" id="glitchLeft">#MTP</span>
-        </div>
-
-        <div class="player-panel">
-            <div class="now-playing" id="trackTitle">Đang tải danh sách nhạc...</div>
-            <div class="controls">
-                <button class="btn" id="prevBtn">◄ PREV</button>
-                <button class="btn" id="playBtn">▶ PLAY</button>
-                <button class="btn" id="nextBtn">NEXT ►</button>
-            </div>
-            <select class="playlist-select" id="playlistSelect">
-                </select>
+            <span id="glitchLeft">#MTP</span>
         </div>
     </div>
 
     <div id="youtube-player"></div>
 
     <script>
-        // ===== DANH SÁCH BÀI HÁT (Thêm/Sửa YouTube Video ID tại đây) =====
+        // Danh sách nhạc YouTube
         const playlist = [
             { title: "Đừng Làm Trái Tim Anh Đau", id: "abPmZCZZrFA" },
             { title: "Chúng Ta Của Tương Lai", id: "0pWsCiO1-mE" },
@@ -407,78 +364,103 @@
             { title: "Hãy Trao Cho Anh", id: "knW7-J7ORjU" },
             { title: "Lạc Trôi", id: "Llw9Q6akRo4" },
             { title: "Có Chắc Yêu Là Đây", id: "c183BI__I_8" },
-            { title: "Muộn Rồi Mà Sao Còn", id: "xypzmu5mMPY" }
+            { title: "Muộn Rồi Mà Sao Còn", id: "xypzmu5mMPY" },
+            { title: "Chúng Ta Của Hiện Tại", id: "psZ1g9fMkyo" },
+            { title: "Nơi Này Có Anh", id: "FN7ALfpGxiI" }
         ];
 
         let currentTrackIndex = 0;
         let player = null;
         let isPlaying = false;
 
-        // ===== YOUTUBE IFRAME API =====
+        // Tải YouTube IFrame API
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        document.head.appendChild(tag);
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
-                height: '0',
-                width: '0',
+                height: '100',
+                width: '100',
                 videoId: playlist[currentTrackIndex].id,
                 playerVars: {
                     'autoplay': 0,
-                    'controls': 0
+                    'controls': 0,
+                    'playsinline': 1
                 },
                 events: {
-                    'onReady': onPlayerReady,
+                    'onReady': () => renderPlaylist(playlist),
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
 
-        function onPlayerReady(event) {
-            updateUI();
-        }
-
         function onPlayerStateChange(event) {
-            // Khi bài hát kết thúc (YT.PlayerState.ENDED = 0), chuyển bài kế tiếp
             if (event.data === YT.PlayerState.ENDED) {
                 nextTrack();
             }
         }
 
-        // ===== CONTROL LOGIC =====
+        // DOM Elements
         const playBtn = document.getElementById('playBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const playlistSelect = document.getElementById('playlistSelect');
+        const playlistContainer = document.getElementById('playlistContainer');
+        const searchInput = document.getElementById('searchInput');
         const trackTitle = document.getElementById('trackTitle');
 
-        // Populate Playlist vào Dropdown
-        playlist.forEach((track, index) => {
-            const opt = document.createElement('option');
-            opt.value = index;
-            opt.textContent = `${index + 1}. ${track.title}`;
-            playlistSelect.appendChild(opt);
-        });
+        // Render Custom Playlist UI
+        function renderPlaylist(items) {
+            playlistContainer.innerHTML = '';
+            if(items.length === 0) {
+                playlistContainer.innerHTML = '<div style="padding:10px; text-align:center; color:#666;">Không tìm thấy bài hát</div>';
+                return;
+            }
 
-        function loadTrack(index) {
+            items.forEach((track) => {
+                const originalIndex = playlist.findIndex(p => p.id === track.id);
+                const item = document.createElement('div');
+                item.className = `playlist-item ${originalIndex === currentTrackIndex ? 'active' : ''}`;
+                item.innerHTML = `<span>${originalIndex + 1}. ${track.title}</span> <span>►</span>`;
+                
+                item.addEventListener('click', () => {
+                    playTrack(originalIndex);
+                });
+                
+                playlistContainer.appendChild(item);
+            });
+        }
+
+        function playTrack(index) {
             currentTrackIndex = index;
-            playlistSelect.value = index;
             if (player && player.loadVideoById) {
                 player.loadVideoById(playlist[currentTrackIndex].id);
-                isPlaying = true;
-                playBtn.textContent = '❚❚ PAUSE';
+                
+                // Nếu trước đó đang bật thì tiếp tục tự động phát bài mới
+                if (isPlaying) {
+                    player.playVideo();
+                } else {
+                    player.pauseVideo();
+                }
             }
             updateUI();
         }
 
         function updateUI() {
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
-            // Cập nhật mảng glitch ở góc bên phải chứa luôn bài hát hiện tại
-            phrasesRight[0] = `► ${playlist[currentTrackIndex].title.toUpperCase()}`;
+            renderPlaylist(getFilteredPlaylist());
+            
+            // Cuộn tới item đang active
+            const activeEl = playlistContainer.querySelector('.playlist-item.active');
+            if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
+        function getFilteredPlaylist() {
+            const query = searchInput.value.toLowerCase().trim();
+            return playlist.filter(item => item.title.toLowerCase().includes(query));
+        }
+
+        // Event Listeners Cho Control
         playBtn.addEventListener('click', () => {
             if (!player) return;
             if (isPlaying) {
@@ -492,27 +474,33 @@
             }
         });
 
-        nextBtn.addEventListener('click', () => {
-            nextTrack();
-        });
-
+        nextBtn.addEventListener('click', () => nextTrack());
         prevBtn.addEventListener('click', () => {
             currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-            loadTrack(currentTrackIndex);
-        });
-
-        playlistSelect.addEventListener('change', (e) => {
-            loadTrack(parseInt(e.target.value));
+            playTrack(currentTrackIndex);
         });
 
         function nextTrack() {
             currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-            loadTrack(currentTrackIndex);
+            playTrack(currentTrackIndex);
         }
 
+        // Tim kiem real-time
+        searchInput.addEventListener('input', () => {
+            renderPlaylist(getFilteredPlaylist());
+        });
 
-        // ===== CANVAS BACKGROUND & EFFECTS =====
+        // Kích hoạt Audio khi chạm vào màn hình (Tránh bị trình duyệt chặn autoplay)
+        document.body.addEventListener('click', () => {
+            if (player && typeof player.isMuted === 'function' && player.isMuted()) {
+                player.unMute();
+            }
+        }, { once: true });
+
+
+        // ===== GLITCH ANIMATION CHỮ M-TP TỐC ĐỘ CAO =====
         (function() {
+            // Grain Canvas
             const canvas = document.getElementById('grainCanvas');
             const ctx = canvas.getContext('2d');
             function resizeCanvas() {
@@ -523,15 +511,12 @@
             resizeCanvas();
 
             function drawGrain() {
-                const w = canvas.width;
-                const h = canvas.height;
+                const w = canvas.width, h = canvas.height;
                 const imageData = ctx.createImageData(w, h);
                 const data = imageData.data;
                 for (let i = 0; i < data.length; i += 4) {
                     const noise = Math.random() * 255;
-                    data[i] = noise;
-                    data[i+1] = noise;
-                    data[i+2] = noise;
+                    data[i] = data[i+1] = data[i+2] = noise;
                     data[i+3] = 255;
                 }
                 ctx.putImageData(imageData, 0, 0);
@@ -539,97 +524,63 @@
             }
             drawGrain();
 
-            // Rung nhẹ cho chữ chính
-            const mainText = document.querySelector('.main-text');
-            let time = 0;
-            setInterval(() => {
-                time += 0.02;
-                const x = Math.sin(time * 3) * 0.3;
-                const y = Math.cos(time * 2.5) * 0.3;
-                mainText.style.transform = `translate(${x}px, ${y}px)`;
-            }, 50);
-
-            // Glitch Text Các Góc
-            window.phrasesRight = ['● SƠN TÙNG MTP', '✦ COME MY WAY', '► EDITOR NETKING', '★ M-TP', '◆ SKY CƠN MƯA', '⬡ CHẠY NGAY ĐI'];
-            const phrasesLeft = ['#MTP', '#SKY', '#SONTUNG', '#MTPFAN', '#VIP'];
-            const elRight = document.getElementById('glitchRight');
-            const elLeft = document.getElementById('glitchLeft');
-            let indexRight = 0, indexLeft = 0;
-
-            function changeRight() {
-                elRight.classList.remove('glitch-active');
-                void elRight.offsetWidth;
-                indexRight = (indexRight + 1) % phrasesRight.length;
-                elRight.textContent = phrasesRight[indexRight];
-                elRight.classList.add('glitch-active');
-                setTimeout(() => elRight.classList.remove('glitch-active'), 500);
-            }
-            function changeLeft() {
-                elLeft.classList.remove('glitch-active');
-                void elLeft.offsetWidth;
-                indexLeft = (indexLeft + 1) % phrasesLeft.length;
-                elLeft.textContent = phrasesLeft[indexLeft];
-                elLeft.classList.add('glitch-active');
-                setTimeout(() => elLeft.classList.remove('glitch-active'), 550);
-            }
-            setInterval(changeRight, 2200);
-            setInterval(changeLeft, 2800);
-
-            // Animation Chuyển Chữ M-TP (Outro "Come My Way" Style)
-            const charSequence = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$'];
-            const charElements = document.querySelectorAll('.char'); // M, T, P
+            // Glitch M-TP Animation
+            const randomChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const charElements = document.querySelectorAll('.char'); 
             const originalChars = ['M', 'T', 'P'];
-            let completed = false;
+            let isAnimating = false;
 
-            function animateCharSequence() {
-                if (completed) return;
-
-                charElements.forEach((el, i) => {
-                    el.textContent = originalChars[i];
-                });
+            function fastGlitchMTP() {
+                if (isAnimating) return;
+                isAnimating = true;
 
                 let currentCharIndex = 0;
 
                 function processNextChar() {
                     if (currentCharIndex >= charElements.length) {
-                        completed = true;
+                        isAnimating = false;
                         return;
                     }
 
                     const el = charElements[currentCharIndex];
-                    const original = originalChars[currentCharIndex];
+                    const targetChar = originalChars[currentCharIndex];
                     let step = 0;
+                    const maxSteps = 12; // Số lần nháy chữ ngẫu nhiên
 
+                    // Đổi ký tự siêu nhanh (60ms/bước)
                     const interval = setInterval(() => {
-                        if (step >= charSequence.length) {
+                        if (step >= maxSteps) {
                             clearInterval(interval);
-                            el.textContent = original;
-                            setTimeout(() => {
-                                currentCharIndex++;
-                                processNextChar();
-                            }, 500);
+                            el.textContent = targetChar;
+                            currentCharIndex++;
+                            setTimeout(processNextChar, 100); // Khoảng nghỉ ngắn giữa các chữ
                             return;
                         }
-                        el.textContent = charSequence[step];
+                        // Lấy ngẫu nhiên ký tự trong mảng
+                        el.textContent = randomChars[Math.floor(Math.random() * randomChars.length)];
                         step++;
-                    }, 300);
+                    }, 60);
                 }
 
                 processNextChar();
             }
 
-            // Kích hoạt animation đổi chữ M-TP sau 3 giây
-            setTimeout(animateCharSequence, 3000);
+            // Chạy animation ban đầu sau 1 giây
+            setTimeout(fastGlitchMTP, 1000);
 
-            // Click vào chữ lớn để replay animation M-TP
-            document.querySelector('.main-content').addEventListener('click', function() {
-                if (!completed) return;
-                completed = false;
-                charElements.forEach((el, i) => {
-                    el.textContent = originalChars[i];
-                });
-                setTimeout(animateCharSequence, 300);
-            });
+            // Click chữ để phát lại animation Glitch bất cứ lúc nào
+            document.querySelector('.main-content').addEventListener('click', fastGlitchMTP);
+
+            // Glitch text phụ ở góc
+            const phrasesRight = ['● SƠN TÙNG MTP', '✦ COME MY WAY', '★ M-TP', '◆ SKY CƠN MƯA'];
+            const elRight = document.getElementById('glitchRight');
+            let idx = 0;
+            setInterval(() => {
+                idx = (idx + 1) % phrasesRight.length;
+                elRight.textContent = phrasesRight[idx];
+                elRight.classList.add('glitch-active');
+                setTimeout(() => elRight.classList.remove('glitch-active'), 300);
+            }, 2000);
         })();
     </script>
 </body>
