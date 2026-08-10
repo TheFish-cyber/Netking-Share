@@ -95,12 +95,12 @@
         .main-content {
             text-align: center;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .main-text {
             font-family: 'Arial Black', 'Impact', sans-serif;
-            font-size: clamp(2.2rem, 7vw, 5rem);
+            font-size: clamp(2rem, 6.5vw, 4.5rem);
             font-weight: 900;
             letter-spacing: 6px;
             text-transform: uppercase;
@@ -116,15 +116,15 @@
         }
 
         .sub-line {
-            margin-top: 5px;
-            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            margin-top: 4px;
+            font-size: clamp(0.75rem, 1.8vw, 1.1rem);
             font-weight: bold;
             color: #ffd700;
             letter-spacing: 8px;
             text-transform: uppercase;
             opacity: 0.9;
             border-top: 1px solid rgba(255, 215, 0, 0.3);
-            padding-top: 5px;
+            padding-top: 4px;
             display: inline-block;
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
         }
@@ -142,41 +142,71 @@
             background: rgba(10, 10, 10, 0.88);
             border: 1px solid rgba(255, 215, 0, 0.3);
             backdrop-filter: blur(12px);
-            padding: 15px;
+            padding: 12px 15px;
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 215, 0, 0.1);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             position: relative;
         }
 
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
         .now-playing {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #00ff66;
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-align: center;
+            text-align: left;
+            flex: 1;
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+        }
+
+        /* Nút Chạy Nền Nhỏ */
+        .btn-bg-mode {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: #ffd700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-bg-mode.active {
+            background: #00ff66;
+            color: #000;
+            border-color: #00ff66;
+            font-weight: bold;
+            box-shadow: 0 0 8px #00ff66;
         }
 
         .controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 215, 0, 0.4);
             color: #fff;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
             font-family: inherit;
             transition: all 0.2s ease;
@@ -208,10 +238,10 @@
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             font-family: inherit;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             outline: none;
             transition: border-color 0.2s;
         }
@@ -223,8 +253,8 @@
 
         .custom-playlist {
             position: relative;
-            min-height: 140px;
-            max-height: 140px;
+            min-height: 125px;
+            max-height: 125px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -244,7 +274,7 @@
             left: 0;
             top: 0;
             width: 100%;
-            height: 35px;
+            height: 33px;
             background: rgba(0, 255, 102, 0.18);
             border-left: 3px solid #00ff66;
             box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.2);
@@ -257,8 +287,8 @@
         .playlist-item {
             position: relative;
             z-index: 2;
-            padding: 8px 12px;
-            font-size: 0.8rem;
+            padding: 7px 10px;
+            font-size: 0.75rem;
             color: #ccc;
             cursor: pointer;
             display: flex;
@@ -278,7 +308,23 @@
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
         }
 
-        /* ===== UI TRẠNG THÁI LOADING / ERROR ===== */
+        /* Căn chỉnh lại footer text bên trong Panel (Fix vỡ giao diện) */
+        .panel-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #888;
+            padding-top: 4px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .panel-footer .glitch-word {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* UI TRẠNG THÁI LOADING / ERROR */
         .status-state {
             position: absolute;
             top: 0; left: 0;
@@ -289,14 +335,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             padding: 10px;
             border-radius: 6px;
         }
 
         .loading-spinner {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border: 3px solid rgba(255, 215, 0, 0.2);
             border-top-color: #ffd700;
             border-radius: 50%;
@@ -308,7 +354,7 @@
         }
 
         .status-text {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #ffd700;
             letter-spacing: 1px;
             text-align: center;
@@ -319,26 +365,12 @@
             text-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
         }
 
-        /* Glitch Corner Text */
-        .corner-text {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10;
-            font-size: clamp(0.7rem, 1.2vw, 1rem);
-            font-weight: 700;
-            color: #fff;
-            text-transform: uppercase;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
         .corner-text-left {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             z-index: 10;
-            font-size: clamp(0.6rem, 1vw, 0.8rem);
+            font-size: 0.7rem;
             color: #888;
             opacity: 0.5;
             pointer-events: none;
@@ -443,7 +475,10 @@
             </div>
 
             <div class="player-panel">
-                <div class="now-playing" id="trackTitle">⌛ ĐANG KHỞI TẠO PLAYER...</div>
+                <div class="panel-header">
+                    <div class="now-playing" id="trackTitle">⌛ ĐANG KHỞI TẠO PLAYER...</div>
+                    <button class="btn-bg-mode" id="bgModeBtn">🎧 Nền: Tắt</button>
+                </div>
                 
                 <div class="controls">
                     <button class="btn" id="prevBtn">◄ PREV</button>
@@ -463,12 +498,14 @@
                         <button class="btn btn-retry" id="retryBtn" style="display: none;">🔄 THỬ LẠI KẾT NỐI</button>
                     </div>
                 </div>
+
+                <div class="panel-footer">
+                    <span>#NETKING_PLAYLIST</span>
+                    <span class="glitch-word" id="glitchRight">● NETKING MTP</span>
+                </div>
             </div>
         </div>
 
-        <div class="corner-text" id="cornerRight">
-            <span id="glitchRight">● NETKING MTP</span>
-        </div>
         <div class="corner-text-left" id="cornerLeft">
             <span id="glitchLeft">#NETKING</span>
         </div>
@@ -520,7 +557,7 @@
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
         document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        // 3. DANH SÁCH BÀI HÁT ĐỐI CHIẾU CHÍNH XÁC THEO ẢNH CHỤP ZALO
+        // 3. DANH SÁCH BÀI HÁT
         const playlist = [
             { title: "Nơi Này Có Anh", id: "FN7ALfpGxiI" },
             { title: "Chúng Ta Của Hiện Tại", id: "psZ1g9fMfeo" },
@@ -536,16 +573,36 @@
         let currentTrackIndex = 0;
         let player = null;
         let isPlaying = false;
+        let isBgMode = false;
         let loadTimeout = null;
 
         const statusOverlay = document.getElementById('statusOverlay');
         const statusSpinner = document.getElementById('statusSpinner');
         const statusText = document.getElementById('statusText');
         const retryBtn = document.getElementById('retryBtn');
+        const bgModeBtn = document.getElementById('bgModeBtn');
+
+        // Logic Toggle Chạy Nền Nhạc Web
+        bgModeBtn.addEventListener('click', () => {
+            isBgMode = !isBgMode;
+            if (isBgMode) {
+                bgModeBtn.textContent = '🎧 Nền: Bật';
+                bgModeBtn.classList.add('active');
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: playlist[currentTrackIndex].title,
+                        artist: 'Sơn Tùng M-TP',
+                        album: 'Netking Playlist'
+                    });
+                }
+            } else {
+                bgModeBtn.textContent = '🎧 Nền: Tắt';
+                bgModeBtn.classList.remove('active');
+            }
+        });
 
         function initYouTubePlayer() {
             showLoadingState();
-            
             clearTimeout(loadTimeout);
             loadTimeout = setTimeout(() => {
                 if (!player || typeof player.getPlayerState !== 'function') {
@@ -635,7 +692,7 @@
 
             if(items.length === 0) {
                 const noItem = document.createElement('div');
-                noItem.style.cssText = 'padding:15px; text-align:center; color:#666; font-size:0.8rem;';
+                noItem.style.cssText = 'padding:15px; text-align:center; color:#666; font-size:0.75rem;';
                 noItem.textContent = 'Không tìm thấy bài hát';
                 playlistContainer.appendChild(noItem);
                 indicator.style.opacity = '0';
@@ -688,6 +745,14 @@
         function updateUI() {
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
             
+            if (isBgMode && 'mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: playlist[currentTrackIndex].title,
+                    artist: 'Sơn Tùng M-TP',
+                    album: 'Netking Playlist'
+                });
+            }
+
             const items = playlistContainer.querySelectorAll('.playlist-item');
             items.forEach(item => {
                 if(parseInt(item.getAttribute('data-index')) === currentTrackIndex) {
