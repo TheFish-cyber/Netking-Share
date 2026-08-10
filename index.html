@@ -33,7 +33,6 @@
             overflow: hidden;
         }
 
-        /* Hiệu ứng hạt (film grain) */
         #grainCanvas {
             position: absolute;
             top: 0;
@@ -46,7 +45,6 @@
             mix-blend-mode: overlay;
         }
 
-        /* Ánh sáng xoay */
         .light-ring {
             position: absolute;
             width: 80vmin;
@@ -72,7 +70,6 @@
             100% { transform: rotate(360deg) scale(1.2); }
         }
 
-        /* Nội dung chính */
         .main-content {
             position: relative;
             z-index: 5;
@@ -155,7 +152,6 @@
             100% { opacity: 0.7; transform: scale(1); }
         }
 
-        /* Scanline */
         .scanline {
             position: absolute;
             top: 0;
@@ -173,7 +169,6 @@
             z-index: 3;
         }
 
-        /* Vignette */
         .vignette {
             position: absolute;
             top: 0;
@@ -194,7 +189,7 @@
             100% { opacity: 1; }
         }
 
-        /* ===== Mỗi ký tự trong "Netking" ===== */
+        /* Mỗi ký tự trong "Netking" - sẽ được điều khiển bằng JS */
         .char {
             display: inline-block;
             min-width: 0.7em;
@@ -203,7 +198,7 @@
             color: #fff;
         }
 
-        /* ===== CÁC GÓC CHỮ NHỎ (giữ nguyên) ===== */
+        /* Các góc chữ nhỏ - giữ nguyên */
         .corner-text {
             position: absolute;
             bottom: 40px;
@@ -298,7 +293,7 @@
         <div class="scanline"></div>
         <canvas id="grainCanvas"></canvas>
 
-        <!-- Nội dung chính -->
+        <!-- Nội dung chính: Editor Netking! -->
         <div class="main-content flicker">
             <div class="main-text">
                 Editor 
@@ -409,9 +404,10 @@
             }
             setInterval(randomFlicker, 400);
 
-            // ===== HIỆU ỨNG NHÁY TUẦN TỰ CHO "Netking" (không glitch, chỉ nháy đổi chữ) =====
+            // ===== HIỆU ỨNG CHUYỂN ĐỔI TUẦN TỰ CHO "Netking" =====
+            // Bảng ký tự sẽ xuất hiện lần lượt: P, O, I, Q, E, R, A, &, $
+            const charSequence = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$'];
             const charElements = document.querySelectorAll('.char');
-            const glitchChars = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$']; // bảng ký tự thay thế
             const originalChars = Array.from(charElements).map(el => el.textContent);
 
             let isAnimating = false;
@@ -425,51 +421,47 @@
                     el.textContent = originalChars[i];
                 });
 
-                // Duyệt từng ký tự
-                let currentIndex = 0;
+                let currentCharIndex = 0; // chỉ số ký tự trong "Netking" (0->6)
 
                 function processNextChar() {
-                    if (currentIndex >= charElements.length) {
-                        // Hoàn thành, đợi 3 giây rồi lặp lại
+                    if (currentCharIndex >= charElements.length) {
+                        // Hoàn thành tất cả ký tự, đợi 2.5s rồi lặp lại
                         setTimeout(() => {
                             isAnimating = false;
-                            // Reset all (đảm bảo)
+                            // Reset all
                             charElements.forEach((el, i) => {
                                 el.textContent = originalChars[i];
                             });
                             // Tự động chạy lại sau 1s
                             setTimeout(animateCharSequence, 1000);
-                        }, 3000);
+                        }, 2500);
                         return;
                     }
 
-                    const el = charElements[currentIndex];
-                    const original = originalChars[currentIndex];
+                    const el = charElements[currentCharIndex];
+                    const original = originalChars[currentCharIndex];
                     let step = 0;
-                    const maxSteps = 10; // số lần nháy (đổi ký tự)
+                    const totalSteps = charSequence.length; // 9 bước
 
                     const interval = setInterval(() => {
-                        if (step >= maxSteps) {
+                        if (step >= totalSteps) {
                             clearInterval(interval);
                             // Kết thúc, đặt lại đúng chữ
                             el.textContent = original;
-                            // Chờ một chút rồi chuyển sang ký tự tiếp theo
+                            // Chuyển sang ký tự tiếp theo sau một khoảng dừng
                             setTimeout(() => {
-                                currentIndex++;
+                                currentCharIndex++;
                                 processNextChar();
-                            }, 150);
+                            }, 180);
                             return;
                         }
 
-                        // Chọn ngẫu nhiên một ký tự từ bảng
-                        const randomChar = glitchChars[Math.floor(Math.random() * glitchChars.length)];
-                        // Đổi chữ
-                        el.textContent = randomChar;
+                        // Hiển thị ký tự trong chuỗi theo thứ tự
+                        el.textContent = charSequence[step];
                         step++;
-                    }, 80); // 80ms mỗi bước => tổng ~0.8s cho mỗi ký tự
+                    }, 100); // 100ms mỗi bước => tổng ~0.9s cho mỗi ký tự
                 }
 
-                // Bắt đầu
                 processNextChar();
             }
 
