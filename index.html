@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sơn Tùng M-TP Playlist</title>
+    <title>Sơn Tùng M-TP Playlist - Smooth Transition</title>
     <style>
         * {
             margin: 0;
@@ -24,7 +24,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Đổi font hỗ trợ hoàn hảo tiếng Việt (Fix lỗi chữ ừ) */
             font-family: Consolas, 'Segoe UI', Roboto, sans-serif;
             color: #fff;
             touch-action: pan-x pan-y;
@@ -99,7 +98,7 @@
             margin-bottom: 15px;
         }
 
-        /* BAN ĐẦU ẨN CHỮ M-TP HOÀN TOÀN (opacity: 0) */
+        /* Ban đầu ẩn M-TP hoàn toàn */
         .main-text {
             font-family: 'Arial Black', 'Impact', sans-serif;
             font-size: clamp(2.2rem, 7vw, 5rem);
@@ -113,7 +112,7 @@
                 0 0 40px rgba(255, 215, 0, 0.4);
             position: relative;
             display: inline-block;
-            opacity: 0; /* Ẩn đi trước khi đổi */
+            opacity: 0;
             transition: opacity 0.2s ease;
         }
 
@@ -152,10 +151,9 @@
             gap: 12px;
         }
 
-        /* BÀI ĐANG PHÁT HIỂN THỊ CHỮ MÀU XANH LÁ */
         .now-playing {
             font-size: 0.85rem;
-            color: #00ff66; /* Màu xanh lá */
+            color: #00ff66;
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
@@ -213,8 +211,9 @@
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
         }
 
-        /* Custom Playlist UI */
+        /* CUSTOM PLAYLIST UI TÍCH HỢP KHUNG SLIDING MƯỢT */
         .custom-playlist {
+            position: relative;
             max-height: 140px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -230,7 +229,26 @@
             border-radius: 2px;
         }
 
+        /* KHUNG VIỀN XANH LÁ TRUYỀN ĐỘNG (INDICATOR) */
+        .active-indicator {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 35px; /* Chiều cao khớp với item */
+            background: rgba(0, 255, 102, 0.18);
+            border-left: 3px solid #00ff66;
+            box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.2);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            /* Tạo hiệu ứng trượt mượt mà bằng transition */
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), height 0.2s ease, opacity 0.2s ease;
+        }
+
         .playlist-item {
+            position: relative;
+            z-index: 2;
             padding: 8px 12px;
             font-size: 0.8rem;
             color: #ccc;
@@ -239,21 +257,17 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background 0.2s, color 0.2s;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
         }
 
         .playlist-item:hover {
-            background: rgba(0, 255, 102, 0.15);
             color: #fff;
         }
 
-        /* ĐỔI BÀI ĐƯỢC CHỌN HOẶC ĐANG PHÁT SANG MÀU XANH LÁ CÂY */
         .playlist-item.active {
-            background: rgba(0, 255, 102, 0.2);
-            color: #00ff66 !important; /* Xanh lá rực rỡ */
+            color: #00ff66 !important;
             font-weight: bold;
-            border-left: 3px solid #00ff66;
-            text-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
         }
 
         /* Glitch Corner Text */
@@ -317,7 +331,7 @@
             left: -9999px;
         }
 
-        /* POPUP CẢNH BÁO IN-APP BROWSER */
+        /* POPUP IN-APP BROWSER */
         .inapp-modal {
             position: fixed;
             top: 0; left: 0;
@@ -343,31 +357,10 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
         }
 
-        .inapp-box h2 {
-            color: #ffd700;
-            font-size: 1.2rem;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .inapp-box p {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-
-        .arrow-guide {
-            font-size: 2rem;
-            color: #ffd700;
-            animation: bounce 1s infinite alternate;
-            margin-bottom: 10px;
-        }
-
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-        }
+        .inapp-box h2 { color: #ffd700; font-size: 1.2rem; margin-bottom: 12px; text-transform: uppercase; }
+        .inapp-box p { font-size: 0.85rem; line-height: 1.5; color: #ddd; margin-bottom: 20px; }
+        .arrow-guide { font-size: 2rem; color: #ffd700; animation: bounce 1s infinite alternate; margin-bottom: 10px; }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
@@ -413,7 +406,9 @@
                     <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm kiếm bài hát...">
                 </div>
 
-                <div class="custom-playlist" id="playlistContainer"></div>
+                <div class="custom-playlist" id="playlistContainer">
+                    <div class="active-indicator" id="activeIndicator"></div>
+                </div>
             </div>
         </div>
 
@@ -428,17 +423,13 @@
     <div id="youtube-player"></div>
 
     <script>
-        // ==========================================
-        // 1. PHÁT HIỆN IN-APP BROWSER
-        // ==========================================
+        // 1. IN-APP BROWSER DETECTOR
         function detectInAppBrowser() {
             const ua = navigator.userAgent || navigator.vendor || window.opera;
             const isInApp = /FBAN|FBAV|Instagram|TikTok|Zalo|Telegram|Discord|Line|Twitter|Snapchat|MicroMessenger|Pinterest|FB_IAB/i.test(ua);
-            
             if (isInApp) {
                 const modal = document.getElementById('inAppModal');
                 const msg = document.getElementById('inAppMsg');
-                
                 let appName = "Ứng dụng này";
                 if (/FBAN|FBAV|FB_IAB/i.test(ua)) appName = "Facebook";
                 else if (/Instagram/i.test(ua)) appName = "Instagram";
@@ -455,7 +446,6 @@
         function openExternalBrowser() {
             const currentUrl = window.location.href;
             const ua = navigator.userAgent || navigator.vendor || window.opera;
-
             if (/android/i.test(ua)) {
                 window.location.href = "intent://" + currentUrl.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end";
             } else {
@@ -465,40 +455,18 @@
 
         document.addEventListener('DOMContentLoaded', detectInAppBrowser);
 
-
-        // ==========================================
-        // 2. KHÓA THAO TÁC / BẢO VỆ WEB & CHỐNG ZOOM
-        // ==========================================
+        // 2. KHÓA THAO TÁC / BẢO VỆ WEB
         document.addEventListener('contextmenu', e => e.preventDefault());
-
         document.addEventListener('keydown', e => {
-            if (
-                e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))
-            ) {
-                e.preventDefault();
-                return false;
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))) {
+                e.preventDefault(); return false;
             }
-            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-                e.preventDefault();
-            }
+            if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) e.preventDefault();
         });
+        document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        document.addEventListener('wheel', e => {
-            if (e.ctrlKey) e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener('touchstart', e => {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-
-        // ==========================================
         // 3. PLAYLIST & YOUTUBE PLAYER LOGIC
-        // ==========================================
         const playlist = [
             { title: "Đừng Làm Trái Tim Anh Đau", id: "abPmZCZZrFA" },
             { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" },
@@ -522,14 +490,9 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
-                height: '100',
-                width: '100',
+                height: '100', width: '100',
                 videoId: playlist[currentTrackIndex].id,
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'playsinline': 1
-                },
+                playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1 },
                 events: {
                     'onReady': () => renderPlaylist(playlist),
                     'onStateChange': onPlayerStateChange
@@ -538,9 +501,7 @@
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                nextTrack();
-            }
+            if (event.data === YT.PlayerState.ENDED) nextTrack();
         }
 
         const playBtn = document.getElementById('playBtn');
@@ -549,11 +510,16 @@
         const playlistContainer = document.getElementById('playlistContainer');
         const searchInput = document.getElementById('searchInput');
         const trackTitle = document.getElementById('trackTitle');
+        const activeIndicator = document.getElementById('activeIndicator');
 
         function renderPlaylist(items) {
-            playlistContainer.innerHTML = '';
+            // Giữ lại indicator
+            playlistContainer.innerHTML = '<div class="active-indicator" id="activeIndicator"></div>';
+            const indicator = document.getElementById('activeIndicator');
+
             if(items.length === 0) {
-                playlistContainer.innerHTML = '<div style="padding:10px; text-align:center; color:#666;">Không tìm thấy bài hát</div>';
+                playlistContainer.innerHTML += '<div style="padding:10px; text-align:center; color:#666;">Không tìm thấy bài hát</div>';
+                indicator.style.opacity = '0';
                 return;
             }
 
@@ -561,6 +527,7 @@
                 const originalIndex = playlist.findIndex(p => p.id === track.id);
                 const item = document.createElement('div');
                 item.className = `playlist-item ${originalIndex === currentTrackIndex ? 'active' : ''}`;
+                item.setAttribute('data-index', originalIndex);
                 item.innerHTML = `<span>${originalIndex + 1}. ${track.title}</span> <span>►</span>`;
                 
                 item.addEventListener('click', () => {
@@ -569,26 +536,55 @@
                 
                 playlistContainer.appendChild(item);
             });
+
+            // Cập nhật vị trí khung trượt xanh lá ngay lập tức
+            moveIndicator();
+        }
+
+        // HÀM TÍNH TOÁN TRUYỀN ĐỘNG (MOVE) CHO KHUNG XANH LÁ
+        function moveIndicator() {
+            const indicator = document.getElementById('activeIndicator');
+            const activeItem = playlistContainer.querySelector('.playlist-item.active');
+            
+            if (activeItem) {
+                // Lấy tọa độ tương đối so với container
+                const topPos = activeItem.offsetTop;
+                const height = activeItem.offsetHeight;
+
+                indicator.style.opacity = '1';
+                indicator.style.height = `${height}px`;
+                indicator.style.transform = `translateY(${topPos}px)`;
+            } else {
+                indicator.style.opacity = '0';
+            }
         }
 
         function playTrack(index) {
             currentTrackIndex = index;
             if (player && player.loadVideoById) {
                 player.loadVideoById(playlist[currentTrackIndex].id);
-                if (isPlaying) {
-                    player.playVideo();
-                } else {
-                    player.pauseVideo();
-                }
+                if (isPlaying) player.playVideo();
+                else player.pauseVideo();
             }
             updateUI();
         }
 
         function updateUI() {
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
-            renderPlaylist(getFilteredPlaylist());
-            const activeEl = playlistContainer.querySelector('.playlist-item.active');
-            if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // Xóa class active cũ và gán cho item mới
+            const items = playlistContainer.querySelectorAll('.playlist-item');
+            items.forEach(item => {
+                if(parseInt(item.getAttribute('data-index')) === currentTrackIndex) {
+                    item.classList.add('active');
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Thực hiện chuyển động khung trượt
+            moveIndicator();
         }
 
         function getFilteredPlaylist() {
@@ -624,6 +620,10 @@
             renderPlaylist(getFilteredPlaylist());
         });
 
+        playlistContainer.addEventListener('scroll', () => {
+            moveIndicator(); // Giữ khung trượt chuẩn vị trí khi cuộn danh sách
+        });
+
         document.body.addEventListener('click', () => {
             if (player && typeof player.isMuted === 'function' && player.isMuted()) {
                 player.unMute();
@@ -631,16 +631,11 @@
         }, { once: true });
 
 
-        // ==========================================
-        // 4. ANIMATION GLITCH M-TP (ẨN TRƯỚC KHI ĐỔI)
-        // ==========================================
+        // 4. ANIMATION GLITCH M-TP
         (function() {
             const canvas = document.getElementById('grainCanvas');
             const ctx = canvas.getContext('2d');
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
 
@@ -667,8 +662,6 @@
             function startGlitchToMTP() {
                 if (isAnimating) return;
                 isAnimating = true;
-
-                // 1. Cho hiện khung chữ khi bắt đầu chạy
                 mainTextEl.style.opacity = '1';
 
                 let currentCharIndex = 0;
@@ -700,10 +693,8 @@
                 processNextChar();
             }
 
-            // Bắt đầu chạy hiệu ứng đổi chữ sau 0.8 giây khi load trang
             setTimeout(startGlitchToMTP, 800);
 
-            // Click vào chữ chính sẽ ẩn đi rồi chạy lại Glitch
             document.querySelector('.main-content').addEventListener('click', () => {
                 if(isAnimating) return;
                 mainTextEl.style.opacity = '0';
