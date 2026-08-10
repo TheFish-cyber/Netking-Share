@@ -189,7 +189,7 @@
             100% { opacity: 1; }
         }
 
-        /* Mỗi ký tự trong "Netking" - sẽ được điều khiển bằng JS */
+        /* Mỗi ký tự trong "M-TP" (chỉ áp dụng cho chữ cái) */
         .char {
             display: inline-block;
             min-width: 0.7em;
@@ -293,20 +293,13 @@
         <div class="scanline"></div>
         <canvas id="grainCanvas"></canvas>
 
-        <!-- Nội dung chính: Editor Netking! -->
+        <!-- Nội dung chính: M-TP -->
         <div class="main-content flicker">
             <div class="main-text">
-                Editor 
-                <span id="glitch-wrapper">
-                    <span class="char" data-original="N">N</span>
-                    <span class="char" data-original="e">e</span>
-                    <span class="char" data-original="t">t</span>
-                    <span class="char" data-original="k">k</span>
-                    <span class="char" data-original="i">i</span>
-                    <span class="char" data-original="n">n</span>
-                    <span class="char" data-original="g">g</span>
-                </span>
-                !
+                <span class="char" data-original="M">M</span>
+                <span style="display:inline-block; min-width:0.3em;">-</span>
+                <span class="char" data-original="T">T</span>
+                <span class="char" data-original="P">P</span>
             </div>
             <div class="sub-line">⚡ COME MY WAY ⚡</div>
         </div>
@@ -404,10 +397,9 @@
             }
             setInterval(randomFlicker, 400);
 
-            // ===== HIỆU ỨNG CHUYỂN ĐỔI TUẦN TỰ CHO "Netking" =====
-            // Bảng ký tự sẽ xuất hiện lần lượt: P, O, I, Q, E, R, A, &, $
+            // ===== HIỆU ỨNG CHO "M-TP" (chỉ các ký tự chữ cái) =====
             const charSequence = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$'];
-            const charElements = document.querySelectorAll('.char');
+            const charElements = document.querySelectorAll('.char'); // lấy M, T, P
             const originalChars = Array.from(charElements).map(el => el.textContent);
 
             let isAnimating = false;
@@ -421,32 +413,31 @@
                     el.textContent = originalChars[i];
                 });
 
-                let currentCharIndex = 0; // chỉ số ký tự trong "Netking" (0->6)
+                let currentCharIndex = 0; // 0->2 (M, T, P)
 
                 function processNextChar() {
                     if (currentCharIndex >= charElements.length) {
-                        // Hoàn thành tất cả ký tự, đợi 2.5s rồi lặp lại
+                        // Hoàn thành tất cả, giữ nguyên trong 4 giây rồi lặp lại
                         setTimeout(() => {
                             isAnimating = false;
-                            // Reset all
+                            // Reset all (đảm bảo)
                             charElements.forEach((el, i) => {
                                 el.textContent = originalChars[i];
                             });
-                            // Tự động chạy lại sau 1s
-                            setTimeout(animateCharSequence, 1000);
-                        }, 2500);
+                            // Tự động chạy lại sau 1.5s
+                            setTimeout(animateCharSequence, 1500);
+                        }, 4000); // giữ lâu hơn
                         return;
                     }
 
                     const el = charElements[currentCharIndex];
                     const original = originalChars[currentCharIndex];
                     let step = 0;
-                    const totalSteps = charSequence.length; // 9 bước
+                    const totalSteps = charSequence.length;
 
                     const interval = setInterval(() => {
                         if (step >= totalSteps) {
                             clearInterval(interval);
-                            // Kết thúc, đặt lại đúng chữ
                             el.textContent = original;
                             // Chuyển sang ký tự tiếp theo sau một khoảng dừng
                             setTimeout(() => {
@@ -455,11 +446,9 @@
                             }, 180);
                             return;
                         }
-
-                        // Hiển thị ký tự trong chuỗi theo thứ tự
                         el.textContent = charSequence[step];
                         step++;
-                    }, 100); // 100ms mỗi bước => tổng ~0.9s cho mỗi ký tự
+                    }, 100);
                 }
 
                 processNextChar();
