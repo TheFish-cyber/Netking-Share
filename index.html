@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sơn Tùng M-TP Playlist - Smooth Transition</title>
+    <title>Sơn Tùng M-TP Playlist - Netking Edition</title>
     <style>
         * {
             margin: 0;
@@ -211,7 +211,7 @@
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
         }
 
-        /* CUSTOM PLAYLIST UI TÍCH HỢP KHUNG SLIDING MƯỢT */
+        /* Custom Playlist UI */
         .custom-playlist {
             position: relative;
             max-height: 140px;
@@ -229,20 +229,19 @@
             border-radius: 2px;
         }
 
-        /* KHUNG VIỀN XANH LÁ TRUYỀN ĐỘNG (INDICATOR) */
+        /* Khung viền xanh lá di chuyển (Move) */
         .active-indicator {
             position: absolute;
             left: 0;
             top: 0;
             width: 100%;
-            height: 35px; /* Chiều cao khớp với item */
+            height: 35px;
             background: rgba(0, 255, 102, 0.18);
             border-left: 3px solid #00ff66;
             box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.2);
             pointer-events: none;
             z-index: 1;
             opacity: 0;
-            /* Tạo hiệu ứng trượt mượt mà bằng transition */
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), height 0.2s ease, opacity 0.2s ease;
         }
 
@@ -466,10 +465,10 @@
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
         document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        // 3. PLAYLIST & YOUTUBE PLAYER LOGIC
+        // 3. PLAYLIST ĐÃ ĐƯỢC CẬP NHẬT
         const playlist = [
             { title: "Đừng Làm Trái Tim Anh Đau", id: "abPmZCZZrFA" },
-            { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" },
+            { title: "Chúng Ta Của Tương Lai", id: "0pWsCiO1-mE" },
             { title: "Making My Way", id: "N36-o42mDdc" },
             { title: "Chạy Ngay Đi (Run Now)", id: "32s188T70vU" },
             { title: "Hãy Trao Cho Anh", id: "knW7-J7ORjU" },
@@ -510,10 +509,8 @@
         const playlistContainer = document.getElementById('playlistContainer');
         const searchInput = document.getElementById('searchInput');
         const trackTitle = document.getElementById('trackTitle');
-        const activeIndicator = document.getElementById('activeIndicator');
 
         function renderPlaylist(items) {
-            // Giữ lại indicator
             playlistContainer.innerHTML = '<div class="active-indicator" id="activeIndicator"></div>';
             const indicator = document.getElementById('activeIndicator');
 
@@ -537,17 +534,14 @@
                 playlistContainer.appendChild(item);
             });
 
-            // Cập nhật vị trí khung trượt xanh lá ngay lập tức
             moveIndicator();
         }
 
-        // HÀM TÍNH TOÁN TRUYỀN ĐỘNG (MOVE) CHO KHUNG XANH LÁ
         function moveIndicator() {
             const indicator = document.getElementById('activeIndicator');
             const activeItem = playlistContainer.querySelector('.playlist-item.active');
             
             if (activeItem) {
-                // Lấy tọa độ tương đối so với container
                 const topPos = activeItem.offsetTop;
                 const height = activeItem.offsetHeight;
 
@@ -572,7 +566,6 @@
         function updateUI() {
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
             
-            // Xóa class active cũ và gán cho item mới
             const items = playlistContainer.querySelectorAll('.playlist-item');
             items.forEach(item => {
                 if(parseInt(item.getAttribute('data-index')) === currentTrackIndex) {
@@ -583,7 +576,6 @@
                 }
             });
 
-            // Thực hiện chuyển động khung trượt
             moveIndicator();
         }
 
@@ -621,7 +613,7 @@
         });
 
         playlistContainer.addEventListener('scroll', () => {
-            moveIndicator(); // Giữ khung trượt chuẩn vị trí khi cuộn danh sách
+            moveIndicator();
         });
 
         document.body.addEventListener('click', () => {
@@ -629,7 +621,6 @@
                 player.unMute();
             }
         }, { once: true });
-
 
         // 4. ANIMATION GLITCH M-TP
         (function() {
