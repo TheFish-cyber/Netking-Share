@@ -33,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* Hiệu ứng hạt (film grain) bằng canvas phủ */
+        /* Hiệu ứng hạt (film grain) */
         #grainCanvas {
             position: absolute;
             top: 0;
@@ -46,7 +46,7 @@
             mix-blend-mode: overlay;
         }
 
-        /* Ánh sáng xoay nền */
+        /* Ánh sáng xoay */
         .light-ring {
             position: absolute;
             width: 80vmin;
@@ -103,7 +103,6 @@
             animation: glowPulse 2.5s ease-in-out infinite alternate;
         }
 
-        /* Hiệu ứng shimmer chạy ngang trên chữ */
         .main-text::before {
             content: '';
             position: absolute;
@@ -156,7 +155,7 @@
             100% { opacity: 0.7; transform: scale(1); }
         }
 
-        /* Scanline hiệu ứng */
+        /* Scanline */
         .scanline {
             position: absolute;
             top: 0;
@@ -186,18 +185,16 @@
             z-index: 1;
         }
 
-        /* Hiệu ứng flicker nhẹ cuối */
         .flicker {
             animation: flicker 0.15s ease-in-out 3s 2;
         }
-
         @keyframes flicker {
             0% { opacity: 1; }
             50% { opacity: 0.4; }
             100% { opacity: 1; }
         }
 
-        /* ===== GLITCH CHO TỪNG KÝ TỰ TRONG "Netking" ===== */
+        /* ===== Mỗi ký tự trong "Netking" ===== */
         .char {
             display: inline-block;
             min-width: 0.7em;
@@ -206,7 +203,7 @@
             color: #fff;
         }
 
-        /* ===== CÁC DÒNG CHỮ NHỎ Ở GÓC ===== */
+        /* ===== CÁC GÓC CHỮ NHỎ (giữ nguyên) ===== */
         .corner-text {
             position: absolute;
             bottom: 40px;
@@ -412,68 +409,77 @@
             }
             setInterval(randomFlicker, 400);
 
-            // ===== HIỆU ỨNG GLITCH TUẦN TỰ CHO "Netking" =====
+            // ===== HIỆU ỨNG NHÁY TUẦN TỰ CHO "Netking" (không glitch, chỉ nháy đổi chữ) =====
             const charElements = document.querySelectorAll('.char');
-            const glitchCharset = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$'];
+            const glitchChars = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$']; // bảng ký tự thay thế
             const originalChars = Array.from(charElements).map(el => el.textContent);
 
-            let isGlitching = false;
+            let isAnimating = false;
 
-            function animateChar(index) {
-                if (index >= charElements.length) {
-                    // Sau khi hoàn thành, đợi 2.5s rồi chạy lại
-                    setTimeout(() => {
-                        // Reset tất cả về đúng
-                        charElements.forEach((el, i) => {
-                            el.textContent = originalChars[i];
-                        });
-                        isGlitching = false;
-                        // Tự động chạy lại vòng lặp
-                        setTimeout(() => startGlitchLoop(), 500);
-                    }, 2500);
-                    return;
-                }
+            function animateCharSequence() {
+                if (isAnimating) return;
+                isAnimating = true;
 
-                const el = charElements[index];
-                const targetChar = originalChars[index];
-                let count = 0;
-                const maxCount = 14; // số lần nháy cho mỗi ký tự
-
-                const interval = setInterval(() => {
-                    if (count >= maxCount) {
-                        clearInterval(interval);
-                        el.textContent = targetChar;
-                        // Đợi một chút rồi chuyển sang ký tự tiếp theo
-                        setTimeout(() => {
-                            animateChar(index + 1);
-                        }, 180);
-                        return;
-                    }
-                    // Lấy ký tự ngẫu nhiên từ bảng glitch
-                    const randomGlitch = glitchCharset[Math.floor(Math.random() * glitchCharset.length)];
-                    el.textContent = randomGlitch;
-                    count++;
-                }, 70); // 70ms * 14 = ~1s cho mỗi ký tự
-            }
-
-            function startGlitchLoop() {
-                if (isGlitching) return;
-                isGlitching = true;
-                // Đảm bảo reset về đúng trước khi bắt đầu
+                // Reset tất cả về đúng
                 charElements.forEach((el, i) => {
                     el.textContent = originalChars[i];
                 });
-                // Bắt đầu từ ký tự đầu tiên
-                animateChar(0);
+
+                // Duyệt từng ký tự
+                let currentIndex = 0;
+
+                function processNextChar() {
+                    if (currentIndex >= charElements.length) {
+                        // Hoàn thành, đợi 3 giây rồi lặp lại
+                        setTimeout(() => {
+                            isAnimating = false;
+                            // Reset all (đảm bảo)
+                            charElements.forEach((el, i) => {
+                                el.textContent = originalChars[i];
+                            });
+                            // Tự động chạy lại sau 1s
+                            setTimeout(animateCharSequence, 1000);
+                        }, 3000);
+                        return;
+                    }
+
+                    const el = charElements[currentIndex];
+                    const original = originalChars[currentIndex];
+                    let step = 0;
+                    const maxSteps = 10; // số lần nháy (đổi ký tự)
+
+                    const interval = setInterval(() => {
+                        if (step >= maxSteps) {
+                            clearInterval(interval);
+                            // Kết thúc, đặt lại đúng chữ
+                            el.textContent = original;
+                            // Chờ một chút rồi chuyển sang ký tự tiếp theo
+                            setTimeout(() => {
+                                currentIndex++;
+                                processNextChar();
+                            }, 150);
+                            return;
+                        }
+
+                        // Chọn ngẫu nhiên một ký tự từ bảng
+                        const randomChar = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                        // Đổi chữ
+                        el.textContent = randomChar;
+                        step++;
+                    }, 80); // 80ms mỗi bước => tổng ~0.8s cho mỗi ký tự
+                }
+
+                // Bắt đầu
+                processNextChar();
             }
 
-            // Khởi động lần đầu sau khi trang load và fadeIn kết thúc
-            setTimeout(startGlitchLoop, 2000);
+            // Khởi động lần đầu sau khi trang load
+            setTimeout(animateCharSequence, 2000);
 
-            // Nếu muốn click để chạy lại (tùy chỉnh)
+            // Click vào main-text để chạy lại (tùy chọn)
             document.querySelector('.main-text').addEventListener('click', function() {
-                if (!isGlitching) {
-                    startGlitchLoop();
+                if (!isAnimating) {
+                    animateCharSequence();
                 }
             });
 
