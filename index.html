@@ -95,7 +95,7 @@
         .main-content {
             text-align: center;
             cursor: pointer;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .main-text {
@@ -147,7 +147,7 @@
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 215, 0, 0.1);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             position: relative;
         }
 
@@ -170,7 +170,6 @@
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
         }
 
-        /* Nút Chạy Nền Nhỏ */
         .btn-bg-mode {
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.4);
@@ -192,6 +191,62 @@
             box-shadow: 0 0 8px #00ff66;
         }
 
+        /* ===== THANH TIMELINE VÀ TUA 5S ===== */
+        .time-control-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .time-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffd700;
+            cursor: pointer;
+            box-shadow: 0 0 8px #ffd700;
+        }
+
+        .btn-seek {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.1s;
+        }
+
+        .time-left-display {
+            font-size: 0.7rem;
+            color: #ffd700;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: right;
+            font-family: monospace;
+        }
+
         .controls {
             display: flex;
             align-items: center;
@@ -209,13 +264,27 @@
             font-size: 0.8rem;
             font-weight: bold;
             font-family: inherit;
-            transition: all 0.2s ease;
+            transition: background 0.1s, color 0.1s, border-color 0.1s;
         }
 
-        .btn:hover {
-            background: #ffd700;
-            color: #000;
-            box-shadow: 0 0 12px #ffd700;
+        /* Nút nháy vàng khi click */
+        .btn.btn-flash {
+            background: #ffd700 !important;
+            color: #000 !important;
+            box-shadow: 0 0 12px #ffd700 !important;
+        }
+
+        /* Nút PAUSE chuyển thành MÀU ĐỎ */
+        .btn-pause-mode {
+            background: rgba(255, 51, 102, 0.2) !important;
+            border-color: #ff3366 !important;
+            color: #ff3366 !important;
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.5) !important;
+        }
+
+        .btn-pause-mode:hover {
+            background: #ff3366 !important;
+            color: #fff !important;
         }
 
         .btn-retry {
@@ -253,8 +322,8 @@
 
         .custom-playlist {
             position: relative;
-            min-height: 125px;
-            max-height: 125px;
+            min-height: 120px;
+            max-height: 120px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -308,7 +377,6 @@
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
         }
 
-        /* Căn chỉnh lại footer text bên trong Panel (Fix vỡ giao diện) */
         .panel-footer {
             display: flex;
             align-items: center;
@@ -324,7 +392,6 @@
             font-weight: bold;
         }
 
-        /* UI TRẠNG THÁI LOADING / ERROR */
         .status-state {
             position: absolute;
             top: 0; left: 0;
@@ -412,7 +479,6 @@
             left: -9999px;
         }
 
-        /* POPUP IN-APP BROWSER */
         .inapp-modal {
             position: fixed;
             top: 0; left: 0;
@@ -478,6 +544,13 @@
                 <div class="panel-header">
                     <div class="now-playing" id="trackTitle">⌛ ĐANG KHỞI TẠO PLAYER...</div>
                     <button class="btn-bg-mode" id="bgModeBtn">🎧 Nền: Tắt</button>
+                </div>
+
+                <div class="time-control-bar">
+                    <button class="btn-seek" id="rewindBtn">-5s</button>
+                    <input type="range" class="time-slider" id="timeSlider" min="0" max="100" value="0">
+                    <button class="btn-seek" id="forwardBtn">+5s</button>
+                    <span class="time-left-display" id="timeLeftDisplay">-00:00</span>
                 </div>
                 
                 <div class="controls">
@@ -575,6 +648,7 @@
         let isPlaying = false;
         let isBgMode = false;
         let loadTimeout = null;
+        let progressInterval = null;
 
         const statusOverlay = document.getElementById('statusOverlay');
         const statusSpinner = document.getElementById('statusSpinner');
@@ -582,19 +656,32 @@
         const retryBtn = document.getElementById('retryBtn');
         const bgModeBtn = document.getElementById('bgModeBtn');
 
-        // Logic Toggle Chạy Nền Nhạc Web
+        const playBtn = document.getElementById('playBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const rewindBtn = document.getElementById('rewindBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const timeSlider = document.getElementById('timeSlider');
+        const timeLeftDisplay = document.getElementById('timeLeftDisplay');
+
+        const playlistContainer = document.getElementById('playlistContainer');
+        const searchInput = document.getElementById('searchInput');
+        const trackTitle = document.getElementById('trackTitle');
+
+        // Hàm hiệu ứng nháy vàng khi click nút
+        function triggerFlash(element) {
+            element.classList.add('btn-flash');
+            setTimeout(() => {
+                element.classList.remove('btn-flash');
+            }, 200);
+        }
+
+        // Toggle Chạy Nền
         bgModeBtn.addEventListener('click', () => {
             isBgMode = !isBgMode;
             if (isBgMode) {
                 bgModeBtn.textContent = '🎧 Nền: Bật';
                 bgModeBtn.classList.add('active');
-                if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: playlist[currentTrackIndex].title,
-                        artist: 'Sơn Tùng M-TP',
-                        album: 'Netking Playlist'
-                    });
-                }
             } else {
                 bgModeBtn.textContent = '🎧 Nền: Tắt';
                 bgModeBtn.classList.remove('active');
@@ -645,16 +732,78 @@
             statusOverlay.style.display = 'none';
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
             renderPlaylist(getFilteredPlaylist());
+            startProgressLoop();
         }
 
         function onPlayerError(e) {
             clearTimeout(loadTimeout);
-            showErrorState("KHÔNG THỂ TẢI VIDEO YOUTUBE (BỊ CHẶN HOẶC LỖI LINK)!");
+            showErrorState("KHÔNG THỂ TẢI VIDEO YOUTUBE!");
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) nextTrack();
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                playBtn.textContent = '❚❚ PAUSE';
+                playBtn.classList.add('btn-pause-mode'); // Đổi sang màu đỏ
+            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                isPlaying = false;
+                playBtn.textContent = '▶ PLAY';
+                playBtn.classList.remove('btn-pause-mode'); // Trở về bình thường
+                if (event.data === YT.PlayerState.ENDED) nextTrack();
+            }
         }
+
+        // Cập nhật thanh timeline và thời gian còn lại
+        function startProgressLoop() {
+            clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                if (player && typeof player.getCurrentTime === 'function' && isPlaying) {
+                    const currentTime = player.getCurrentTime() || 0;
+                    const duration = player.getDuration() || 0;
+                    
+                    if (duration > 0) {
+                        timeSlider.value = (currentTime / duration) * 100;
+                        const remaining = duration - currentTime;
+                        timeLeftDisplay.textContent = `-${formatTime(remaining)}`;
+                    }
+                }
+            }, 500);
+        }
+
+        function formatTime(seconds) {
+            const sec = Math.max(0, Math.floor(seconds));
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // Tua nhạc bằng Slider
+        timeSlider.addEventListener('input', (e) => {
+            if (player && typeof player.getDuration === 'function') {
+                const duration = player.getDuration();
+                const seekToTime = (e.target.value / 100) * duration;
+                player.seekTo(seekToTime, true);
+            }
+        });
+
+        // Tua lùi 5s
+        rewindBtn.addEventListener('click', () => {
+            triggerFlash(rewindBtn);
+            if (player && typeof player.getCurrentTime === 'function') {
+                const curr = player.getCurrentTime();
+                player.seekTo(Math.max(0, curr - 5), true);
+            }
+        });
+
+        // Tua tới 5s
+        forwardBtn.addEventListener('click', () => {
+            triggerFlash(forwardBtn);
+            if (player && typeof player.getCurrentTime === 'function') {
+                const curr = player.getCurrentTime();
+                const dur = player.getDuration();
+                player.seekTo(Math.min(dur, curr + 5), true);
+            }
+        });
 
         function showLoadingState() {
             statusOverlay.style.display = 'flex';
@@ -676,13 +825,6 @@
         retryBtn.addEventListener('click', () => {
             initYouTubePlayer();
         });
-
-        const playBtn = document.getElementById('playBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const playlistContainer = document.getElementById('playlistContainer');
-        const searchInput = document.getElementById('searchInput');
-        const trackTitle = document.getElementById('trackTitle');
 
         function renderPlaylist(items) {
             playlistContainer.innerHTML = '<div class="active-indicator" id="activeIndicator"></div>';
@@ -744,14 +886,8 @@
 
         function updateUI() {
             trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
-            
-            if (isBgMode && 'mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: playlist[currentTrackIndex].title,
-                    artist: 'Sơn Tùng M-TP',
-                    album: 'Netking Playlist'
-                });
-            }
+            timeSlider.value = 0;
+            timeLeftDisplay.textContent = "-00:00";
 
             const items = playlistContainer.querySelectorAll('.playlist-item');
             items.forEach(item => {
@@ -772,20 +908,22 @@
         }
 
         playBtn.addEventListener('click', () => {
+            triggerFlash(playBtn);
             if (!player) return;
             if (isPlaying) {
                 player.pauseVideo();
-                playBtn.textContent = '▶ PLAY';
-                isPlaying = false;
             } else {
                 player.playVideo();
-                playBtn.textContent = '❚❚ PAUSE';
-                isPlaying = true;
             }
         });
 
-        nextBtn.addEventListener('click', () => nextTrack());
+        nextBtn.addEventListener('click', () => {
+            triggerFlash(nextBtn);
+            nextTrack();
+        });
+
         prevBtn.addEventListener('click', () => {
+            triggerFlash(prevBtn);
             currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
             playTrack(currentTrackIndex);
         });
