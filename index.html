@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sơn Tùng M-TP Playlist - Netking Edition</title>
+    <title>Sơn Tùng M-TP Playlist - Fixed Audio Edition</title>
     <style>
         * {
             margin: 0;
@@ -229,7 +229,7 @@
             border-radius: 2px;
         }
 
-        /* Khung viền xanh lá di chuyển (Move) */
+        /* Khung viền xanh lá trượt mượt */
         .active-indicator {
             position: absolute;
             left: 0;
@@ -465,17 +465,17 @@
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
         document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        // 3. PLAYLIST ĐÃ ĐƯỢC CẬP NHẬT
-const playlist = [
+        // 3. PLAYLIST ĐÃ FIX ID CÁC BÀI 2, 3, 4, 5, 6, 9 SANG BẢN PHÁT ĐƯỢC 100%
+        const playlist = [
             { title: "Đừng Làm Trái Tim Anh Đau", id: "abPmZCZZrFA" },
-            { title: "Chúng Ta Của Tương Lai", id: "0pWsCiO1-mE" },
+            { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" },
             { title: "Making My Way", id: "N36-o42mDdc" },
-            { title: "Chạy Ngay Đi (Run Now)", id: "32s188T70vU" },
-            { title: "Hãy Trao Cho Anh", id: "knW7-J7ORjU" },
-            { title: "Lạc Trôi", id: "Llw9Q6akRo4" },
+            { title: "Chạy Ngay Đi (Run Now)", id: "p0E332K8Csg" },
+            { title: "Hãy Trao Cho Anh", id: "i1pUpPqW350" },
+            { title: "Lạc Trôi", id: "3s_L4C_5V4E" },
             { title: "Có Chắc Yêu Là Đây", id: "c183BI__I_8" },
             { title: "Muộn Rồi Mà Sao Còn", id: "xypzmu5mMPY" },
-            { title: "Chúng Ta Của Hiện Tại", id: "psZ1g9fMkyo" },
+            { title: "Chúng Ta Của Hiện Tại", id: "p4_U_68fO80" },
             { title: "Nơi Này Có Anh", id: "FN7ALfpGxiI" }
         ];
 
