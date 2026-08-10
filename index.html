@@ -24,7 +24,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Courier New', monospace, sans-serif;
+            /* Đổi font hỗ trợ hoàn hảo tiếng Việt (Fix lỗi chữ ừ) */
+            font-family: Consolas, 'Segoe UI', Roboto, sans-serif;
             color: #fff;
             touch-action: pan-x pan-y;
         }
@@ -98,6 +99,7 @@
             margin-bottom: 15px;
         }
 
+        /* BAN ĐẦU ẨN CHỮ M-TP HOÀN TOÀN (opacity: 0) */
         .main-text {
             font-family: 'Arial Black', 'Impact', sans-serif;
             font-size: clamp(2.2rem, 7vw, 5rem);
@@ -111,6 +113,8 @@
                 0 0 40px rgba(255, 215, 0, 0.4);
             position: relative;
             display: inline-block;
+            opacity: 0; /* Ẩn đi trước khi đổi */
+            transition: opacity 0.2s ease;
         }
 
         .sub-line {
@@ -148,15 +152,16 @@
             gap: 12px;
         }
 
+        /* BÀI ĐANG PHÁT HIỂN THỊ CHỮ MÀU XANH LÁ */
         .now-playing {
             font-size: 0.85rem;
-            color: #ffd700;
+            color: #00ff66; /* Màu xanh lá */
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: center;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
         }
 
         .controls {
@@ -221,7 +226,7 @@
             width: 4px;
         }
         .custom-playlist::-webkit-scrollbar-thumb {
-            background: #ffd700;
+            background: #00ff66;
             border-radius: 2px;
         }
 
@@ -238,15 +243,17 @@
         }
 
         .playlist-item:hover {
-            background: rgba(255, 215, 0, 0.15);
+            background: rgba(0, 255, 102, 0.15);
             color: #fff;
         }
 
+        /* ĐỔI BÀI ĐƯỢC CHỌN HOẶC ĐANG PHÁT SANG MÀU XANH LÁ CÂY */
         .playlist-item.active {
-            background: rgba(255, 215, 0, 0.25);
-            color: #ffd700;
+            background: rgba(0, 255, 102, 0.2);
+            color: #00ff66 !important; /* Xanh lá rực rỡ */
             font-weight: bold;
-            border-left: 3px solid #ffd700;
+            border-left: 3px solid #00ff66;
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
         }
 
         /* Glitch Corner Text */
@@ -310,7 +317,7 @@
             left: -9999px;
         }
 
-        /* ===== POPUP CẢNH BÁO IN-APP BROWSER ===== */
+        /* POPUP CẢNH BÁO IN-APP BROWSER */
         .inapp-modal {
             position: fixed;
             top: 0; left: 0;
@@ -318,7 +325,7 @@
             background: rgba(5, 5, 5, 0.95);
             backdrop-filter: blur(15px);
             z-index: 99999;
-            display: none; /* Mặc định ẩn */
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -383,11 +390,11 @@
 
         <div class="wrapper">
             <div class="main-content" title="Click để kích hoạt lại Glitch M-TP">
-                <div class="main-text">
-                    <span class="char">#</span>
+                <div class="main-text" id="mainTextEl">
+                    <span class="char">&nbsp;</span>
                     <span style="display:inline-block; min-width:0.3em;">-</span>
-                    <span class="char">&</span>
-                    <span class="char">$</span>
+                    <span class="char">&nbsp;</span>
+                    <span class="char">&nbsp;</span>
                 </div>
                 <br>
                 <div class="sub-line">⚡ NETKING ⚡</div>
@@ -422,19 +429,16 @@
 
     <script>
         // ==========================================
-        // 1. PHÁT HIỆN IN-APP BROWSER (TÍNH NĂNG MỚI)
+        // 1. PHÁT HIỆN IN-APP BROWSER
         // ==========================================
         function detectInAppBrowser() {
             const ua = navigator.userAgent || navigator.vendor || window.opera;
-            
-            // Danh sách từ khóa nhận biết In-App Browser ứng dụng bên thứ 3
             const isInApp = /FBAN|FBAV|Instagram|TikTok|Zalo|Telegram|Discord|Line|Twitter|Snapchat|MicroMessenger|Pinterest|FB_IAB/i.test(ua);
             
             if (isInApp) {
                 const modal = document.getElementById('inAppModal');
                 const msg = document.getElementById('inAppMsg');
                 
-                // Hiển thị tên ứng dụng đang mở nếu nhận diện được
                 let appName = "Ứng dụng này";
                 if (/FBAN|FBAV|FB_IAB/i.test(ua)) appName = "Facebook";
                 else if (/Instagram/i.test(ua)) appName = "Instagram";
@@ -448,21 +452,17 @@
             }
         }
 
-        // Tự động chuyển hướng mở app trình duyệt nếu bấm nút (Hỗ trợ Android Intent)
         function openExternalBrowser() {
             const currentUrl = window.location.href;
             const ua = navigator.userAgent || navigator.vendor || window.opera;
 
             if (/android/i.test(ua)) {
-                // Ép Android mở bằng Chrome
                 window.location.href = "intent://" + currentUrl.replace(/^https?:\/\//, '') + "#Intent;scheme=https;package=com.android.chrome;end";
             } else {
-                // Với iOS Safari / các hệ điều hành khác: Yêu cầu mở thủ công qua Menu góc
-                alert("Hãy nhấn dấu (...) ở góc trên cùng bên phải màn hình -> เลือก 'Mở bằng Safari / Trình duyệt'");
+                alert("Hãy nhấn dấu (...) ở góc trên cùng bên phải màn hình -> Chọn 'Mở bằng Safari / Trình duyệt'");
             }
         }
 
-        // Chạy kiểm tra ngay khi load xong DOM
         document.addEventListener('DOMContentLoaded', detectInAppBrowser);
 
 
@@ -501,7 +501,7 @@
         // ==========================================
         const playlist = [
             { title: "Đừng Làm Trái Tim Anh Đau", id: "abPmZCZZrFA" },
-            { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" }, // Đã cập nhật ID mới chuẩn
+            { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" },
             { title: "Making My Way", id: "N36-o42mDdc" },
             { title: "Chạy Ngay Đi (Run Now)", id: "32s188T70vU" },
             { title: "Hãy Trao Cho Anh", id: "knW7-J7ORjU" },
@@ -632,7 +632,7 @@
 
 
         // ==========================================
-        // 4. ANIMATION GLITCH M-TP VÀ CANVAS
+        // 4. ANIMATION GLITCH M-TP (ẨN TRƯỚC KHI ĐỔI)
         // ==========================================
         (function() {
             const canvas = document.getElementById('grainCanvas');
@@ -660,12 +660,16 @@
 
             const randomChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const charElements = document.querySelectorAll('.char'); 
+            const mainTextEl = document.getElementById('mainTextEl');
             const targetChars = ['M', 'T', 'P'];
             let isAnimating = false;
 
             function startGlitchToMTP() {
                 if (isAnimating) return;
                 isAnimating = true;
+
+                // 1. Cho hiện khung chữ khi bắt đầu chạy
+                mainTextEl.style.opacity = '1';
 
                 let currentCharIndex = 0;
 
@@ -696,8 +700,15 @@
                 processNextChar();
             }
 
+            // Bắt đầu chạy hiệu ứng đổi chữ sau 0.8 giây khi load trang
             setTimeout(startGlitchToMTP, 800);
-            document.querySelector('.main-content').addEventListener('click', startGlitchToMTP);
+
+            // Click vào chữ chính sẽ ẩn đi rồi chạy lại Glitch
+            document.querySelector('.main-content').addEventListener('click', () => {
+                if(isAnimating) return;
+                mainTextEl.style.opacity = '0';
+                setTimeout(startGlitchToMTP, 200);
+            });
 
             const phrasesRight = ['● NETKING MTP', '✦ SON TUNG M-TP', '★ NETKING', '◆ SKY CƠN MƯA'];
             const elRight = document.getElementById('glitchRight');
