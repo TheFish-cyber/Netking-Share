@@ -180,14 +180,8 @@
             z-index: 1;
         }
 
-        .flicker {
-            animation: flicker 0.15s ease-in-out 3s 2;
-        }
-        @keyframes flicker {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+        /* Xóa flicker để tránh nhấp nháy không mong muốn */
+        /* .flicker đã bị loại bỏ */
 
         /* Mỗi ký tự trong "M-TP" */
         .char {
@@ -293,8 +287,8 @@
         <div class="scanline"></div>
         <canvas id="grainCanvas"></canvas>
 
-        <!-- Nội dung chính: M-TP -->
-        <div class="main-content flicker">
+        <!-- Nội dung chính: M-TP (không có class flicker) -->
+        <div class="main-content">
             <div class="main-text">
                 <span class="char" data-original="M">M</span>
                 <span style="display:inline-block; min-width:0.3em;">-</span>
@@ -352,7 +346,7 @@
                 mainText.style.transform = `translate(${x}px, ${y}px)`;
             }, 50);
 
-            // ===== GLITCH CORNER TEXT =====
+            // ===== GLITCH CORNER TEXT (giữ nguyên) =====
             const phrasesRight = ['● SƠN TÙNG MTP', '✦ COME MY WAY', '► EDITOR NETKING', '★ M-TP', '◆ SKY CƠN MƯA', '⬡ CHẠY NGAY ĐI'];
             const phrasesLeft = ['#MTP', '#SKY', '#SONTUNG', '#MTPFAN', '#VIP'];
             const elRight = document.getElementById('glitchRight');
@@ -397,18 +391,17 @@
             }
             setInterval(randomFlicker, 400);
 
-            // ===== HIỆU ỨNG CHO "M-TP" (chỉ các ký tự chữ cái) =====
+            // ===== HIỆU ỨNG CHUYỂN ĐỔI CHẬM CHO "M-TP" (GIỮ MÃI MÃI) =====
             const charSequence = ['P', 'O', 'I', 'Q', 'E', 'R', 'A', '&', '$'];
             const charElements = document.querySelectorAll('.char'); // M, T, P
             const originalChars = Array.from(charElements).map(el => el.textContent);
 
-            // Khởi tạo trạng thái đã hoàn thành
-            let completed = false;
+            let completed = false; // đánh dấu đã hoàn thành
 
             function animateCharSequence() {
-                if (completed) return; // nếu đã hoàn thành thì không chạy nữa
+                if (completed) return; // không chạy lại
 
-                // Reset tất cả về đúng (phòng trường hợp chạy lần đầu)
+                // Reset về gốc (lần đầu)
                 charElements.forEach((el, i) => {
                     el.textContent = originalChars[i];
                 });
@@ -419,7 +412,7 @@
                     if (currentCharIndex >= charElements.length) {
                         // Hoàn thành tất cả, đánh dấu và giữ nguyên mãi mãi
                         completed = true;
-                        // Không reset nữa
+                        console.log('Hoàn thành đổi chữ, giữ nguyên!');
                         return;
                     }
 
@@ -433,38 +426,35 @@
                             clearInterval(interval);
                             // Hiện chữ thật
                             el.textContent = original;
-                            // Chuyển sang ký tự tiếp theo sau 200ms
+                            // Chuyển sang ký tự tiếp theo sau 500ms (chậm hơn)
                             setTimeout(() => {
                                 currentCharIndex++;
                                 processNextChar();
-                            }, 200);
+                            }, 500);
                             return;
                         }
                         // Hiển thị ký tự trong chuỗi theo thứ tự
                         el.textContent = charSequence[step];
                         step++;
-                    }, 200); // 200ms mỗi bước => chậm hơn
+                    }, 300); // 300ms mỗi bước => mỗi ký tự mất 2.7s
                 }
 
                 processNextChar();
             }
 
-            // Khởi động lần đầu sau khi trang load
-            setTimeout(animateCharSequence, 2000);
+            // Khởi động sau 3 giây (để người dùng thấy chữ gốc trước)
+            setTimeout(animateCharSequence, 3000);
 
-            // Click vào main-text để chạy lại (nếu chưa hoàn thành)
+            // Click vào main-text để chạy lại nếu đã hoàn thành (tùy chọn)
             document.querySelector('.main-text').addEventListener('click', function() {
-                if (!completed) {
-                    // Nếu đang chạy thì không làm gì
-                    return;
-                }
-                // Nếu đã hoàn thành, có thể cho chạy lại bằng cách reset completed và gọi lại
+                if (!completed) return;
+                // Reset trạng thái
                 completed = false;
-                // Reset về chữ gốc
                 charElements.forEach((el, i) => {
                     el.textContent = originalChars[i];
                 });
-                setTimeout(animateCharSequence, 300);
+                // Bắt đầu lại sau 500ms
+                setTimeout(animateCharSequence, 500);
             });
 
         })();
