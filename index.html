@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sơn Tùng M-TP Playlist - Fixed Audio Edition</title>
+    <title>Sơn Tùng M-TP Playlist - Netking Edition</title>
     <style>
         * {
             margin: 0;
@@ -98,7 +98,6 @@
             margin-bottom: 15px;
         }
 
-        /* Ban đầu ẩn M-TP hoàn toàn */
         .main-text {
             font-family: 'Arial Black', 'Impact', sans-serif;
             font-size: clamp(2.2rem, 7vw, 5rem);
@@ -149,6 +148,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            position: relative;
         }
 
         .now-playing {
@@ -188,7 +188,17 @@
             box-shadow: 0 0 12px #ffd700;
         }
 
-        /* Search Bar */
+        .btn-retry {
+            border-color: #ff3366;
+            color: #ff3366;
+        }
+
+        .btn-retry:hover {
+            background: #ff3366;
+            color: #fff;
+            box-shadow: 0 0 12px #ff3366;
+        }
+
         .search-box {
             width: 100%;
         }
@@ -211,9 +221,9 @@
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
         }
 
-        /* Custom Playlist UI */
         .custom-playlist {
             position: relative;
+            min-height: 140px;
             max-height: 140px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -229,7 +239,6 @@
             border-radius: 2px;
         }
 
-        /* Khung viền xanh lá trượt mượt */
         .active-indicator {
             position: absolute;
             left: 0;
@@ -267,6 +276,47 @@
             color: #00ff66 !important;
             font-weight: bold;
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+        }
+
+        /* ===== UI TRẠNG THÁI LOADING / ERROR ===== */
+        .status-state {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 215, 0, 0.2);
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            color: #ffd700;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .error-text {
+            color: #ff3366;
+            text-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
         }
 
         /* Glitch Corner Text */
@@ -393,7 +443,7 @@
             </div>
 
             <div class="player-panel">
-                <div class="now-playing" id="trackTitle">▶ Chọn bài hát để bắt đầu</div>
+                <div class="now-playing" id="trackTitle">⌛ ĐANG KHỞI TẠO PLAYER...</div>
                 
                 <div class="controls">
                     <button class="btn" id="prevBtn">◄ PREV</button>
@@ -407,6 +457,11 @@
 
                 <div class="custom-playlist" id="playlistContainer">
                     <div class="active-indicator" id="activeIndicator"></div>
+                    <div class="status-state" id="statusOverlay">
+                        <div class="loading-spinner" id="statusSpinner"></div>
+                        <div class="status-text" id="statusText">⚡ ĐANG TẢI BẢNG NHẠC YOUTUBE...</div>
+                        <button class="btn btn-retry" id="retryBtn" style="display: none;">🔄 THỬ LẠI KẾT NỐI</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -465,43 +520,106 @@
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
         document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        // 3. PLAYLIST ĐÃ FIX ID CÁC BÀI 2, 3, 4, 5, 6, 9 SANG BẢN PHÁT ĐƯỢC 100%
+        // 3. PLAYLIST & YOUTUBE PLAYER WITH STATUS CHECKER
         const playlist = [
-            { title: "Đừng Làm Trái Tim Anh Đau", id: "abPmZCZZrFA" },
-            { title: "Chúng Ta Của Tương Lai", id: "zoEtcR5EW08" },
-            { title: "Making My Way", id: "N36-o42mDdc" },
-            { title: "Chạy Ngay Đi (Run Now)", id: "p0E332K8Csg" },
-            { title: "Hãy Trao Cho Anh", id: "i1pUpPqW350" },
-            { title: "Lạc Trôi", id: "3s_L4C_5V4E" },
-            { title: "Có Chắc Yêu Là Đây", id: "c183BI__I_8" },
+            { title: "Nơi Này Có Anh", id: "FN7ALfpGxiI" },
+            { title: "Chúng Ta Của Hiện Tại", id: "psZ1g9fMfeo" },
             { title: "Muộn Rồi Mà Sao Còn", id: "xypzmu5mMPY" },
-            { title: "Chúng Ta Của Hiện Tại", id: "p4_U_68fO80" },
-            { title: "Nơi Này Có Anh", id: "FN7ALfpGxiI" }
+            { title: "Lạc Trôi", id: "Llw9Q6akRo4" },
+            { title: "Chạy Ngay Đi", id: "6t-MjBazs3o" },
+            { title: "Hãy Trao Cho Anh", id: "knW7-x7Y7RE" },
+            { title: "Making My Way", id: "32sYGCOYJUM" },
+            { title: "Đừng Làm Trái Tim Anh Đau", id: "niPkap1ozUA" }
         ];
 
         let currentTrackIndex = 0;
         let player = null;
         let isPlaying = false;
+        let loadTimeout = null;
 
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
+        const statusOverlay = document.getElementById('statusOverlay');
+        const statusSpinner = document.getElementById('statusSpinner');
+        const statusText = document.getElementById('statusText');
+        const retryBtn = document.getElementById('retryBtn');
+
+        function initYouTubePlayer() {
+            showLoadingState();
+            
+            // Timeout 10s: Nếu mạng kém không tải được API sẽ báo lỗi
+            clearTimeout(loadTimeout);
+            loadTimeout = setTimeout(() => {
+                if (!player || typeof player.getPlayerState !== 'function') {
+                    showErrorState("KHÔNG THỂ KẾT NỐI TỚI YOUTUBE! VUI LÒNG ĐỔI MẠNG HOẶC THỬ LẠI.");
+                }
+            }, 10000);
+
+            if (window.YT && window.YT.Player) {
+                createPlayer();
+            } else {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(tag);
+            }
+        }
 
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                height: '100', width: '100',
-                videoId: playlist[currentTrackIndex].id,
-                playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1 },
-                events: {
-                    'onReady': () => renderPlaylist(playlist),
-                    'onStateChange': onPlayerStateChange
-                }
-            });
+            createPlayer();
+        }
+
+        function createPlayer() {
+            try {
+                player = new YT.Player('youtube-player', {
+                    height: '100', width: '100',
+                    videoId: playlist[currentTrackIndex].id,
+                    playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1 },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onError': onPlayerError,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            } catch (err) {
+                showErrorState("LỖI KHỞI TẠO BỘ PHÁT YOUTUBE!");
+            }
+        }
+
+        function onPlayerReady() {
+            clearTimeout(loadTimeout);
+            // Kết nối thành công -> Ẩn Overlay và render Playlist
+            statusOverlay.style.display = 'none';
+            trackTitle.textContent = `🎵 ${playlist[currentTrackIndex].title}`;
+            renderPlaylist(playlist);
+        }
+
+        function onPlayerError(e) {
+            clearTimeout(loadTimeout);
+            showErrorState("KHÔNG THỂ TẢI VIDEO YOUTUBE (BỊ CHẶN HOẶC LỖI LINK)!");
         }
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) nextTrack();
         }
+
+        function showLoadingState() {
+            statusOverlay.style.display = 'flex';
+            statusSpinner.style.display = 'block';
+            statusText.className = 'status-text';
+            statusText.textContent = "⚡ ĐANG TẢI BẢNG NHẠC YOUTUBE...";
+            retryBtn.style.display = 'none';
+        }
+
+        function showErrorState(msg) {
+            statusOverlay.style.display = 'flex';
+            statusSpinner.style.display = 'none';
+            statusText.className = 'status-text error-text';
+            statusText.textContent = msg;
+            retryBtn.style.display = 'inline-block';
+            trackTitle.textContent = "❌ LỖI KẾT NỐI NHẠC";
+        }
+
+        retryBtn.addEventListener('click', () => {
+            initYouTubePlayer();
+        });
 
         const playBtn = document.getElementById('playBtn');
         const prevBtn = document.getElementById('prevBtn');
@@ -512,10 +630,15 @@
 
         function renderPlaylist(items) {
             playlistContainer.innerHTML = '<div class="active-indicator" id="activeIndicator"></div>';
+            playlistContainer.appendChild(statusOverlay); // Giữ lại Overlay
+
             const indicator = document.getElementById('activeIndicator');
 
             if(items.length === 0) {
-                playlistContainer.innerHTML += '<div style="padding:10px; text-align:center; color:#666;">Không tìm thấy bài hát</div>';
+                const noItem = document.createElement('div');
+                noItem.style.cssText = 'padding:15px; text-align:center; color:#666; font-size:0.8rem;';
+                noItem.textContent = 'Không tìm thấy bài hát';
+                playlistContainer.appendChild(noItem);
                 indicator.style.opacity = '0';
                 return;
             }
@@ -621,6 +744,9 @@
                 player.unMute();
             }
         }, { once: true });
+
+        // Khởi chạy Player
+        initYouTubePlayer();
 
         // 4. ANIMATION GLITCH M-TP
         (function() {
