@@ -1,0 +1,20 @@
+[
+  {
+    "Device Id": "7fe10f9enfj29nfi20fj", 
+    "username": "NETKING-FAKELAG-465E-8DEA-00DA-16F2",
+    "password": "key1d",
+    "expiry": "2026-08-22" 
+  },
+  {
+    "Device Id": "1frlq03jf03nskd0j2jd",
+    "username": "NETKING-FAKELAG-11DD-CC9E-ADE9-2FER",
+    "password": "key1d",
+    "expiry": "2026-08-22"
+  },
+  {
+    "Device Id": "20fjf93nf0sn29fn0end",
+    "username": "NETKING-FAKELAG-2JF9-DJ29-SKW9-D02F",
+    "password": "key1d",
+    "expiry": "2026-08-22" // NO DATE NO EXPIRY UNLIMITED KEY 
+  }
+]
